@@ -13,7 +13,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-2">
         {label && (
-          <label htmlFor={id} className="block text-sm font-medium text-text-secondary">
+          <label htmlFor={id} className="block text-sm font-medium text-text-primary">
             {label}
           </label>
         )}
@@ -21,7 +21,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={id}
           className={cn(
-            "w-full rounded-lg border border-border-hover/70 bg-bg-input px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none transition-all h-10 hover:border-border-hover focus:border-accent focus:ring-2 focus:ring-accent/20",
+            "w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted outline-none transition-all h-10 hover:border-border-hover focus:border-accent focus:ring-2 focus:ring-accent/20",
             error && "border-danger focus:border-danger focus:ring-danger/20",
             className
           )}

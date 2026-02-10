@@ -32,10 +32,10 @@ const ICONS: Record<ToastType, typeof CheckCircle2> = {
 }
 
 const STYLES: Record<ToastType, string> = {
-  success: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
-  error: "border-red-500/20 bg-red-500/10 text-red-400",
-  warning: "border-amber-500/20 bg-amber-500/10 text-amber-400",
-  info: "border-blue-500/20 bg-blue-500/10 text-blue-400",
+  success: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  error: "border-red-200 bg-red-50 text-red-700",
+  warning: "border-amber-200 bg-amber-50 text-amber-700",
+  info: "border-blue-200 bg-blue-50 text-blue-700",
 }
 
 function ToastItem({ toast: t, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {

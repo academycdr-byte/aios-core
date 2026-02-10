@@ -35,7 +35,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="fixed inset-0 bg-black/60"
+        className="fixed inset-0 bg-black/30"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -46,7 +46,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "relative z-10 w-full max-w-lg rounded-xl border border-border bg-bg-card p-5 shadow-2xl animate-scale-in outline-none",
+          "relative z-10 w-full max-w-lg rounded-xl border border-border bg-white p-5 shadow-xl animate-scale-in outline-none",
           className
         )}
       >

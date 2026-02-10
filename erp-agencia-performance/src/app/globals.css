@@ -1,25 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #08080c;
-  --color-bg-secondary: #101016;
-  --color-bg-card: #1a1a26;
-  --color-bg-hover: #26263a;
-  --color-bg-elevated: #20202c;
-  --color-bg-input: #0e0e16;
+  --color-bg-primary: #f5f6fa;
+  --color-bg-secondary: #eef0f4;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #f0f2f5;
+  --color-bg-elevated: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-bg-sidebar: #0f1723;
+  --color-bg-sidebar-hover: #1a2332;
+  --color-bg-sidebar-active: #22c55e;
 
-  --color-border: #32324a;
-  --color-border-hover: #48486a;
+  --color-border: #e8ecf1;
+  --color-border-hover: #d1d5db;
 
-  --color-text-primary: #ededf0;
-  --color-text-secondary: #a0a0b4;
-  --color-text-muted: #6e6e88;
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  --color-text-sidebar: #94a3b8;
+  --color-text-sidebar-active: #ffffff;
 
-  --color-accent: #7c5cfc;
-  --color-accent-hover: #6a4ce0;
+  --color-accent: #22c55e;
+  --color-accent-hover: #16a34a;
 
   --color-success: #22c55e;
-  --color-warning: #eab308;
+  --color-warning: #f59e0b;
   --color-danger: #ef4444;
   --color-info: #3b82f6;
 
@@ -43,15 +48,15 @@ body {
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #32324a; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #48486a; }
-* { scrollbar-width: thin; scrollbar-color: #32324a transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+* { scrollbar-width: thin; scrollbar-color: #d1d5db transparent; }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #0e0e16 inset;
-  -webkit-text-fill-color: #ededf0;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+  -webkit-text-fill-color: #1a1a2e;
   transition: background-color 5000s ease-in-out 0s;
 }
 
