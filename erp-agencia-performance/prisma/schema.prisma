@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTH ====================
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("ANALISTA") // ADMIN, GESTOR, ANALISTA
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clientesGerenciados Cliente[]
+  tarefas             Tarefa[]
+  membro              MembroEquipe?
+}
+
+// ==================== CLIENTES ====================
+
+model Cliente {
+  id             String   @id @default(cuid())
+  nome           String
+  cnpj           String?  @unique
+  segmento       String?
+  contato        String?
+  email          String?
+  telefone       String?
+  plataforma     String?  // SHOPIFY, WOOCOMMERCE, VTEX, NUVEMSHOP, OUTRA
+  urlLoja        String?
+  status         String   @default("ATIVO") // ATIVO, PAUSADO, CHURN
+  feeMensal      Float?
+  modeloCobranca String   @default("FIXO") // FIXO, PERCENTUAL, HIBRIDO
+  gestorId       String?
+  gestor         User?    @relation(fields: [gestorId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  campanhas     Campanha[]
+  tarefas       Tarefa[]
+  contasReceber ContaReceber[]
+}
+
+// ==================== CAMPANHAS ====================
+
+model Campanha {
+  id              String   @id @default(cuid())
+  nome            String
+  clienteId       String
+  cliente         Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  plataforma      String   // META_ADS, GOOGLE_ADS, TIKTOK_ADS
+  budgetPlanejado Float
+  gastoReal       Float    @default(0)
+  impressoes      Int      @default(0)
+  cliques         Int      @default(0)
+  conversoes      Int      @default(0)
+  receita         Float    @default(0)
+  mes             String   // "2025-01" format
+  status          String   @default("ATIVA") // ATIVA, PAUSADA, FINALIZADA
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== FINANCEIRO ====================
+
+model ContaReceber {
+  id            String    @id @default(cuid())
+  clienteId     String
+  cliente       Cliente   @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  descricao     String?
+  valor         Float
+  mes           String    // "2025-01" format
+  status        String    @default("PENDENTE") // PENDENTE, PAGO, ATRASADO, CANCELADO
+  dataPagamento DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ==================== EQUIPE ====================
+
+model MembroEquipe {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cargo     String   // GESTOR_CONTA, ANALISTA_MIDIA, DESIGNER, COPYWRITER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==================== TAREFAS ====================
+
+model Tarefa {
+  id            String    @id @default(cuid())
+  titulo        String
+  descricao     String?
+  status        String    @default("A_FAZER") // A_FAZER, FAZENDO, FEITO
+  prioridade    String    @default("MEDIA") // BAIXA, MEDIA, ALTA, URGENTE
+  clienteId     String?
+  cliente       Cliente?  @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+  responsavelId String?
+  responsavel   User?     @relation(fields: [responsavelId], references: [id], onDelete: SetNull)
+  prazo         DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
