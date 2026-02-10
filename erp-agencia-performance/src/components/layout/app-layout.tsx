@@ -16,7 +16,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   const isPublicPath = publicPaths.includes(pathname)
 
-  // Close sidebar on route change
   useEffect(() => {
     setSidebarOpen(false)
   }, [pathname])
@@ -31,7 +30,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   if (status === "loading") {
     return (
       <div className="flex h-screen items-center justify-center bg-bg-primary">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
       </div>
     )
   }
@@ -43,11 +42,11 @@ export function AppLayout({ children }: { children: ReactNode }) {
   if (!session) return null
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-bg-primary">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 lg:pl-64">
+      <div className="flex-1 lg:pl-60">
         <Header onMenuToggle={() => setSidebarOpen(true)} />
-        <main className="p-4 sm:p-6">{children}</main>
+        <main className="p-6">{children}</main>
       </div>
     </div>
   )

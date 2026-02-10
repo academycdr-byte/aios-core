@@ -1,8 +1,6 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { Badge } from "@/components/ui/badge"
-import { getStatusColor } from "@/lib/utils"
 import { Menu, Bell } from "lucide-react"
 
 interface HeaderProps {
@@ -13,36 +11,38 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const { data: session } = useSession()
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-bg-primary/80 px-4 sm:px-6 backdrop-blur-sm">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onMenuToggle}
-          className="rounded-lg p-2 text-text-muted hover:bg-bg-hover hover:text-text-primary transition-colors lg:hidden cursor-pointer"
-          aria-label="Abrir menu"
-        >
-          <Menu size={20} />
-        </button>
-      </div>
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-bg-primary px-4 sm:px-6">
+      <button
+        onClick={onMenuToggle}
+        className="rounded p-1.5 text-text-muted hover:text-text-primary lg:hidden cursor-pointer"
+        aria-label="Abrir menu"
+      >
+        <Menu size={18} />
+      </button>
+      <div className="lg:hidden" />
 
       <div className="flex items-center gap-3">
         <button
-          className="relative rounded-lg p-2 text-text-muted hover:bg-bg-hover hover:text-text-primary transition-colors cursor-pointer"
-          aria-label="Notificações"
+          className="relative rounded p-1.5 text-text-muted hover:text-text-primary cursor-pointer"
+          aria-label="Notificacoes"
         >
-          <Bell size={18} />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-danger animate-pulse" />
+          <Bell size={16} />
+          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-danger" />
         </button>
 
         {session?.user && (
-          <div className="flex items-center gap-3">
-            <Badge className={getStatusColor("ATIVO")}>
-              {session.user.role}
-            </Badge>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/20 text-sm font-medium text-accent">
-              {session.user.name?.charAt(0).toUpperCase()}
+          <>
+            <div className="h-5 w-px bg-border" />
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-medium text-white">
+                {session.user.name?.charAt(0).toUpperCase()}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[13px] font-medium text-text-primary leading-none">{session.user.name}</p>
+                <p className="text-[11px] text-text-muted mt-0.5">{session.user.role}</p>
+              </div>
             </div>
-            <span className="hidden text-sm text-text-secondary sm:block">{session.user.name}</span>
-          </div>
+          </>
         )}
       </div>
     </header>

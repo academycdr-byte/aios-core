@@ -9,8 +9,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts"
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/utils"
+import { BarChart3 } from "lucide-react"
 
 interface RevenueChartProps {
   data: Array<{ mes: string; receita: number; gastoMidia: number }>
@@ -28,14 +28,14 @@ function CustomTooltip({
   if (!active || !payload?.length) return null
 
   return (
-    <div className="rounded-lg border border-border bg-bg-card px-4 py-3 shadow-lg">
-      <p className="mb-2 text-sm font-medium text-text-primary">{label}</p>
+    <div className="rounded-md border border-border bg-bg-elevated px-3 py-2 text-xs shadow-lg">
+      <p className="mb-1.5 font-medium text-text-primary">{label}</p>
       {payload.map((entry) => (
-        <p key={entry.name} className="text-sm text-text-secondary">
-          <span className="inline-block h-2 w-2 rounded-full mr-2" style={{ backgroundColor: entry.color }} />
-          {entry.name === "receita" ? "Receita" : "Gasto Mídia"}:{" "}
-          <span className="font-medium text-text-primary">{formatCurrency(entry.value)}</span>
-        </p>
+        <div key={entry.name} className="flex items-center gap-2 text-text-secondary">
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span>{entry.name === "receita" ? "Receita" : "Gasto Midia"}</span>
+          <span className="ml-auto font-medium text-text-primary">{formatCurrency(entry.value)}</span>
+        </div>
       ))}
     </div>
   )
@@ -43,57 +43,62 @@ function CustomTooltip({
 
 export function RevenueChart({ data }: RevenueChartProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Receita vs Gasto de Mídia</CardTitle>
-      </CardHeader>
-      <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-          <defs>
-            <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="colorGasto" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#262626" />
-          <XAxis
-            dataKey="mes"
-            tick={{ fill: "#71717a", fontSize: 12 }}
-            axisLine={{ stroke: "#262626" }}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: "#71717a", fontSize: 12 }}
-            axisLine={{ stroke: "#262626" }}
-            tickLine={false}
-            tickFormatter={(value: number) =>
-              new Intl.NumberFormat("pt-BR", {
-                notation: "compact",
-                compactDisplay: "short",
-              }).format(value)
-            }
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Area
-            type="monotone"
-            dataKey="receita"
-            stroke="#6366f1"
-            strokeWidth={2}
-            fill="url(#colorReceita)"
-          />
-          <Area
-            type="monotone"
-            dataKey="gastoMidia"
-            stroke="#f43f5e"
-            strokeWidth={2}
-            fill="url(#colorGasto)"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    </Card>
+    <div className="rounded-xl border border-border bg-bg-card p-5 h-full ring-1 ring-white/[0.03]">
+      <h3 className="mb-4 text-sm font-medium text-text-secondary">Receita vs Gasto de Midia</h3>
+      {data.length === 0 ? (
+        <div className="flex h-[280px] flex-col items-center justify-center gap-2 text-text-muted">
+          <BarChart3 size={24} />
+          <p className="text-xs">Sem dados disponiveis</p>
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height={280}>
+          <AreaChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#7c5cfc" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#7c5cfc" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="colorGasto" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ef4444" stopOpacity={0.1} />
+                <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+            <XAxis
+              dataKey="mes"
+              tick={{ fill: "#666", fontSize: 11 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: "#666", fontSize: 11 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(value: number) =>
+                new Intl.NumberFormat("pt-BR", {
+                  notation: "compact",
+                  compactDisplay: "short",
+                }).format(value)
+              }
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="receita"
+              stroke="#7c5cfc"
+              strokeWidth={1.5}
+              fill="url(#colorReceita)"
+            />
+            <Area
+              type="monotone"
+              dataKey="gastoMidia"
+              stroke="#ef4444"
+              strokeWidth={1.5}
+              fill="url(#colorGasto)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      )}
+    </div>
   )
 }

@@ -280,8 +280,8 @@ export default function ClientesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Clientes</h1>
-          <p className="text-sm text-text-muted mt-1">
+          <h1 className="text-lg font-semibold text-text-primary">Clientes</h1>
+          <p className="text-[13px] text-text-muted mt-0.5">
             Gerencie sua carteira de clientes
           </p>
         </div>
@@ -299,7 +299,7 @@ export default function ClientesPage() {
           placeholder="Buscar por nome, CNPJ ou segmento..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-border bg-bg-secondary pl-9 pr-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent"
+          className="w-full rounded-lg border border-border bg-bg-input pl-9 pr-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30 h-9"
         />
       </div>
 
@@ -309,9 +309,9 @@ export default function ClientesPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
+            className={`px-3 py-2 text-[13px] font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
               activeTab === tab
-                ? "border-accent text-accent"
+                ? "border-accent text-text-primary"
                 : "border-transparent text-text-muted hover:text-text-secondary"
             }`}
           >
@@ -342,14 +342,14 @@ export default function ClientesPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Nome</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">CNPJ</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Segmento</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Plataforma</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Fee Mensal</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Gestor</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Ações</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Nome</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">CNPJ</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Segmento</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Plataforma</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Status</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Fee Mensal</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Gestor</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Acoes</th>
               </tr>
             </thead>
             <tbody>
@@ -357,20 +357,20 @@ export default function ClientesPage() {
                 <tr
                   key={cliente.id}
                   onClick={() => router.push(`/clientes/${cliente.id}`)}
-                  className="border-b border-border hover:bg-bg-hover cursor-pointer transition-colors"
+                  className="border-b border-border hover:bg-bg-hover/50 cursor-pointer transition-colors"
                 >
-                  <td className="px-4 py-3 text-sm font-medium text-text-primary">{cliente.nome}</td>
-                  <td className="px-4 py-3 text-sm text-text-secondary">{cliente.cnpj || "-"}</td>
-                  <td className="px-4 py-3 text-sm text-text-secondary">{cliente.segmento || "-"}</td>
-                  <td className="px-4 py-3 text-sm text-text-secondary">{cliente.plataforma || "-"}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2.5 text-[13px] font-medium text-text-primary">{cliente.nome}</td>
+                  <td className="px-4 py-2.5 text-[13px] text-text-secondary">{cliente.cnpj || "-"}</td>
+                  <td className="px-4 py-2.5 text-[13px] text-text-secondary">{cliente.segmento || "-"}</td>
+                  <td className="px-4 py-2.5 text-[13px] text-text-secondary">{cliente.plataforma || "-"}</td>
+                  <td className="px-4 py-2.5">
                     <Badge className={getStatusColor(cliente.status)}>{cliente.status}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-sm text-text-secondary">
+                  <td className="px-4 py-2.5 text-[13px] text-text-secondary">
                     {cliente.feeMensal != null ? formatCurrency(cliente.feeMensal) : "-"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-text-secondary">{cliente.gestor?.name || "-"}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-2.5 text-[13px] text-text-secondary">{cliente.gestor?.name || "-"}</td>
+                  <td className="px-4 py-2.5 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={(e) => {

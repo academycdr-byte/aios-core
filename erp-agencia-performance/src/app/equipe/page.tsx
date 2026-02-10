@@ -189,8 +189,8 @@ export default function EquipePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Equipe</h1>
-          <p className="text-text-muted mt-1">
+          <h1 className="text-lg font-semibold text-text-primary">Equipe</h1>
+          <p className="text-[13px] text-text-muted mt-0.5">
             {membros.length} {membros.length === 1 ? "membro" : "membros"}
           </p>
         </div>
@@ -290,7 +290,7 @@ export default function EquipePage() {
       >
         <div className="space-y-4">
           {formError && (
-            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm text-red-400">
+            <div className="rounded-md bg-danger/10 px-3 py-2 text-[13px] text-danger">
               {formError}
             </div>
           )}

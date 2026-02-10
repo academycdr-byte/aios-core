@@ -1,73 +1,49 @@
 "use client"
 
 import { AlertTriangle } from "lucide-react"
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 interface AlertItem {
   tipo: string
   mensagem: string
-  clienteNome: string
+  clienteNome?: string
 }
 
 interface AlertsProps {
   alerts: AlertItem[]
 }
 
-function getAlertStyles(tipo: string) {
-  switch (tipo) {
-    case "ROAS_BAIXO":
-      return {
-        border: "border-l-red-500",
-        icon: "text-red-400",
-        bg: "bg-red-500/5",
-      }
-    case "BUDGET_ESTOURANDO":
-      return {
-        border: "border-l-amber-500",
-        icon: "text-amber-400",
-        bg: "bg-amber-500/5",
-      }
-    default:
-      return {
-        border: "border-l-zinc-500",
-        icon: "text-zinc-400",
-        bg: "bg-zinc-500/5",
-      }
-  }
-}
-
 export function Alerts({ alerts }: AlertsProps) {
   if (alerts.length === 0) return null
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Alertas</CardTitle>
-      </CardHeader>
-      <div className="space-y-2">
+    <div className="rounded-xl border border-border bg-bg-card p-5 ring-1 ring-white/[0.03]">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-sm font-medium text-text-secondary">Alertas</h3>
+        <span className="text-[11px] text-text-muted">{alerts.length} items</span>
+      </div>
+      <div className="max-h-[240px] space-y-1.5 overflow-y-auto">
         {alerts.map((alert, index) => {
-          const styles = getAlertStyles(alert.tipo)
+          const isWarning = alert.tipo === "BUDGET_ESTOURANDO" || alert.tipo === "BUDGET_ALTO"
           return (
             <div
-              key={`${alert.tipo}-${alert.clienteNome}-${index}`}
+              key={`${alert.tipo}-${index}`}
               className={cn(
-                "flex items-start gap-3 rounded-lg border-l-4 px-4 py-3",
-                styles.border,
-                styles.bg
+                "flex items-start gap-2.5 rounded-md px-3 py-2.5",
+                isWarning ? "bg-amber-500/5" : "bg-red-500/5"
               )}
             >
-              <AlertTriangle className={cn("mt-0.5 h-4 w-4 shrink-0", styles.icon)} />
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-text-primary">
-                  {alert.clienteNome}
-                </p>
-                <p className="text-xs text-text-muted">{alert.mensagem}</p>
-              </div>
+              <AlertTriangle size={14} className={cn(
+                "mt-0.5 shrink-0",
+                isWarning ? "text-amber-400" : "text-red-400"
+              )} />
+              <p className="text-[13px] text-text-secondary leading-relaxed">
+                {alert.mensagem}
+              </p>
             </div>
           )
         })}
       </div>
-    </Card>
+    </div>
   )
 }
