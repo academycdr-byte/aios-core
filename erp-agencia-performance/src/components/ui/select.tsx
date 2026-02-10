@@ -13,7 +13,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, label, error, id, options, placeholder, ...props }, ref) => {
     return (
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {label && (
           <label htmlFor={id} className="block text-sm font-medium text-text-secondary">
             {label}
@@ -23,8 +23,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={id}
           className={cn(
-            "w-full rounded-lg border border-border bg-bg-secondary px-3 py-2 text-sm text-text-primary outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent",
-            error && "border-danger focus:border-danger focus:ring-danger",
+            "w-full rounded-lg border border-border-hover/70 bg-bg-input px-3.5 py-2.5 text-sm text-text-primary outline-none transition-all h-10 hover:border-border-hover focus:border-accent focus:ring-2 focus:ring-accent/20",
+            error && "border-danger focus:border-danger focus:ring-danger/30",
             className
           )}
           {...props}

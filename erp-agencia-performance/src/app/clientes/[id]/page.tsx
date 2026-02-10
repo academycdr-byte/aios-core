@@ -127,11 +127,11 @@ export default function ClienteDetailPage({ params }: PageProps) {
           </button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-text-primary">{cliente.nome}</h1>
+              <h1 className="text-lg font-semibold text-text-primary">{cliente.nome}</h1>
               <Badge className={getStatusColor(cliente.status)}>{cliente.status}</Badge>
             </div>
             {cliente.segmento && (
-              <p className="text-sm text-text-muted mt-1">{cliente.segmento}</p>
+              <p className="text-[13px] text-text-muted mt-0.5">{cliente.segmento}</p>
             )}
           </div>
         </div>
@@ -241,9 +241,9 @@ export default function ClienteDetailPage({ params }: PageProps) {
       <div className="flex gap-1 border-b border-border">
         <button
           onClick={() => setActiveTab("campanhas")}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
+          className={`px-4 py-2 text-[13px] font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
             activeTab === "campanhas"
-              ? "border-accent text-accent"
+              ? "border-accent text-text-primary"
               : "border-transparent text-text-muted hover:text-text-secondary"
           }`}
         >
@@ -254,9 +254,9 @@ export default function ClienteDetailPage({ params }: PageProps) {
         </button>
         <button
           onClick={() => setActiveTab("financeiro")}
-          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
+          className={`px-4 py-2 text-[13px] font-medium transition-colors border-b-2 -mb-px cursor-pointer ${
             activeTab === "financeiro"
-              ? "border-accent text-accent"
+              ? "border-accent text-text-primary"
               : "border-transparent text-text-muted hover:text-text-secondary"
           }`}
         >
@@ -272,23 +272,23 @@ export default function ClienteDetailPage({ params }: PageProps) {
         <>
           {cliente.campanhas.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-bg-card py-12">
-              <p className="text-text-muted text-sm">Nenhuma campanha registrada</p>
+              <p className="text-text-muted text-[13px]">Nenhuma campanha registrada</p>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-border bg-bg-card">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Nome</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Plataforma</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Mês</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Budget</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Gasto</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Impressões</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Cliques</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">CTR</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">ROAS</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Status</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Nome</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Plataforma</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Mês</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Budget</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Gasto</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Impressões</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Cliques</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">CTR</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">ROAS</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -297,17 +297,17 @@ export default function ClienteDetailPage({ params }: PageProps) {
                     const roas = calcROAS(camp.receita, camp.gastoReal)
                     return (
                       <tr key={camp.id} className="border-b border-border hover:bg-bg-hover transition-colors">
-                        <td className="px-4 py-3 text-sm font-medium text-text-primary">{camp.nome}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary">{camp.plataforma}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary">{camp.mes}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary text-right">{formatCurrency(camp.budgetPlanejado)}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary text-right">{formatCurrency(camp.gastoReal)}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary text-right">{formatNumber(camp.impressoes)}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary text-right">{formatNumber(camp.cliques)}</td>
-                        <td className="px-4 py-3 text-sm text-text-secondary text-right">{ctr.toFixed(1)}%</td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-2.5 text-[13px] font-medium text-text-primary">{camp.nome}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary">{camp.plataforma}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary">{camp.mes}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">{formatCurrency(camp.budgetPlanejado)}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">{formatCurrency(camp.gastoReal)}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">{formatNumber(camp.impressoes)}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">{formatNumber(camp.cliques)}</td>
+                        <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">{ctr.toFixed(1)}%</td>
+                        <td className="px-4 py-2.5 text-right">
                           <span
-                            className={`text-sm font-medium ${
+                            className={`text-[13px] font-medium ${
                               roas >= 3
                                 ? "text-emerald-400"
                                 : roas >= 2
@@ -318,7 +318,7 @@ export default function ClienteDetailPage({ params }: PageProps) {
                             {roas.toFixed(2)}x
                           </span>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-2.5">
                           <Badge className={getStatusColor(camp.status)}>{camp.status}</Badge>
                         </td>
                       </tr>
@@ -335,32 +335,32 @@ export default function ClienteDetailPage({ params }: PageProps) {
         <>
           {cliente.contasReceber.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-bg-card py-12">
-              <p className="text-text-muted text-sm">Nenhuma conta a receber registrada</p>
+              <p className="text-text-muted text-[13px]">Nenhuma conta a receber registrada</p>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-border bg-bg-card">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Descrição</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Mês</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Valor</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Pagamento</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Descrição</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Mês</th>
+                    <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Valor</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Status</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Pagamento</th>
                   </tr>
                 </thead>
                 <tbody>
                   {cliente.contasReceber.map((cr) => (
                     <tr key={cr.id} className="border-b border-border hover:bg-bg-hover transition-colors">
-                      <td className="px-4 py-3 text-sm text-text-primary">{cr.descricao || "-"}</td>
-                      <td className="px-4 py-3 text-sm text-text-secondary">{cr.mes}</td>
-                      <td className="px-4 py-3 text-sm text-text-primary font-medium text-right">
+                      <td className="px-4 py-2.5 text-[13px] text-text-primary">{cr.descricao || "-"}</td>
+                      <td className="px-4 py-2.5 text-[13px] text-text-secondary">{cr.mes}</td>
+                      <td className="px-4 py-2.5 text-[13px] text-text-primary font-medium text-right">
                         {formatCurrency(cr.valor)}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-2.5">
                         <Badge className={getStatusColor(cr.status)}>{cr.status}</Badge>
                       </td>
-                      <td className="px-4 py-3 text-sm text-text-secondary">
+                      <td className="px-4 py-2.5 text-[13px] text-text-secondary">
                         {cr.dataPagamento
                           ? new Date(cr.dataPagamento).toLocaleDateString("pt-BR")
                           : "-"}

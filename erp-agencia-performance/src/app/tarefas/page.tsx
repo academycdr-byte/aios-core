@@ -272,8 +272,8 @@ export default function TarefasPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Tarefas</h1>
-          <p className="text-sm text-text-muted">
+          <h1 className="text-lg font-semibold text-text-primary">Tarefas</h1>
+          <p className="text-[13px] text-text-muted mt-0.5">
             Gerencie as tarefas da sua equipe
           </p>
         </div>
@@ -324,7 +324,7 @@ export default function TarefasPage() {
               >
                 {columnTarefas.length === 0 && (
                   <div className="flex items-center justify-center rounded-lg border border-dashed border-border py-8">
-                    <p className="text-sm text-text-muted">
+                    <p className="text-[13px] text-text-muted">
                       Nenhuma tarefa
                     </p>
                   </div>
@@ -333,7 +333,7 @@ export default function TarefasPage() {
                 {columnTarefas.map((tarefa) => (
                   <div
                     key={tarefa.id}
-                    className="group cursor-pointer rounded-lg border border-border bg-bg-card p-4 transition-colors hover:border-border-hover"
+                    className="group cursor-pointer rounded-xl border border-border bg-bg-card p-4 transition-colors hover:border-border-hover"
                     onClick={() => openEditModal(tarefa)}
                   >
                     {/* Title */}
@@ -343,7 +343,7 @@ export default function TarefasPage() {
 
                     {/* Description Preview */}
                     {tarefa.descricao && (
-                      <p className="mt-1 line-clamp-2 text-sm text-text-muted">
+                      <p className="mt-1 line-clamp-2 text-[13px] text-text-muted">
                         {tarefa.descricao}
                       </p>
                     )}

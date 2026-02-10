@@ -35,10 +35,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -46,57 +45,56 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-bg-secondary transition-transform duration-300",
+          "fixed left-0 top-0 z-40 flex h-screen w-60 flex-col border-r border-border bg-bg-card transition-transform duration-200",
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-border px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-violet-500">
-              <Zap size={18} className="text-white" />
+        <div className="flex h-14 items-center justify-between border-b border-border px-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-accent">
+              <Zap size={14} className="text-white" />
             </div>
-            <div>
-              <h1 className="text-sm font-bold text-text-primary">ERP Agency</h1>
-              <p className="text-xs text-text-muted">Performance Digital</p>
-            </div>
+            <span className="text-sm font-semibold text-text-primary">ERP Agency</span>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-text-muted hover:bg-bg-hover hover:text-text-primary transition-colors lg:hidden cursor-pointer"
+            className="rounded p-1 text-text-muted hover:text-text-primary lg:hidden cursor-pointer"
             aria-label="Fechar menu"
           >
-            <X size={20} />
+            <X size={16} />
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-                  isActive
-                    ? "bg-accent/10 text-accent border-l-2 border-accent"
-                    : "text-text-secondary hover:bg-bg-hover hover:text-text-primary border-l-2 border-transparent"
-                )}
-              >
-                <item.icon size={18} />
-                {item.label}
-              </Link>
-            )
-          })}
+        <nav className="flex-1 overflow-y-auto p-2">
+          <div className="space-y-0.5">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onClose}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors",
+                    isActive
+                      ? "bg-bg-hover text-text-primary"
+                      : "text-text-muted hover:bg-bg-hover hover:text-text-secondary"
+                  )}
+                >
+                  <item.icon size={16} className={isActive ? "text-accent" : ""} />
+                  {item.label}
+                </Link>
+              )
+            })}
+          </div>
         </nav>
 
-        <div className="border-t border-border p-3">
+        <div className="border-t border-border p-2">
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary cursor-pointer"
+            className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium text-text-muted transition-colors hover:bg-bg-hover hover:text-text-secondary cursor-pointer"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             Sair
           </button>
         </div>

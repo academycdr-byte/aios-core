@@ -256,8 +256,8 @@ export default function FinanceiroPage() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Financeiro</h1>
-        <p className="text-text-muted mt-1">Gestão financeira e P&L</p>
+        <h1 className="text-lg font-semibold text-text-primary">Financeiro</h1>
+        <p className="text-[13px] text-text-muted mt-0.5">Gestão financeira e P&L</p>
       </div>
 
       {/* Tabs */}
@@ -266,7 +266,7 @@ export default function FinanceiroPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 rounded-md px-4 py-2 text-[13px] font-medium transition-colors ${
               activeTab === tab.key
                 ? "bg-bg-card text-text-primary shadow-sm"
                 : "text-text-muted hover:text-text-secondary"
@@ -408,7 +408,7 @@ export default function FinanceiroPage() {
                   </div>
                 ))}
                 {dashboard.topClientes.length === 0 && (
-                  <p className="text-sm text-text-muted">Nenhum cliente encontrado</p>
+                  <p className="text-[13px] text-text-muted">Nenhum cliente encontrado</p>
                 )}
               </div>
             </Card>
@@ -427,7 +427,7 @@ export default function FinanceiroPage() {
                   </div>
                 ))}
                 {dashboard.alerts.length === 0 && (
-                  <p className="text-sm text-text-muted">Nenhum alerta</p>
+                  <p className="text-[13px] text-text-muted">Nenhum alerta</p>
                 )}
               </div>
             </Card>
@@ -464,25 +464,25 @@ export default function FinanceiroPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Cliente
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Descrição
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Valor
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Mês
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Data Pagamento
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">
+                    <th className="px-6 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">
                       Ações
                     </th>
                   </tr>
@@ -490,25 +490,25 @@ export default function FinanceiroPage() {
                 <tbody>
                   {contas.map((conta) => (
                     <tr key={conta.id} className="border-b border-border hover:bg-bg-hover">
-                      <td className="px-6 py-4 text-sm text-text-primary">
+                      <td className="px-6 py-2.5 text-[13px] text-text-primary">
                         {conta.cliente.nome}
                       </td>
-                      <td className="px-6 py-4 text-sm text-text-secondary">
+                      <td className="px-6 py-2.5 text-[13px] text-text-secondary">
                         {conta.descricao || "-"}
                       </td>
-                      <td className="px-6 py-4 text-sm font-medium text-text-primary">
+                      <td className="px-6 py-2.5 text-[13px] font-medium text-text-primary">
                         {formatCurrency(conta.valor)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-text-secondary">{conta.mes}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2.5 text-[13px] text-text-secondary">{conta.mes}</td>
+                      <td className="px-6 py-2.5">
                         <Badge className={getStatusColor(conta.status)}>{conta.status}</Badge>
                       </td>
-                      <td className="px-6 py-4 text-sm text-text-secondary">
+                      <td className="px-6 py-2.5 text-[13px] text-text-secondary">
                         {conta.dataPagamento
                           ? new Date(conta.dataPagamento).toLocaleDateString("pt-BR")
                           : "-"}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2.5">
                         <div className="flex items-center justify-end gap-2">
                           {conta.status !== "PAGO" && (
                             <button
@@ -534,7 +534,7 @@ export default function FinanceiroPage() {
                     <tr>
                       <td
                         colSpan={7}
-                        className="px-6 py-12 text-center text-sm text-text-muted"
+                        className="px-6 py-12 text-center text-[13px] text-text-muted"
                       >
                         Nenhuma conta encontrada
                       </td>
@@ -623,19 +623,19 @@ export default function FinanceiroPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">
+                  <th className="px-6 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">
                     Cliente
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">
+                  <th className="px-6 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">
                     Receita (Fees)
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">
+                  <th className="px-6 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">
                     Custo Mídia
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">
+                  <th className="px-6 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">
                     Lucro
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">
+                  <th className="px-6 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">
                     Margem %
                   </th>
                 </tr>
@@ -643,24 +643,24 @@ export default function FinanceiroPage() {
               <tbody>
                 {plData.clientes.map((c) => (
                   <tr key={c.id} className="border-b border-border hover:bg-bg-hover">
-                    <td className="px-6 py-4 text-sm text-text-primary">{c.nome}</td>
-                    <td className="px-6 py-4 text-right text-sm text-text-primary">
+                    <td className="px-6 py-2.5 text-[13px] text-text-primary">{c.nome}</td>
+                    <td className="px-6 py-2.5 text-right text-[13px] text-text-primary">
                       {formatCurrency(c.receitaFees)}
                     </td>
-                    <td className="px-6 py-4 text-right text-sm text-text-secondary">
+                    <td className="px-6 py-2.5 text-right text-[13px] text-text-secondary">
                       {formatCurrency(c.custoMidia)}
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-medium text-text-primary">
+                    <td className="px-6 py-2.5 text-right text-[13px] font-medium text-text-primary">
                       {formatCurrency(c.lucro)}
                     </td>
-                    <td className={`px-6 py-4 text-right text-sm font-medium ${getMargemColor(c.margem)}`}>
+                    <td className={`px-6 py-2.5 text-right text-[13px] font-medium ${getMargemColor(c.margem)}`}>
                       {c.margem.toFixed(1)}%
                     </td>
                   </tr>
                 ))}
                 {plData.clientes.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-sm text-text-muted">
+                    <td colSpan={5} className="px-6 py-12 text-center text-[13px] text-text-muted">
                       Nenhum dado encontrado
                     </td>
                   </tr>
@@ -668,18 +668,18 @@ export default function FinanceiroPage() {
                 {/* Totals row */}
                 {plData.clientes.length > 0 && (
                   <tr className="border-t-2 border-border bg-bg-secondary">
-                    <td className="px-6 py-4 text-sm font-bold text-text-primary">TOTAL</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-text-primary">
+                    <td className="px-6 py-2.5 text-[13px] font-bold text-text-primary">TOTAL</td>
+                    <td className="px-6 py-2.5 text-right text-[13px] font-bold text-text-primary">
                       {formatCurrency(plData.totals.receitaFees)}
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-text-secondary">
+                    <td className="px-6 py-2.5 text-right text-[13px] font-bold text-text-secondary">
                       {formatCurrency(plData.totals.custoMidia)}
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-text-primary">
+                    <td className="px-6 py-2.5 text-right text-[13px] font-bold text-text-primary">
                       {formatCurrency(plData.totals.lucro)}
                     </td>
                     <td
-                      className={`px-6 py-4 text-right text-sm font-bold ${getMargemColor(plData.totals.margem)}`}
+                      className={`px-6 py-2.5 text-right text-[13px] font-bold ${getMargemColor(plData.totals.margem)}`}
                     >
                       {plData.totals.margem.toFixed(1)}%
                     </td>

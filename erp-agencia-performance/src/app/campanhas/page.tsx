@@ -278,8 +278,8 @@ export default function CampanhasPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Campanhas</h1>
-          <p className="text-sm text-text-muted mt-1">
+          <h1 className="text-lg font-semibold text-text-primary">Campanhas</h1>
+          <p className="text-[13px] text-text-muted mt-0.5">
             Gerencie campanhas de mídia paga
           </p>
         </div>
@@ -325,7 +325,7 @@ export default function CampanhasPage() {
       {filteredCampanhas.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-bg-card py-16">
           <MegaphoneIcon size={40} className="text-text-muted/50 mb-3" />
-          <p className="text-text-muted text-sm">
+          <p className="text-text-muted text-[13px]">
             {filterPlataforma || filterStatus
               ? "Nenhuma campanha encontrada com estes filtros"
               : "Nenhuma campanha cadastrada"}
@@ -342,17 +342,17 @@ export default function CampanhasPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Nome</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Cliente</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Plataforma</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Budget</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Gasto Real</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Impressões</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Cliques</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">CTR</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">ROAS</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted">Status</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">Ações</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Nome</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Cliente</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Plataforma</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Budget</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Gasto Real</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Impressões</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Cliques</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">CTR</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">ROAS</th>
+                <th className="px-4 py-2.5 text-left text-[11px] font-medium uppercase tracking-wider text-text-muted">Status</th>
+                <th className="px-4 py-2.5 text-right text-[11px] font-medium uppercase tracking-wider text-text-muted">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -364,37 +364,37 @@ export default function CampanhasPage() {
                     key={campanha.id}
                     className="border-b border-border hover:bg-bg-hover transition-colors"
                   >
-                    <td className="px-4 py-3 text-sm font-medium text-text-primary">{campanha.nome}</td>
-                    <td className="px-4 py-3 text-sm text-text-secondary">{campanha.cliente?.nome || "-"}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2.5 text-[13px] font-medium text-text-primary">{campanha.nome}</td>
+                    <td className="px-4 py-2.5 text-[13px] text-text-secondary">{campanha.cliente?.nome || "-"}</td>
+                    <td className="px-4 py-2.5">
                       <Badge className={PLATAFORMA_COLORS[campanha.plataforma] || ""}>
                         {campanha.plataforma.replace("_", " ")}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-sm text-text-secondary text-right">
+                    <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">
                       {formatCurrency(campanha.budgetPlanejado)}
                     </td>
-                    <td className={`px-4 py-3 text-sm text-right font-medium ${getBudgetUsageColor(campanha.gastoReal, campanha.budgetPlanejado)}`}>
+                    <td className={`px-4 py-2.5 text-[13px] text-right font-medium ${getBudgetUsageColor(campanha.gastoReal, campanha.budgetPlanejado)}`}>
                       {formatCurrency(campanha.gastoReal)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-text-secondary text-right">
+                    <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">
                       {formatNumber(campanha.impressoes)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-text-secondary text-right">
+                    <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">
                       {formatNumber(campanha.cliques)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-text-secondary text-right">
+                    <td className="px-4 py-2.5 text-[13px] text-text-secondary text-right">
                       {ctr.toFixed(1)}%
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <span className={`text-sm font-medium ${getRoasColor(roas)}`}>
+                    <td className="px-4 py-2.5 text-right">
+                      <span className={`text-[13px] font-medium ${getRoasColor(roas)}`}>
                         {roas.toFixed(2)}x
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-2.5">
                       <Badge className={getStatusColor(campanha.status)}>{campanha.status}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-2.5 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => openEditModal(campanha)}
@@ -427,7 +427,7 @@ export default function CampanhasPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-lg bg-danger/10 border border-danger/20 px-3 py-2 text-sm text-danger">
+            <div className="rounded-md bg-danger/10 px-3 py-2 text-[13px] text-danger">
               {error}
             </div>
           )}
@@ -545,7 +545,7 @@ export default function CampanhasPage() {
           Tem certeza que deseja remover esta campanha? Esta ação não pode ser desfeita.
         </p>
         {error && (
-          <div className="rounded-lg bg-danger/10 border border-danger/20 px-3 py-2 text-sm text-danger mb-4">
+          <div className="rounded-md bg-danger/10 px-3 py-2 text-[13px] text-danger mb-4">
             {error}
           </div>
         )}
