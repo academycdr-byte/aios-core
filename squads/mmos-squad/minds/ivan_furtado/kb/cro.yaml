@@ -1,0 +1,892 @@
+domain: cro
+title: "CRO - Conversion Rate Optimization"
+confidence: 0.95
+source: "Aulas 07, 08, 09, 10"
+last_updated: "2026-02-16"
+
+# =============================================================================
+# FRAMEWORK DE DIAGNOSTICO DE CONVERSAO
+# =============================================================================
+diagnostico_conversao:
+  nome: "Quebra por Metricas Antecedentes"
+  passos:
+    - "Calcular taxa de conversao geral: (vendas / sessoes) x 100"
+    - "Se abaixo de 1%, quebrar em duas metricas:"
+    - "  - Taxa de adicao ao carrinho (benchmark: 8%)"
+    - "  - Taxa de conversao do checkout (benchmark: 18%+)"
+    - "Se adicao ao carrinho esta ruim -> problema na pagina do produto"
+    - "Se conversao do checkout esta ruim -> problema no checkout"
+  quando_usar: "Sempre que taxa de conversao estiver abaixo do esperado"
+  resultado: "Identificar rapidamente onde esta o furo no balde"
+
+  simulacao_impacto:
+    cenario_1:
+      sessoes: 10132
+      compras: 54
+      conversao: "0.53%"
+      receita: "R$23k"
+      roas: 4.6
+    cenario_2:
+      sessoes: 10132
+      compras: 101
+      conversao: "1%"
+      receita: "R$44k"
+      roas: 8.7
+    investimento_trafego: "R$5k (MESMO nos dois cenarios)"
+    insight: "Quase DOBRO do ROAS sem gastar mais em trafego. A gente fica muito bitolado no trafego e as vezes precisa olhar para o site."
+
+  diagnostico_metricas_caras:
+    custo_adicao_carrinho:
+      ideal: "< R$3"
+      bom: "R$0.69-0.70 em lojas otimizadas"
+      ruim: "> R$7 (gargalo na pagina do produto)"
+    custo_finalizacao_compra:
+      ruim: "> R$37 (gargalo no checkout)"
+    custo_inclusao_info_pagamento:
+      ruim: "> R$271 (gargalo enorme no checkout)"
+    processo:
+      - "Verificar custo por adicao ao carrinho"
+      - "Verificar custo por finalizacao de compra"
+      - "Verificar custo por inclusao info pagamento"
+      - "Identificar maior 'salto' entre etapas = maior gargalo"
+      - "Ajustar site (pagina produto / checkout)"
+
+  3_objecoes_universais:
+    preco: "Ancoragem, parcelas, desconto progressivo"
+    qualidade_produto: "UGC, videocommerce, fotos detalhadas, reviews"
+    confianca_na_loja: "Humanizacao, rosto da marca, reviews, Reclame Aqui, pagina Quem Somos"
+
+# =============================================================================
+# CHECKLIST CRO COMPLETO (230+ PONTOS)
+# =============================================================================
+checklist_completo:
+  descricao: "Checklist completo dividido por secao do site. 230+ pontos de verificacao."
+
+  1_barra_de_anuncios_topo:
+    principios:
+      - "Ofertas que gerem desejo OU quebrem objecao"
+    tipos_conteudo:
+      escassez: "Promocao valida somente esta semana (funciona independente de quando acessar)"
+      desejo: "Ao inves de 'Pag2Leve3', mostrar 'cada camisa sai por R$94'"
+      preco: "Desconto no PIX, parcelamento sem juros"
+      autoridade: "Garantia, troca/devolucao"
+    regras_visuais:
+      - "Fonte grande o suficiente para ler no mobile"
+      - "Negrito nos pontos-chave"
+      - "Fonte mobile minima: 16 pixels"
+
+  2_banners:
+    quantidade_minima: 3
+    renovacao: "Renovar regularmente (marcas grandes nunca tem os mesmos)"
+    prioridade_1: "HUMANIZACAO (pessoas nos banners = 10 passos a frente)"
+    tipos:
+      - "Quebra de objecao"
+      - "Geracao de desejo"
+      - "Oferta atual"
+      - "Sazonalidade"
+      - "Principais colecoes"
+      - "Escassez"
+      - "Influenciadores grandes da marca"
+      - "Nota Reclame Aqui (so se nota alta 8.7+)"
+      - "Colecoes mais vendidas (renovar mensalmente)"
+      - "Canais quentes (comunidade, app)"
+    regra: "Banner levando para comunidade WhatsApp e banner levando para app"
+    quote: "Tirando o site e o Instagram, sao os dois canais de contato mais quente que existem: Comunidade e App"
+
+  3_sessoes_cruciais_home:
+    seletor_colecoes:
+      descricao: "Seletor de colecoes/categorias"
+      referencia: "Nike nao tem produto na home, so fotos que levam para colecoes"
+      tipos:
+        - "Seletor de clubes brasileiros"
+        - "Seletor de marcas (para chuteiras)"
+        - "Seletor de ligas (Premier League -> todos os times)"
+        - "Seletor de paises (pensando na Copa do Mundo)"
+      objetivo: "O cliente tem que conseguir achar qualquer produto facilmente"
+    produtos_mais_vendidos:
+      regra: "Atualizar semanalmente via relatorio Shopify"
+    produtos_lancamento:
+      descricao: "Sessao dedicada a lancamentos"
+    produtos_categorias_principais:
+      descricao: "Sessao por categoria principal"
+    produtos_desconto:
+      regra: "MAS NAO todos com desconto"
+      quote: "Se toda loja tem desconto, nada tem desconto"
+    videocommerce:
+      tipo: "Video institucional 25-45 segundos"
+      implementacao: "NAO usar app pago; HTML customizado"
+      variantes: "Um video para home, um por colecao (por clube), um por produto escalado"
+    social_commerce:
+      descricao: "Elementos semelhantes a redes sociais (Stories, Reels no site)"
+      resultado: "Menor taxa de rejeicao"
+    popup:
+      objetivo: "Coletar email/telefone"
+      benchmark_preenchimento: "8%"
+      shopify_forms: "15% (melhor que Klaviyo 12%)"
+
+  4_colecao:
+    banner_exclusivo: "Banner exclusivo por colecao (adaptar identidade visual para o clube)"
+    filtros:
+      - "Preco"
+      - "Disponibilidade"
+      - "Tamanho"
+      - "Categoria (masculino/feminino/infantil)"
+    ordenacao: "Produtos com maior rotatividade de venda NO TOPO"
+    ancoragem_preco:
+      posicao_4: "Produto com preco alto SEM desconto (ancora)"
+      posicao_6: "Produto ESGOTADO (escassez + efeito manada)"
+    produtos_esgotados: "Cadastrar produtos que fornecedor NAO tem como esgotados (bones, cacheros, etc.)"
+    videocommerce_por_colecao: "Um VideoCommerce especifico por colecao/clube"
+
+  5_pagina_produto:
+    elementos_essenciais:
+      - "Foto do produto"
+      - "Nome do produto"
+      - "Avaliacoes (estrelas)"
+      - "Preco comparativo + preco de venda"
+      - "% de desconto"
+      - "Preco parcelado"
+      - "Desconto no PIX"
+      - "Tabela de medidas"
+      - "Seletor de variantes"
+      - "Personalizacao"
+      - "Botao adicionar ao carrinho"
+
+    acima_do_botao:
+      escassez:
+        - "Quase esgotado"
+        - "Restam X unidades em promocao"
+      variantes_esgotadas: "PP, 4XG, tamanhos que fornecedor nao tem (gera escassez)"
+
+    fotos:
+      humanizadas_ia: "Fotos de modelos vestindo produtos geradas por IA - 'nao tem desculpa mais'"
+      detalhes: "Fotos mostrando detalhes do produto"
+      oferta: "Foto explicando a oferta (desconto progressivo)"
+      profissionais: "Modelar Nike, Adidas, ProDirect"
+
+    reviews:
+      social_commerce: "Review do cliente com video (Social Commerce / VideoCommerce)"
+      ia_fotos: "Gerar fotos humanizadas de reviews com IA"
+      citar_nome_loja: "CITAR nome da loja nas avaliacoes importadas"
+      idioma: "Trocar 'Reviews' para 'Avaliacoes' (publico pode nao saber ingles)"
+      posicao: "Reviews/avaliacoes devem subir na pagina (quanto mais desce, menos pessoas veem)"
+
+    calculadora_frete:
+      impacto_adicao_carrinho: "NAO reduziu adicao ao carrinho"
+      impacto_checkout: "MAS AUMENTOU conversao do checkout"
+
+    copy:
+      formato: "Em texto E imagem: material, qualidade, autoridade, dores, diferenciais"
+      linha_suspensa: "Beneficios, prazo de entrega, devolucao 7 dias, compra segura"
+
+    recomendados:
+      - "Produtos recomendados"
+      - "Produtos vistos recentemente"
+
+    analise_detalhada:
+      fontes: "Aumentar tamanho + negrito na barra de anuncios e titulos"
+      logo_mobile: "Aumentar"
+      padrao: "Nome produto minusculo vs colecao maiuscula -> padronizar"
+      preco_destaque: "Preco de venda DEVE ter MAIOR destaque que comparativo"
+      guia_tamanhos: "Aumentar, adicionar icone"
+      espacamentos: "Reduzir, compactar informacao importante"
+      bordas: "Botao adicionar carrinho quadrado vs calculadora arredondada -> padronizar"
+      responsividade: "Espacamentos diferentes esquerda vs direita -> corrigir"
+      prioridade: "Elementos acima devem ser mais relevantes: UGC/video > copy/fotos genericas"
+      funil: "Tudo e funil. Quanto mais desce, menos pessoas veem -> info importante NO TOPO"
+
+  6_checkout:
+    nao_colocar: "Banners/ofertas de desconto progressivo no checkout (leva cliente a sair)"
+    sim_colocar:
+      - "Ofertas de PAGAMENTO (parcelamento, % off PIX, frete gratis)"
+      - "Escassez ('ultimas unidades em promocao')"
+    identidade_visual: "Manter consistente com o site"
+    resumo_carrinho: "ABERTO por padrao"
+    frete:
+      regra: "Mais de uma opcao de frete"
+      mesmo_dropshipping: "Frete gratis + frete expresso pago R$9.90-19.90"
+      lucro_frete_pago: "R$15k de lucro adicional no mes (caso R$1M faturamento)"
+    order_bump: "Por colecao"
+    avaliacoes: "Abaixo do rodape do checkout"
+    cartpanda:
+      conversao: "Ate 35% (melhor que checkout nativo Shopify)"
+
+  7_rodape:
+    elementos:
+      - "Newsletter"
+      - "Redes sociais"
+    menu:
+      - "Principais colecoes"
+      - "Politicas"
+      - "Rastrear pedido"
+      - "Baixar app"
+      - "FAQ"
+      - "Historia"
+      - "Influenciadores"
+    pagina_avaliacoes: "Pagina dedicada de avaliacoes de clientes"
+    central_atendimento: "Canais, horarios, dias"
+    barra_inferior: "Tom cinza de contraste com copyright + CNPJ"
+
+  8_menu_cabecalho:
+    itens:
+      - "Inicio"
+      - "Mais vendidos"
+      - "Principais categorias/colecoes"
+    hierarquia: "Campeonatos > Ligas > Times dentro da liga"
+    extras:
+      - "Clientes/influenciadores"
+      - "Nosso app"
+      - "Grupo VIP"
+      - "Rastrear pedido"
+
+# =============================================================================
+# SOCIAL COMMERCE
+# =============================================================================
+social_commerce:
+  descricao: "Trazer elementos de redes sociais para o site (Stories, Reels, publicacoes)"
+  pesquisa: "EUA - taxa de rejeicao MENOR quando site tem elementos familiares de redes sociais"
+  tendencia: "Comecou em 2025 e vai ganhar cada vez mais forca"
+  objetivos:
+    - "Gerar desejo"
+    - "Confianca"
+    - "Pertencimento"
+    - "Humanizacao"
+  implementacao:
+    - "Stories no site"
+    - "Reels no site"
+    - "Feed do Instagram integrado"
+    - "Reviews em video (VideoCommerce)"
+
+# =============================================================================
+# ANCORAGEM DE PRECO
+# =============================================================================
+ancoragem_preco:
+  conceito: "Usar produto com preco alto sem desconto para fazer descontos parecerem reais"
+  estrutura:
+    posicao_1: "Produto com desconto (ex: 30% off)"
+    posicao_2: "Produto com desconto (ex: 25% off)"
+    posicao_3: "Produto com desconto (ex: 35% off)"
+    posicao_4: "Produto SEM desconto, preco ALTO (ancora)"
+    posicao_5: "Produto com desconto"
+    posicao_6: "Produto ESGOTADO (escassez + efeito manada)"
+  efeito_psicologico:
+    esgotado: "Se tem produto esgotado, muita gente compra nessa loja (efeito manada)"
+    ancora: "Se tem produto caro, esses com desconto sao de verdade"
+  regra: "Usar em produtos com BAIXA rotatividade de vendas (nao nos mais vendidos)"
+  caso_pratico: "Bobojaco cadastrado a R$700 (fornecedor nao tinha, comprou no Brasil por R$300-400)"
+  anti_pattern: "Se todos os produtos tem mesmo desconto: URGENTE corrigir. Se toda loja tem desconto, nada tem desconto."
+
+# =============================================================================
+# HUMANIZACAO
+# =============================================================================
+humanizacao:
+  principio: "Pessoas compram de pessoas. Nunca esteve tao forte como atualmente."
+  quote: "Lojas que humanizam estao 10 passos a frente."
+
+  estrategias:
+    banners: "Pessoas nos banners (nao apenas produtos)"
+    fotos_ia: "Modelos vestindo produtos gerados por IA - qualidade ja profissional"
+    reviews_ia: "Fotos humanizadas de reviews geradas por IA"
+    ugc: "User Generated Content - clientes reais usando o produto"
+    influenciadores: "Banner de influenciadores grandes da marca"
+    rosto_marca: "Ter um rosto na rede social (influencer, colaborador)"
+    audio_video: "Mandar audio ao inves de texto, mandar foto e video"
+    youtube: "Fortalece muito a confianca"
+    instagram:
+      feed: "Vitrine que converte (humanizado, nao pagina de futebol)"
+      marcados: "Influenciadores usando produto = mina de ouro"
+      destaques: "Humanizar capas (foto cliente, nao icones genericos)"
+    pagina_quem_somos:
+      referencia: "ShowMeme, Insider"
+      conteudo: "Equipe real, espaco fisico (ou mockup com IA), historia"
+      diferencial: "Todo mundo tem 'estamos ha 5 anos no mercado' -> diferente e mostrar pessoas reais"
+      ia_valido: "Mockup de fachada com IA e valido. Pessoas + espaco fisico = credibilidade maxima."
+
+  confianca:
+    elementos:
+      - "CNPJ registrado"
+      - "Endereco da empresa"
+      - "Tempo de abertura"
+      - "Link do Instagram com muitos seguidores"
+      - "Localizacao Google Maps (se loja fisica)"
+      - "Foto/video da loja"
+      - "Reclame Aqui positivo (nota 8.7+)"
+      - "Avaliacoes de clientes"
+
+  videocommerce:
+    home: "Video institucional 25-45 segundos"
+    por_colecao: "Um video por colecao/clube"
+    por_produto: "Um video por produto escalado"
+    implementacao: "NAO usar app pago; HTML customizado"
+    impacto: "Funciona muito bem para taxa de conversao"
+
+# =============================================================================
+# PRODUTO ISCA
+# =============================================================================
+produto_isca:
+  nome: "Produto Isca Nacional"
+  conceito: "Encontrar fabrica local para produzir produto barato com markup alto"
+  exemplos: "Poster, adesivo"
+
+  economia:
+    custo_total_com_frete: "R$6-7"
+    preco_venda: "R$40-50"
+    markup: "~9x"
+
+  uso:
+    cross_sell: "Ofertar na pagina do produto"
+    order_bump: "Ofertar no checkout"
+    logistica: "Enviar como carta (logistica nacional, rapida e barata)"
+
+  beneficios:
+    tranquilizar_cliente: "Chegou rapido, nao e golpe"
+    lucro: "Markup absurdo (~9x)"
+    reduzir_chargeback: "Cliente recebe algo rapido, confia mais"
+
+  quando_usar:
+    - "Periodos de problema logistico com importacao"
+    - "Finais de campeonato"
+    - "Como cross-sell permanente"
+
+  quote: "A gente fez no intuito de evitar chargeback, mas quando foi ver, vendeu pra caralho e deu puta margem."
+
+# =============================================================================
+# ESTRATEGIA DE NIVEL DE CONSCIENCIA
+# =============================================================================
+nivel_consciencia:
+  principio: "Nunca pensar no lead como nivel de consciencia baixo"
+  razao: "Se ate o cara dificil de comprar esta comprando, quem tem consciencia mais baixa tambem compra"
+  aplicacao:
+    antes: "Pag2Leve3 (confuso para muitos)"
+    depois: "Cada camisa sai por R$94 (muito mais atrativo)"
+  referencia: "Loja Alfa faz isso e e muito mais atrativo"
+  quote: "R$94 na cabeca do cliente e muito melhor que R$200"
+
+# =============================================================================
+# OFERTAS QUE FUNCIONAM
+# =============================================================================
+ofertas:
+  ranking_ivan:
+    1_desconto_progressivo:
+      descricao: "Desconto aumenta conforme adiciona produtos"
+      exemplo:
+        1_produto: "Sem desconto (ou pequeno)"
+        2_produtos: "R$100 off"
+        3_produtos: "R$150 off"
+        4_produtos: "R$250 off"
+      complemento: "Combinar com barra de progressao/gamificacao no site"
+      quote: "No meu ver, e uma das melhores ofertas para Black"
+    2_cupom_desconto:
+      faixas: "15%, 20% (se fizer sentido para margem)"
+    3_personalizacao_gratuita:
+      descricao: "Menos atrativa sozinha, melhor como complemento"
+    4_pague_x_leve_y:
+      descricao: "Menos preferida"
+      problema: "Se ja faz pague 2 leve 3, tem que reinventar para pague 2 leve 4 ou pague 3 leve 5"
+
+  gamificacao:
+    barra_progressao: "Mostrando descontos conforme adiciona produtos"
+    confetes: "Animacoes quando atinge nivel"
+    referencia: "Temu, Shopee (50 roletas na tua tela, foguetes, confetes)"
+    razao: "Essa estrategia de gamificacao funciona"
+
+  patch_campeao:
+    descricao: "Add-on de patch de campeonato"
+    preco_recomendado: "R$29-30 minimo"
+    conversao: "60% dos pedidos com patch (vs media order bump 15-18%)"
+    quote: "80% do trafico pagou so com venda de patch"
+
+  alinhamento_comunicacao:
+    regra: "Todos os pontos de contato DEVEM refletir a oferta"
+    pontos:
+      - "Destaques do Instagram"
+      - "Arte fixada"
+      - "TODOS os banners do site (home, colecoes, pagina de produto)"
+      - "Videocommerce (por clube se possivel)"
+      - "Barra de anuncio do site"
+      - "Criativos de trafego"
+      - "Stories diarios"
+      - "Foto do suporte WhatsApp"
+      - "Descricao da comunidade WhatsApp"
+    quote: "Quando eu falo tudo, e TUDO, mano. Ate a foto do suporte do WhatsApp precisa estar alinhada."
+
+# =============================================================================
+# COMUNIDADE WHATSAPP E BASE
+# =============================================================================
+comunidade_whatsapp:
+  importancia: "Se eu pudesse colocar um so ponto-chave, colocaria isso: trabalhar muito bem a sua base"
+  receita_comunidade: "10-15% do faturamento"
+  receita_app: "20-23% do faturamento"
+  caso_black: "R$15-20K em 30 minutos (so com comunidade)"
+  caso_lancamento: "R$12k em 30 minutos (com contagem regressiva)"
+
+  tipos_mensagem:
+    tipo_1_engajamento:
+      descricao: "Engajamento e Interacao"
+      exemplos:
+        - "Enquetes em dia de jogo (Quem leva a vitoria?)"
+        - "Reacoes a lancamento de camisas"
+        - "Noticias importantes do futebol (SO as importantes)"
+      metrica: "60-70 reacoes em 10 minutos"
+
+    tipo_2_nivel_consciencia:
+      descricao: "Elevar Nivel de Consciencia"
+      exemplos:
+        - "UGC/GC de clientes recebendo produto"
+        - "Videos de influenciadores"
+      objecoes_quebradas: "Qualidade + confianca (2 das 3)"
+      frequencia: "1 a cada 2 dias ou 1 por semana"
+
+    tipo_3_oferta:
+      descricao: "Oferta/Desconto"
+      exemplos:
+        - "Cupom"
+        - "Desconto progressivo"
+        - "Parcelamento sem juros"
+      frequencia: "1x por semana ou de 15 em 15 dias MAXIMO"
+      regra: "Se so manda cupom, ninguem fica"
+      hack_dia_fraco: "Hoje personalizacao gratuita em todos os produtos"
+
+  regra: "Ninguem esta em grupo de WhatsApp pra receber cupom toda hora. Equilibrar conteudo x oferta."
+
+  lancamento_contagem_regressiva:
+    dia_15: "Imagem 'faltam 15 dias' + video UGC"
+    dia_14: "Imagem 'faltam 14 dias' + mensagem de engajamento"
+    continua_ate_dia: "Do lancamento"
+    no_dia: "Soltar oferta agressiva"
+    resultado: "R$40k no dia (com trafego + outros canais)"
+
+# =============================================================================
+# AUTOMACOES E CRM
+# =============================================================================
+automacoes:
+  resultado: "31% de taxa de recuperacao media (mercado: 10-15%)"
+  resultado_numerico: "R$155K em vendas recuperadas em um mes"
+  plataforma_principal: "Reportana (R$159/mes)"
+  plataforma_escala: "Klaviyo (e-mail) + Reportana (WhatsApp)"
+
+  eventos_com_automacao:
+    pedido_pago:
+      descricao: "Upsell com desconto 15-20%"
+      janela: "3 dias"
+      razao: "CPA ja foi pago, pode ser mais agressivo"
+    pix_gerado_vencido:
+      janela: "5 dias"
+      objecao_principal: "Preco"
+      acao: "Oferecer desconto adicional 5%+ alem do desconto do PIX"
+      diferencial: "90% das lojas so tem automacao padrao de PIX (lembrete). Poucas fazem CTA apos vencimento."
+    cartao_recusado:
+      janela: "3 dias"
+      razao: "NAO e cartao sem limite; e quando plataforma identifica possivel fraude"
+      acao: "Oferecer pagamento via PIX (nao tem como destornar = elimina risco chargeback)"
+    carrinho_abandonado:
+      janela: "30 dias (testou 60 e 90; conversao muito baixa apos 30)"
+      resultado: "95% da recuperacao total vem de carrinho abandonado"
+      importancia: "MAIS RESULTADO de todas as automacoes"
+    rastreio:
+      eventos:
+        - "Pedido postado"
+        - "Saiu para entrega"
+        - "Falha na entrega"
+        - "Entregue"
+    pedido_entregue_remarketing:
+      janela: "90-120 dias (baseado no tempo medio de recompra)"
+      conceito: "Calcular tempo medio de recompra dos clientes recorrentes"
+
+  funil_vendas:
+    estender: "Ate 15-30 dias"
+    canais: "Email E WhatsApp"
+    copy: "Focar em persuasao e CURIOSIDADE"
+    taxa_abertura: "40% (vs media mercado 15%)"
+    metricas:
+      valor_por_disparo: "R$16/disparo"
+      valor_por_click: "R$65/click"
+    otimizar: "Se contato 2 nao converteu, ajustar copy"
+    metodologia: "Sexy Canvas (Andre Djalman) - 7 pecados capitais"
+
+  evolucao_email:
+    fase_1_v1:
+      descricao: "E-mail basico (esqueleto)"
+      duracao: "Primeiros 2-3 meses"
+      conteudo: "Apenas copy, CTA, botao e logo"
+      imagens: "Em JPEG (mais leves que PNG)"
+      regras:
+        - "Pouco negrito"
+        - "Pouco maiusculo"
+        - "Evita spam"
+      objetivo: "Construir reputacao do dominio com a plataforma"
+    fase_2_v2:
+      descricao: "E-mail profissional modelando Nike/Adidas"
+      proporcao: "80% imagem, 20% escrita"
+      conteudo: "Fotos de produtos, sessoes de confianca, multiplos CTAs"
+      transicao: "Se taxa de abertura nao cair de forma grotesca, pode migrar para V2"
+
+  estrutura_email_profissional_v2:
+    passo_1: "Banner/imagem de cabecalho (alinhado com oferta)"
+    passo_2: "Heading (fonte Helvetica, 28px, bold, maiusculo)"
+    passo_3: "Copy curta (Helvetica, 16px, pouco negrito)"
+    passo_4: "Botao CTA #1 (fundo preto, fonte branca, sem borda arredondada, alinhado a esquerda)"
+    passo_5: "Sessao de 2 colunas: foto produto + copy de qualidade (alternando lados)"
+    passo_6: "Botao CTA #2 (borda preta, fundo branco - variacao visual)"
+    passo_7: "Repetir sessao 2 colunas (3 vezes alternando)"
+    passo_8: "Sessao de produtos recomendados (2 colunas com foto, titulo, preco, parcelamento, botao)"
+    passo_9: "Botao 'Ver todas as camisas' (para quem nao se interessou)"
+    passo_10: "Rodape: logo + redes sociais (Instagram, YouTube, TikTok) + CNPJ"
+    estilo: "E-mails quadrados (sem borda arredondada) passam sofisticacao no subconsciente"
+
+  assuntos_email_que_convertem:
+    exemplos:
+      - assunto: "Comece da melhor forma, [Nome]"
+        contexto: "Com cupom 5% no dia 1 do mes"
+        resultado: "R$3K conversao"
+      - assunto: "O mundo vai parar"
+        contexto: "Sobre semifinal"
+        resultado: "84% taxa abertura"
+      - assunto: "As mais desejadas do momento"
+        contexto: "Com emoji sugestivo para publico masculino"
+    regra: "Sempre usar pelo menos 1 emoji no assunto (max 2)"
+    pesquisa: "E-mails com emoji no assunto tem 42-50% mais abertura"
+
+  segmentacao_base_por_clube:
+    tipos:
+      - "Carrinho abandonado por clube (ex: 'produto contem Palmeiras')"
+      - "Compradores por clube"
+      - "Clientes dos ultimos 180 dias"
+      - "Clientes que abriram e-mails"
+      - "Clientes que ja receberam compras"
+    criacao: "Automatica e retroativa (puxa historico da loja). Atualiza sozinha."
+    uso: "Disparos nichados por clube + automacoes segmentadas"
+
+  teste_ab:
+    execucao: "Funcao 'Randomizar' da Reportana (50%/50%)"
+    metricas:
+      - "Conversao por Envio: Receita gerada por cada envio da automacao"
+      - "Conversao por Clique: Receita gerada por cada clique na automacao"
+    exemplo_real: "Segundo contato carrinho abandonado = R$53/envio, R$533/clique"
+    processo: "Testar variacoes de copy, identificar padrao, chegar em porcentagem cada vez maior"
+
+  copy_email_sexy_canvas:
+    metodologia: "Sexy Canvas (Andre Diamant) - 7 pecados capitais para persuadir"
+    implementacao_ia:
+      passo_1: "Criar projeto no Claude (ou ChatGPT) chamado 'Andre Diamant'"
+      passo_2: "Fazer upload dos livros do Andre Diamant (PDFs)"
+      passo_3: "Dar instrucoes em texto sobre como o projeto deve responder"
+      passo_4: "Pedir para otimizar e-mails ou criar novos seguindo a metodologia"
+    prompt_exemplo: "Andre, amanha dia X tenho disparo de e-mail para toda a base sobre Dia dos Pais. Utilize metodologia Sexy Canvas, siga padroes Nike/Adidas, crie o melhor e-mail possivel para conversao maxima."
+
+  regras_email:
+    carrinho_time_brasileiro: "Usar imagem de produto INTERNACIONAL (nao pode mandar camisa do Corinthians para palmeirense)"
+    negrito_maiusculo: "Muito negrito/maiusculo no e-mail aumenta chance de cair no spam"
+    modelar_nike_adidas: "E-mails quadrados (sem borda arredondada)"
+    links: "Se fala de varios clubes -> link para COLECAO. Se nichado para 1 clube -> link para PRODUTO."
+    fonte: "Helvetica, tamanho 16 para texto, 28 para cabecalho"
+    frequencia: "2-3x por semana (normal: 2; sazonalidade: 3)"
+
+  matriz_rfm:
+    plataforma: "Reportana"
+    descricao: "Segmenta leads de 0 a 10 baseado no potencial"
+    lead_alto: "Nivel 8-10 - comprou varias vezes, gastou muito -> muito mais facil converter"
+    lead_baixo: "Nivel 0-1-2 - campanhas especificas para reativar"
+    quote: "E ouro na mao de quem sabe utilizar"
+
+# =============================================================================
+# RECUPERACAO DE VENDAS X1 (WHATSAPP)
+# =============================================================================
+recuperacao_x1:
+  descricao: "Recuperacao de vendas via WhatsApp 1-para-1"
+  resultados: "~R$3,000,000 recuperados, com ~R$300,000 investidos (ROAS ~10x)"
+  potencial: "20% da receita paga pode vir de recuperacao X1"
+
+  tipos_lead_perdido:
+    ordem_potencial:
+      - "Carrinho abandonado (95% da recuperacao - PRINCIPAL)"
+      - "PIX nao pago"
+      - "Cartao recusado"
+      - "Boleto nao pago"
+      - "Chargeback"
+
+  sequencia_4_mensagens:
+    regra: "Cliente normalmente compra entre a 2a e 4a mensagem"
+    dia_1:
+      nome: "Chamar Atencao"
+      mensagem: "Ola, esse numero e do [Nome]?"
+      razao: "Gera curiosidade. Taxa de resposta muito alta."
+      origem: "Insight da Morgana Kaiser no evento Drophouse (Fernando Pintos)"
+    dia_2:
+      nome: "Facilitacao"
+      acoes: "Suporte ativo, passar confianca, facilitar pagamento (ex: 3x sem juros)"
+    dia_3:
+      nome: "Identificacao de Objecao"
+      acoes: "Entender POR QUE nao comprou, contornar objecao"
+    dia_4:
+      nome: "Oferta Irresistivel + CTA Urgente"
+      acoes: "Brinde (chaveiro), cupom (5-15%), encerramento com CTA claro"
+
+  contorno_objecoes:
+    ta_caro: "Uma oficial custa R$700, aqui ta R$250, e a qualidade e a mesma"
+    medo_golpe: "Mandar CNPJ, endereco, tempo de abertura, Instagram, Google Maps, foto/video da loja"
+    nao_entende_promocao: "Pague 2 Leve 3 confunde muita gente; explicar claramente"
+    qualidade_produto: "Enviar fotos/videos detalhados"
+
+  regras:
+    - "NUNCA usar ChatGPT para scripts de venda (mensagens robotizadas nao convertem)"
+    - "Cupom NAO na primeira mensagem (primeiro identificar objecao)"
+    - "Tempo de resposta < 20 minutos"
+    - "Lead quente = prioridade (quanto menos tempo desde o carrinho, mais quente)"
+    - "Constancia: bater no mesmo lead varias vezes (4 contatos)"
+    - "Treinar equipe do zero e preferivel (sem vicios, mais barata, moldavel)"
+
+  recuperacao_chargeback:
+    estrategia: "Notificacao Extrajudicial (agressiva)"
+    passos:
+      - "Ter um numero simulando contato com advogada"
+      - "Mandar notificacao extrajudicial (formatada como oficial)"
+      - "Informar que pedido esta em transito"
+      - "Pedir que realize pagamento novamente"
+
+  coleta_ugc_pos_compra:
+    regra: "NAO usar automacao (cara de robo = lead nao responde)"
+    numero_comercial: "Com foto de PESSOA (nao logo)"
+    primeira_mensagem: "Boa tarde, tudo certo? Esse numero e do [nome]?"
+    incentivo: "R$20 PIX + cupom de desconto"
+    formato: "AUDIO (nao texto) -> maior taxa de resposta"
+    audio: "Com voz da pessoa que e rosto da marca"
+    ranking_resposta: "Automacao < texto humanizado < AUDIO humanizado"
+
+  3_momentos_quentes_funil:
+    pedido_pago: "CTA comunidade"
+    pedido_postado: "CTA baixar app"
+    compra_entregue: "CTA programa afiliados"
+
+# =============================================================================
+# NOTIFICACOES DE APP
+# =============================================================================
+notificacoes_app:
+  referencia: "Modelar iFood"
+  principio: "Titulos que remetam a CURIOSIDADE"
+  formato:
+    titulo: "Voce nunca viu isso daqui! + emoji"
+    regra: "NAO revelar oferta no titulo, apenas abaixo"
+    exemplo: "Todos os produtos do Timao com 40% off somente ate as 23h59"
+  rotacao: "Rodar por clubes (sexta = Corinthians, sabado = Palmeiras, etc.)"
+
+# =============================================================================
+# PROGRAMA DE AFILIADOS
+# =============================================================================
+programa_afiliados:
+  custo: "Zero"
+  fluxo:
+    - "Cliente recebe produto"
+    - "Convite para programa"
+    - "Gravar videos sobre a loja"
+    - "Cupom exclusivo com comissao por venda"
+  resultado: "Revendedor da loja de graca"
+  caso_real: "Afiliada da Amor tirando R$3k/mes"
+
+# =============================================================================
+# BENCHMARKS CRO
+# =============================================================================
+benchmarks:
+  taxa_conversao:
+    media_ecommerce_brasil: "1%"
+    abaixo_aceitavel: "< 0.5%"
+    ivan_operacoes: "1.5-1.7%"
+
+  taxa_adicao_carrinho:
+    media_mercado: "8-10%"
+    ideal: "8%+"
+    ivan_operacoes: "13-15%"
+    ruim: "< 4%"
+    alerta: "Adicao ao carrinho < 8% -> pagina do produto esta horrivel. Liga o alerta."
+
+  taxa_conversao_checkout:
+    media_mercado: "18-20%"
+    ideal: "18%+"
+    ivan_operacoes: "25-30%"
+    ruim: "< 10%"
+    cartpanda: "Ate 35%"
+
+  taxa_conversao_sessao:
+    media_mercado: "1%"
+    ivan_operacoes: "1.5-1.7%"
+
+  custo_adicao_carrinho:
+    ideal: "< R$3"
+    otimizado: "R$0.69-0.70"
+    ruim: "> R$7"
+
+  custo_finalizacao_compra:
+    ruim: "> R$37"
+
+  custo_inclusao_info_pagamento:
+    ruim: "> R$271"
+
+  taxa_preenchimento_popup:
+    media: "8%"
+    shopify_forms: "15%"
+    klaviyo: "12%"
+
+  taxa_recuperacao_carrinho:
+    ivan: "31%"
+    mercado: "10-15%"
+    bom: "16%+"
+    ruim: "< 5%"
+    case: "Cliente de 2% para 16-17%"
+
+  taxa_abertura_email:
+    ivan: "40%"
+    mercado: "15%"
+    bom: "23%+ (automacoes)"
+
+  taxa_abertura_whatsapp: "90%+"
+
+  taxa_desinscricao_email: "0.10% (abaixo de 1%)"
+
+  taxa_pagamento:
+    media: "79.47%"
+    com_todas_automacoes: "90%"
+
+  fonte_mobile_minima: "16 pixels"
+
+  ltv:
+    maximo_alcancado: "32% ALTV em uma loja"
+    target_d90: "3-4%"
+
+  receita:
+    automacao_email_2_meses: "R$30K (uma operacao)"
+    automacao_whatsapp: "R$55K (uma operacao, 60-70% do total)"
+    automacao_total_1_operacao: "R$85K (email + WhatsApp)"
+    disparo_email_1_loja_mes: "R$15K"
+    recuperacao_total_mes: "R$155K (soma de todos clientes CDR Labs)"
+    carrinhos_abandonados_mes: "R$454K (total)"
+    campanha_email: "R$3K de receita adicional em 1 case"
+
+# =============================================================================
+# FERRAMENTAS CRO
+# =============================================================================
+ferramentas:
+  reportana:
+    custo: "R$159/mes"
+    funcoes: "Automacoes email + WhatsApp + listas + disparos + metricas por contato + matriz RFM + funis de vendas"
+    vantagens_vs_cellflux: "Integracao nativa Shopify, metricas de receita por contato, segmentacao por lista"
+  klaviyo:
+    custo: "R$300-500+/mes"
+    funcoes: "Email marketing avancado, servidor proprio, segmentacao avancada (mostra produtos visualizados)"
+    recomendacao: "Ate R$100K/mes -> Reportana. Acima -> Klaviyo (e-mail) + Reportana (WhatsApp)"
+  shopify_forms:
+    custo: "Gratuito"
+    funcao: "Pop-up nativo"
+    benchmark: "15% preenchimento"
+  wishlist:
+    custo: "Gratuito"
+    funcao: "Lista de desejos"
+  search_discovery:
+    custo: "Gratuito"
+    funcao: "Personalizar filtros"
+  live_reviews:
+    funcao: "Importar avaliacoes em massa"
+  bk_reviews:
+    funcao: "Importar avaliacoes via CSV"
+  global_menu:
+    custo: "Gratuito"
+    funcao: "Menu com fotos e colecoes"
+  parcel_panel:
+    funcao: "Notificacoes de rastreio (incluindo 'fake' para dropshipping)"
+  nemo:
+    funcao: "Plataforma de rastreamento (recomendada pelo melhor gestor de e-commerce 2025)"
+  cartpanda:
+    funcao: "Checkout com ate 35% de conversao"
+  coutimer:
+    funcao: "Contador regressivo para Shopify (escassez)"
+  zapvoice:
+    funcao: "Audios pre-gravados para equipe"
+    custo: "~R$50/mes (serve 2-3 colaboradores)"
+    resultado: "Reduzir 80% do trabalho operacional"
+  manychat:
+    funcao: "Responda '[Palavra]' e ganha um presente"
+    uso: "Stories pos-jogo"
+  claude_ai:
+    funcao: "Criar projetos de copy (metodologia Sexy Canvas)"
+  gemini:
+    funcao: "Pesquisa de benchmarks e dados de mercado"
+  ia_fotos:
+    funcao: "Gerar fotos de modelos vestindo produtos"
+  fiverr:
+    funcao: "Contratar freelancer para otimizacao de velocidade do site"
+  clickup:
+    funcao: "Gestao completa (tarefas, squads, health score, formularios)"
+    health_score: "Entregou antes = 10, no dia = 7, atrasado = 3"
+
+# =============================================================================
+# REGRAS DE DECISAO CRO
+# =============================================================================
+decision_rules:
+  conversao:
+    - regra: "Se taxa de adicao ao carrinho ruim mas checkout bom -> problema na pagina do produto"
+    - regra: "Se checkout ruim mas adicao ao carrinho boa -> problema no checkout"
+    - regra: "Se CPA de adicao ao carrinho > R$3 -> problema na pagina do produto"
+    - regra: "Se custo finalizacao de compra > R$40 -> problema no checkout"
+    - regra: "Se custo inclusao info pagamento > R$100 -> checkout com furo grave"
+    - regra: "Se todas metricas caras -> (1) Ajustar site, (2) Verificar pixel, (3) Google Analytics, (4) Criar BM nova"
+
+  email:
+    - regra: "Tem trafego rodando? TEM QUE TER automacao ativa."
+    - regra: "Nao menosprezem e-mail (enfatico)"
+    - regra: "Comecar com email basico (V1) para evitar spam, migrar para V2 apos 2-3 meses"
+    - regra: "PIX vencido -> oferecer desconto adicional (objecao principal e preco)"
+    - regra: "Cartao recusado (antifraude) -> oferecer pagamento PIX"
+    - regra: "Pedido pago -> upsell com 15-20% desconto"
+    - regra: "Faturando R$100K+/mes -> Klaviyo para email + Reportana para WhatsApp"
+    - regra: "Disparo WhatsApp Business: cai muito facil. 3-4 disparos cai. Usar API oficial."
+    - regra: "Carrinho abandonado email de time brasileiro: usar imagem INTERNACIONAL"
+    - regra: "Links no email: varios clubes -> COLECAO. Um clube -> PRODUTO."
+
+  preco:
+    - regra: "Se todos os produtos tem mesmo desconto -> URGENTE corrigir"
+    - regra: "Ancoragem em produtos com BAIXA rotatividade (nao nos mais vendidos)"
+    - regra: "Markup < 1.8x -> sinal de alerta, margem muito apertada"
+    - regra: "Margem bruta < 15% -> chance alta de prejuizo"
+
+  site:
+    - regra: "Voce compraria na sua operacao? (autocritica essencial)"
+    - regra: "Olhar fora da bolha, fora de camisa de time"
+    - regra: "Eu tenho um perfil onde so aparece anuncio de concorrente - visito sites 3-5 vezes por semana"
+    - regra: "Entre no funil reverso de grandes marcas: gere PIX na Nike, abandone carrinho na Adidas"
+
+  recuperacao:
+    - regra: "NUNCA usar ChatGPT para scripts de venda"
+    - regra: "Cupom NAO na primeira mensagem"
+    - regra: "Tempo de resposta < 20 minutos"
+    - regra: "Lead quente = prioridade"
+    - regra: "Constancia: 4 contatos minimo"
+    - regra: "NUNCA excluir comentarios negativos no Facebook. Ocultar sim."
+    - regra: "Comunidade so cupom NAO funciona. Precisa dos 3 tipos de mensagem."
+
+  adicao_carrinho:
+    - regra: "Adicao ao carrinho < 8% -> pagina do produto esta horrivel. Liga o alerta."
+
+  dados:
+    - regra: "Olhem para dados. Numeros falam com a gente."
+    - regra: "Muitas vezes nao e o CPA que esta caro, nao e o problema nos anuncios, o problema e na sua operacao"
+    - regra: "A gente testa, olha pra numeros, olha pra dados, identifica padrao e ajusta"
+
+# =============================================================================
+# QUOTES E MODELOS MENTAIS CRO
+# =============================================================================
+quotes:
+  - "Lojas que humanizam estao 10 passos a frente."
+  - "Pessoas compram de pessoas, e cada ano que passa isso se torna mais forte."
+  - "Se toda loja ta com desconto, nada vai estar com desconto."
+  - "Se fosse eu entrando nesse site aqui, eu ia achar interessante? Ia achar bonito?"
+  - "Tudo no nosso e-commerce funciona como um funil - quanto mais para baixo, menos pessoas visualizando."
+  - "A gente fica muito bitolado no trafego, achando que vai ter milagre, e as vezes precisa olhar para o site."
+  - "Voce compraria na sua operacao?"
+  - "Sabio e aquele que executa, nao e aquele que sabe."
+  - "Nao menosprezem a porra do e-mail."
+  - "Automacao tem que ser crucial. Tem trafego rodando, tem que ter automacao ativa."
+  - "Com dados, voces tem respostas. Com dados, voces sabem pra onde ir."
+  - "Numeros estao querendo dizer alguma coisa pra gente. A gente tem que saber analisar."
+  - "CDR = Constancia, Dados e Resultado"
+  - "Faturamento e ego"
+  - "Entre no funil reverso de grandes marcas: gere um PIX na Nike, abandone carrinho na Adidas"
+  - "O que mais tem peso na hora de vender com CPA barata sao as pessoas por tras da marca."

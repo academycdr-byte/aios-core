@@ -1,0 +1,376 @@
+domain: black-friday
+title: "Estrategias de Black Friday & Black Week"
+confidence: 0.95
+source: "Aulas 02, 06"
+last_updated: "2026-02-16"
+
+# =============================================================================
+# FRAMEWORK BLACK WEEK
+# =============================================================================
+framework_black_week:
+  nome: "Black Week Strategy"
+  conceito: "Comecar ofertando no inicio de novembro, nao esperar o dia da Black"
+  motivo_principal: "No dia da Black, o leilao esta carisimo (CPM sobe muito por causa de Magazine Luiza, Shopee, etc.)"
+
+  execucao_semana_a_semana:
+    dia_1_novembro:
+      acao: "Soltar desconto menor / progressivo menos agressivo"
+      resultado: "R$15-20K em 30 minutos ate meia noite e meia. So com comunidade."
+    ao_longo_novembro:
+      acao: "Ir aumentando a agressividade da oferta"
+    terceira_semana:
+      acao: "Oferta mais agressiva"
+    semana_da_black:
+      acao: "Acelerar e fechar forte"
+
+  preparacao_completa:
+    nome: "Black Friday Completo (Site + Criativo + Equipe + Processo + Trafego + Estrategia + Oferta + Metrica)"
+    passos:
+      - "Definir metas realisticas (nao 10x do faturamento atual)"
+      - "Calcular CPA maximo, CPA ideal e ROAS minimo"
+      - "Definir objetivo da Black (aquisicao de base vs lucro imediato)"
+      - "Escolher oferta e testar: Se eu fosse cliente, compraria?"
+      - "Alinhar TODA comunicacao da empresa com a oferta"
+      - "Preparar site (banners, videocommerce, barra de anuncios)"
+      - "Preparar criativos"
+      - "Estrategia de trafego (Black Week + semana da Black)"
+      - "Trabalhar base existente (comunidade, app, WhatsApp)"
+      - "Executar e monitorar"
+
+  pre_black:
+    acoes:
+      - "Focar em captacao de leads para canais quentes (comunidade, app, canal Instagram, Stories, status WhatsApp)"
+      - "Rodar o mes inteiro de novembro com comunicacao/oferta da Black"
+      - "Na semana, oferta mais agressiva"
+      - "Programar campanhas com antecedencia (na semana da Black demora muito para ficarem ativas)"
+
+  pos_black:
+    sem_libertadores: "Queda de vendas ate dia 3 de dezembro -> preparar comunicacao de Natal"
+    com_libertadores: "Maior oportunidade de venda (exceto Copa do Mundo) -> estender oferta Black + emocao do titulo"
+    natal_imediato: "Site repaginado NO DIA SEGUINTE a Black (incluindo logo com chapeu de Natal, foto perfil WhatsApp)"
+
+# =============================================================================
+# SIMULACAO DE MARGEM
+# =============================================================================
+simulacao_margem:
+  nome: "Planilha de Simulacao de Margem"
+  inputs:
+    - "Meta de faturamento"
+    - "Ticket medio"
+    - "Taxa de chargeback media (ex: 2%)"
+    - "Taxa de checkout/gateway (ex: 5.99%)"
+    - "Imposto sobre receita (ex: 3%)"
+    - "CMV (Custo de Mercadoria Vendida) - CUIDADO: considerar a oferta (ex: pague 2 leve 3 = pagar 3 camisas)"
+    - "CPA alvo (media dos ultimos 90 dias)"
+  outputs:
+    - "Investimento necessario em trafego"
+    - "Margem de contribuicao (margem bruta - CPA)"
+    - "ROAS minimo"
+    - "ROAS de break-even"
+    - "Lucro bruto estimado"
+    - "Simulacao por faixa de ROAS"
+    - "Simulacao por aumento de orcamento"
+    - "Impacto do LTV em D+60 e D+90"
+
+  regras_margem:
+    margem_bruta_minima: "15% - abaixo disso, chance alta de prejuizo"
+    margem_bruta_ideal: "20%+"
+    markup_ideal: "2x+"
+    markup_apertado: "1.8x - 'E um markup apertado, cara. Sendo bem sincero.'"
+
+  impacto_cpa_na_margem:
+    cpa_50: "Margem 16%"
+    cpa_35: "Margem 20% (4pp de diferenca)"
+    conclusao: "CPA reduzido = margem muito maior"
+
+  roas_referencia:
+    break_even: "~3.36 (para operacao com markup 2x e custos tipicos)"
+    para_margem_16: "7.6 - pouquissimos estejam com ROAS desse"
+    para_margem_19: "10 (com CPA de R$50)"
+
+# =============================================================================
+# OFERTAS
+# =============================================================================
+ofertas:
+  ranking_ivan:
+    1_desconto_progressivo:
+      nome: "Desconto Progressivo (FAVORITA do Ivan)"
+      estrutura:
+        - "1 produto: sem desconto (ou pequeno)"
+        - "2 produtos: R$100 off"
+        - "3 produtos: R$150 off"
+        - "4 produtos: R$250 off"
+      complemento: "Combinar com barra de progressao/gamificacao no site"
+      ivan_quote: "No meu ver, e uma das melhores ofertas para Black"
+
+    2_cupom_desconto:
+      nome: "Cupom de Desconto"
+      valores: "15%, 20% (se fizer sentido para margem)"
+
+    3_personalizacao_gratuita:
+      nome: "Personalizacao Gratuita"
+      nota: "Menos atrativa sozinha, melhor como complemento"
+
+    4_pague_x_leve_y:
+      nome: "Pague X Leve Y (menos preferida)"
+      ivan_quote: "Nao sou muito fa dessa"
+      regra: "Se ja faz pague 2 leve 3, tem que reinventar para pague 2 leve 4 ou pague 3 leve 5"
+
+  gamificacao_site:
+    descricao: "Barra de progressao mostrando descontos conforme adiciona produtos"
+    elementos:
+      - "Barra visual de progressao"
+      - "Confetes/animacoes quando atinge nivel"
+    referencia: "Shopee e Temu - '50 roletas na tua tela, foguetes, confetes. Porque gamificacao funciona'"
+
+  teste_oferta:
+    regra: "Se eu fosse cliente, eu teria vontade ou desejo de comprar nessa oferta? Se nao, mude."
+
+  nivel_consciencia:
+    dica: "Ao inves de 'Pag2Leve3': mostrar 'cada camisa sai por R$94'"
+    referencia: "Loja Alfa faz isso e e muito mais atrativo"
+    logica: "R$94 na cabeca do cliente e muito melhor que R$200"
+
+# =============================================================================
+# ALINHAMENTO TOTAL DE COMUNICACAO
+# =============================================================================
+alinhamento_comunicacao:
+  regra: "TODA comunicacao da empresa DEVE refletir a oferta. Quando eu falo tudo, e TUDO, mano."
+  pontos_de_contato:
+    - "Destaques do Instagram"
+    - "Arte fixada"
+    - "TODOS os banners do site (home, colecoes, pagina de produto)"
+    - "Videocommerce (por clube se possivel)"
+    - "Barra de anuncio do site"
+    - "Criativos de trafego"
+    - "Stories diarios"
+    - "Foto do suporte WhatsApp"
+    - "Descricao da comunidade WhatsApp"
+    - "Logo do site (com tematica Black/Natal)"
+    - "Foto perfil WhatsApp"
+
+  banners_especificos:
+    tipos:
+      - "Banners por time com oferta da Black"
+      - "Banner levando para comunidade WhatsApp"
+      - "Banner levando para app"
+    ivan_quote: "Tirando o site e o Instagram, sao os dois canais de contato mais quente que existem: Comunidade e App"
+
+# =============================================================================
+# RESULTADOS REAIS
+# =============================================================================
+resultados:
+  faturamento_total_bf: "R$1.400.000 na Black (ano anterior do Ivan)"
+  comunidade_dia_1:
+    resultado: "R$15-20K em 30 minutos"
+    canal: "Comunidade WhatsApp somente"
+    momento: "Dia 1 de novembro com desconto menor"
+  comunidade_contagem_regressiva:
+    resultado: "R$12K em 30 minutos"
+    metodo: "Contagem regressiva de 15 dias"
+
+  ltv_pos_black:
+    nome: "Bola de Neve do LTV"
+    conceito: "A Black gera base que compra novamente sem investir mais em trafego"
+    exemplo:
+      faturamento: "R$500K"
+      lucro_bruto_inicial: "R$83K"
+      ltv_d60_1_24: "+R$1.848 de lucro bruto em 30 dias"
+      ltv_d90_4: "+R$10K de lucro bruto em 90 dias"
+      total_final: "De R$83K para R$93K sem investir mais nada"
+    media_ltv: "3% (camisas de time, recompra em 3-6 meses)"
+
+  posicao_ivan:
+    objetivo: "Black = aquisicao de leads"
+    ivan_quote: "Disposto a abaixar margem liquida, ter faturamento mais expressivo, adquirir mais leads para base"
+
+# =============================================================================
+# BUDGET / DISTRIBUICAO DE ORCAMENTO
+# =============================================================================
+budget:
+  regra_80_20:
+    nome: "Distribuicao de Orcamento 80/20"
+    estrutura:
+      total_validado: "80% do orcamento para o que ja esta validado"
+      dentro_80:
+        campanhas_validadas: "70%"
+        remarketing: "30%"
+      testes: "20% do orcamento para novos testes"
+    quando_usar: "Sempre, mas especialmente em periodos de alta competicao (Black Friday)"
+
+  remarketing_como_percentual: "10% a 30% do total (depende do investimento mensal)"
+
+  regra_cpam: "CPM VAI subir na Black, e normal. Por isso fazer Black Week para vender antes do pico de custo"
+
+# =============================================================================
+# TRAFEGO ESPECIFICO BLACK FRIDAY
+# =============================================================================
+trafego_bf:
+  escadinha:
+    nome: "Alavancagem de Otimizacao (Escadinha)"
+    passos:
+      - "Resultado bom -> sobe 1 degrau no orcamento"
+      - "Manteve bom por 1-2 dias -> sobe mais 1 degrau"
+      - "Resultado ruim -> fica no mesmo degrau por 1-2 dias"
+      - "Manteve ruim -> desce 1 degrau (volta ao orcamento anterior)"
+    aumento_seguro: "R$50 para R$100 (tranquilo)"
+    aumento_arriscado: "R$500 para R$1.000 (ja pode quebrar performance)"
+
+  catalogos_com_moldura:
+    descricao: "Dentro do catalogo, adicionar TEMA com imagem personalizada"
+    specs: "1080x1080, <1MB, fundo TRANSPARENTE"
+    caminho: "Anuncio > Carrossel > Editar Criativo > Adicionar Tema > Imagem Personalizada"
+    regra: "DESATIVAR opcao 'mostrar imagem apenas quando houver probabilidade de aumentar engajamento'"
+    testes:
+      - "Moldura de oferta (Pag2Leve3)"
+      - "Moldura de % off"
+      - "Moldura de escassez"
+      - "Moldura generica"
+    resultado: "Nunca vi ninguem no nicho de camisa de time usar. Deu muito bom."
+
+  andromeda_advantage_plus:
+    descricao: "Meta identifica melhor o criativo (cores, logos, copy, imagens, narracoes)"
+    configuracao: "Deixar Advantage+ ativo em TUDO: campanha, conjunto, anuncio"
+    publico_personalizado: "Lista de clientes (compradores por clube) como sugestao"
+    criativos_institucionais: "Exportar compradores ultimos 90/180 dias"
+    clube_especifico: "Exportar lista filtrada por time"
+    resultado: "CBO menos campanhas, menos conjuntos, MAIS criativos diferentes"
+
+  reciclagem_criativos:
+    descricao: "Manter aba com criativos que nao foram campeoes mas trouxeram alguma venda"
+    uso: "Quando campanhas atuais perdem performance, reativar criativos dessa aba"
+    pos_black: "Quando oferta volta ao normal, reativar campanhas curva A"
+
+  analise_criativos_campeoes:
+    passos:
+      - "Pegar historico do ano inteiro de criativos"
+      - "Identificar os que tiveram melhor ROAS e metricas saudaveis"
+      - "Analisar padrao: comeco video, musica viral, hino clube, CTA especifico"
+      - "Para imagem: preco no criativo? Titulo? CTA? Poluida ou simples?"
+      - "Focar nesse padrao para Black Friday"
+
+  campanhas_curva_a:
+    regra: "NAO matar durante Black"
+    se_performance_cair: "Apenas reduzir orcamento"
+    pos_black: "Reativar imediatamente"
+
+  programar_antecedencia:
+    motivo: "Na semana da Black, demora muito para campanhas ficarem ativas (volume alto de anunciantes)"
+
+# =============================================================================
+# TIMELINE / CRONOGRAMA
+# =============================================================================
+timeline:
+  pre_bf_outubro:
+    acoes:
+      - "Outubro e mes mais fraco (consumidores esperam pela Black)"
+      - "Focar em captacao de leads para canais quentes"
+      - "Analisar criativos campeoes do ano"
+      - "Preparar site, banners, videocommerce"
+      - "Calcular margem e ROAS minimo"
+      - "Definir oferta e testar internamente"
+
+  novembro_semana_1:
+    acoes:
+      - "Dia 1: soltar desconto menor com comunidade"
+      - "Comunicacao de Black em todo site"
+      - "Iniciar campanhas de trafego com oferta progressiva"
+      - "Mudar TODA identidade visual para Black"
+
+  novembro_semana_2_3:
+    acoes:
+      - "Aumentar agressividade da oferta"
+      - "Escalar campanhas que performam"
+      - "Trabalhar base (comunidade, app, e-mail, WhatsApp)"
+
+  semana_da_black:
+    acoes:
+      - "Oferta mais agressiva"
+      - "Acelerar investimento (escadinha)"
+      - "Monitorar constantemente"
+      - "Trabalhar base intensamente"
+      - "Escassez maxima"
+
+  pos_black_imediato:
+    acoes:
+      - "Mudar TODA identidade para Natal NO DIA SEGUINTE"
+      - "Logo com chapeu de Natal"
+      - "Foto perfil WhatsApp com tema Natal"
+      - "Manter mesma oferta com comunicacao de Natal"
+      - "Reativar campanhas curva A"
+      - "Se houve Libertadores: estender comunicacao de titulo + Natal"
+
+# =============================================================================
+# TRABALHAR A BASE (PONTO-CHAVE #1)
+# =============================================================================
+trabalhar_base:
+  ivan_quote: "Se eu pudesse colocar um so ponto-chave, colocaria isso: trabalhar muito bem a sua base"
+  canais:
+    comunidade_whatsapp:
+      resultado_bf: "R$15-20K em 30 minutos"
+    app:
+      percentual_faturamento: "20-23% em alguns meses"
+    email:
+      acoes: "Disparos segmentados por clube com oferta da Black"
+    canal_instagram:
+      uso: "Stories, canal exclusivo"
+    status_whatsapp:
+      uso: "Comunicacao da oferta"
+  logica: "Eu ja paguei pra aquele lead chegar ate mim. Por que nao ter comunidade, app, canal do Insta, status do WhatsApp?"
+
+# =============================================================================
+# SESSOES DE SITE PARA BLACK FRIDAY
+# =============================================================================
+site_bf:
+  contador_regressivo:
+    app: "Coutimer (Shopify)"
+    formato: "Contador que reseta no final de cada dia"
+    visual: "Tematico (Black Friday / Natal com gorro)"
+  banners: "TODOS atualizados com oferta da Black"
+  videocommerce: "Atualizado com oferta"
+  barra_anuncio: "Comunicacao da Black"
+  escassez: "Ultimas unidades em promocao"
+
+# =============================================================================
+# BENCHMARKS BLACK FRIDAY
+# =============================================================================
+benchmarks:
+  metricas:
+    roas_medio_cdr: "7.7"
+    roas_remarketing: "8 (semanas com 14-15)"
+    cpa_medio_mercado_inicio: "R$50-60"
+    margem_bruta_minima: "15%"
+    margem_bruta_ideal: "20%+"
+    markup_ideal: "2x+"
+    receita_comunidade: "10-15% do faturamento"
+    receita_app: "20-23% do faturamento"
+    ltv_d90: "3-4%"
+    resultado_total_bf_ivan: "R$1.400.000"
+
+# =============================================================================
+# FERRAMENTAS BLACK FRIDAY
+# =============================================================================
+ferramentas:
+  planilha_simulacao_margem: "Calcular ROAS minimo, CPA ideal, margem por cenario"
+  videocommerce: "Video no canto do site alinhado com oferta"
+  barra_progressao: "Mostrar desconto progressivo visualmente"
+  coutimer: "App de contador regressivo para Shopify"
+  pagespeed_insights: "Verificar velocidade do site antes da Black"
+  meta_business_suite: "Verificar reclamacoes nos comentarios dos anuncios DIARIAMENTE"
+
+# =============================================================================
+# QUOTES & MENTAL MODELS
+# =============================================================================
+quotes:
+  - "Faturamento e ego"
+  - "Se eu fosse cliente, eu teria vontade ou desejo de comprar nessa oferta?"
+  - "A Black, eu to disposto a abaixar um pouco a minha margem liquida, ter um faturamento mais expressivo, consequentemente adquirir mais leads pra minha base"
+  - "Trabalhem muito bem a propria base (regra #1 da Black)"
+  - "Toda a comunicacao da empresa esta voltada para oferta... quando eu falo tudo, e TUDO, mano"
+  - "Ate a foto do suporte do WhatsApp precisa estar alinhada"
+  - "80% do orcamento para o que funciona, 20% para testes"
+  - "O que trouxe a gente ate aqui nao vai ser o que vai levar a gente pro proximo passo"
+  - "Nao vai ser camisa de time que vai me deixar milionario. Camisa de time e pra levantar caixa."
+  - "Eu gosto de isolar as variaveis para saber se aquilo que estou testando me trouxe resultado ou nao"
+  - "Sobre sazonalidade: O dia que eu mais faturei na minha vida foi um dia depois da Libertadores"
+  - "Eu ja paguei pra aquele lead chegar ate mim. Por que nao ter comunidade, app, canal do Insta, status do WhatsApp?"
