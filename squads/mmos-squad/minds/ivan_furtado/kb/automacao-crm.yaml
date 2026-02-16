@@ -1,0 +1,554 @@
+domain: automacao-crm
+title: "Automacoes, CRM & Retencao"
+confidence: 0.95
+source: "Aulas 05, 09, 10"
+last_updated: "2026-02-16"
+
+# =============================================================================
+# RECUPERACAO DE CARRINHO ABANDONADO
+# =============================================================================
+recuperacao_carrinho:
+  taxa_recuperacao_ivan: "31% media (todos clientes CDR Labs)"
+  taxa_recuperacao_mercado: "10-15%"
+  resultado_mensal: "R$155K em vendas recuperadas em um mes"
+  carrinhos_abandonados_mes: "R$454K total de carrinhos abandonados dos clientes"
+  janela_funil: "30 dias (testou 60 e 90 dias; conversao muito baixa apos 30)"
+  carrinho_como_percentual: "95% de toda recuperacao vem de carrinho abandonado"
+  case_evolucao: "Cliente saiu de 2% para 16-17% de recuperacao"
+
+  sequencia_4_mensagens:
+    descricao: "Funil de Recuperacao em 4 Contatos - cliente normalmente compra entre 2a e 4a mensagem"
+    dia_1_chamar_atencao:
+      mensagem: "Ola, esse numero e do [Nome]?"
+      origem: "Insight da Morgana Kaiser no evento Drophouse (Fernando Pintos)"
+      por_que_funciona: "Gera curiosidade - O que essa pessoa quer comigo? Sera importante?"
+      resultado: "Taxa de resposta muito alta"
+      aplicacao: "Usar em QUALQUER tipo de lead (carrinho, PIX, cartao recusado)"
+    dia_2_facilitacao:
+      acoes:
+        - "Suporte ativo"
+        - "Passar confianca"
+        - "Facilitar pagamento (ex: 3x sem juros)"
+    dia_3_identificacao_objecao:
+      acoes:
+        - "Entender POR QUE nao comprou"
+        - "Contornar objecao especifica"
+    dia_4_oferta_irresistivel:
+      acoes:
+        - "Brinde (chaveiro - custaria R$30 mas mando gratis)"
+        - "Cupom 5-15% (usar com criterio)"
+        - "Encerramento com CTA claro: Posso te ajudar a finalizar agora com esse cupom?"
+
+  regras_criticas:
+    - "NUNCA usar ChatGPT para scripts de venda - mensagens robotizadas nao convertem"
+    - "Cupom NAO na primeira mensagem - primeiro identificar objecao; as vezes nao e preco"
+    - "Tempo de resposta < 20 minutos - lead esfria rapido"
+    - "Lead quente = prioridade - quanto menos tempo desde o carrinho, mais quente"
+    - "Constancia: bater no mesmo lead varias vezes (4 contatos)"
+    - "Carrinho > PIX > Cartao > Boleto em ordem de potencial de recuperacao"
+
+  imagem_email_carrinho:
+    regra: "Usar imagem de produto INTERNACIONAL (nao pode mandar camisa do Corinthians para palmeirense)"
+    motivo: "Automacao nao sabe qual time o lead torce"
+
+# =============================================================================
+# RECUPERACAO X1 WHATSAPP (EQUIPE COMERCIAL)
+# =============================================================================
+recuperacao_x1:
+  descricao: "Estrutura X1 de Recuperacao via WhatsApp"
+  resultado_historico: "~R$3.000.000 recuperados com ~R$300.000 investidos (ROAS ~10x)"
+  investimento_operacao: "8-10% do valor recuperado"
+  receita_recuperada_max: "20% da receita paga pode vir de recuperacao X1"
+  taxa_pagamento_com_todas_automacoes: "90%"
+  lucro_bruto_50_margem: "R$1.500.000 do total recuperado"
+  lucro_liquido_pos_custos: "R$1.375.000"
+  exemplo_rapido: "R$176K em 15 dias em uma operacao"
+
+  tipos_lead_perdido:
+    - tipo: "Carrinho abandonado"
+      percentual: "95% da recuperacao"
+    - tipo: "PIX nao pago"
+    - tipo: "Boleto nao pago"
+    - tipo: "Cartao recusado"
+    - tipo: "Chargeback"
+
+  contorno_objecoes:
+    principais:
+      - objecao: "Ta caro"
+        contorno: "Uma oficial custa R$700, aqui ta R$250, e a qualidade e a mesma"
+      - objecao: "Medo de golpe/confianca"
+        contorno: "Mandar CNPJ, endereco, tempo de abertura, Instagram, Google Maps, foto/video da loja"
+      - objecao: "Nao entende a promocao"
+        contorno: "Pague 2 Leve 3 confunde muita gente; explicar claramente"
+      - objecao: "Qualidade do produto"
+        contorno: "Enviar fotos/videos detalhados"
+    regra_geral: "Humanizar ao maximo (audio, foto, video). Pessoas confiam em pessoas."
+
+  estrategia_confianca:
+    elementos:
+      - "CNPJ registrado"
+      - "Endereco da empresa"
+      - "Tempo de abertura"
+      - "Link do Instagram com muitos seguidores"
+      - "Localizacao Google Maps (se loja fisica)"
+      - "Foto/video da loja"
+      - "Reclame Aqui positivo"
+      - "Avaliacoes de clientes"
+
+  estrategia_humanizacao:
+    elementos:
+      - "Mandar audio ao inves de texto"
+      - "Mandar foto e video"
+      - "Ter um rosto na rede social (influencer, colaborador)"
+      - "Compartilhar redes sociais (quanto mais, melhor)"
+      - "YouTube fortalece muito a confianca"
+
+  recuperacao_chargeback:
+    nome: "Notificacao Extrajudicial (estrategia agressiva)"
+    passos:
+      - "Ter um numero simulando contato com advogada"
+      - "Mandar notificacao extrajudicial (formatada como oficial)"
+      - "Informar que pedido esta em transito, se quiser solicitar chargeback, aguardar recebimento"
+      - "Pedir que realize pagamento novamente"
+
+  equipe:
+    regra: "Treinar equipe do zero e preferivel a contratar especialista caro"
+    motivo: "Pessoa sem vicios de venda e mais barata e moldavel"
+
+# =============================================================================
+# REPORTANA
+# =============================================================================
+reportana:
+  descricao: "Plataforma principal de automacao e-mail + WhatsApp"
+  custo: "R$159/mes"
+  posicionamento: "Melhor custo-beneficio do mercado"
+  servidor: "Compartilhado (limita taxa de entrega)"
+
+  funcionalidades:
+    - "Automacoes de e-mail e WhatsApp"
+    - "Listas segmentadas por clube (automatica e retroativa)"
+    - "Disparos nichados por clube"
+    - "Teste A/B de automacoes (funcao Randomizar - 50%/50%)"
+    - "Import/Export de automacoes entre lojas"
+    - "Matriz RFM (segmenta leads de 0 a 10 por potencial)"
+    - "API oficial WhatsApp integrada"
+    - "Metricas de receita por contato"
+    - "Integracao nativa Shopify"
+    - "UTM por campanha para rastreio"
+
+  vs_klaviyo:
+    reportana: "R$159/mes, servidor compartilhado, bom custo-beneficio"
+    klaviyo: "R$300-500+/mes, servidor proprio por loja, segmentacao avancada (mostra produtos visualizados)"
+    regra_decisao: "Ate R$100K/mes -> Reportana. Acima -> Klaviyo (e-mail) + Reportana (WhatsApp)"
+
+  vs_cellflux:
+    reportana: "Integracao nativa Shopify, metricas de receita por contato, segmentacao por lista"
+    cellflux: "Boa para infoprodutores, integracao Shopify custou R$4.400 + bugs"
+
+  matriz_rfm:
+    descricao: "Segmenta leads de 0 a 10 baseado no potencial"
+    lead_8_10: "Comprou varias vezes, gastou muito -> muito mais facil converter"
+    lead_0_1_2: "Campanhas especificas para reativar"
+    ivan_quote: "E ouro na mao de quem sabe utilizar"
+
+# =============================================================================
+# SEXY CANVAS (METODOLOGIA DE COPY)
+# =============================================================================
+sexy_canvas:
+  nome: "Metodologia Sexy Canvas"
+  autor: "Andre Diamant (tambem referenciado como Andre Djalman)"
+  conceito: "Usar os 7 pecados capitais para persuadir o cliente"
+
+  implementacao_com_ia:
+    passos:
+      - "Criar projeto no Claude (ou ChatGPT) chamado 'Andre Diamant'"
+      - "Fazer upload dos livros do Andre Diamant (PDFs)"
+      - "Dar instrucoes em texto sobre como o projeto deve responder"
+      - "Pedir para otimizar e-mails ou criar novos seguindo a metodologia"
+    prompt_exemplo: "Andre, amanha dia X tenho disparo de e-mail para toda a base sobre Dia dos Pais. Utilize metodologia Sexy Canvas, siga padroes Nike/Adidas, crie o melhor e-mail possivel para conversao maxima."
+    resultado: "IA gera banners sugeridos, copy, cabecalho, estrutura completa"
+
+  uso_em_automacoes:
+    descricao: "Aplicar Sexy Canvas + gatilho de curiosidade nas automacoes"
+    resultado_taxa_abertura: "40% vs media mercado 15%"
+    resultado_metricas: "R$16/disparo e R$65/click de retorno"
+
+# =============================================================================
+# FLUXOS DE EMAIL
+# =============================================================================
+email_flows:
+  evolucao_v1_v2:
+    fase_1_v1:
+      nome: "E-mail Esqueleto (primeiros 2-3 meses)"
+      caracteristicas:
+        - "E-mail basico: apenas copy, CTA, botao e logo"
+        - "Imagens em JPEG (mais leves que PNG)"
+        - "Pouco negrito, pouco maiusculo (evita spam)"
+      objetivo: "Construir reputacao do dominio com a plataforma"
+
+    fase_2_v2:
+      nome: "E-mail Profissional (apos reputacao construida)"
+      caracteristicas:
+        - "80% imagem, 20% escrita"
+        - "Modelando Nike/Adidas"
+        - "Fotos de produtos, sessoes de confianca, multiplos CTAs"
+      regra_transicao: "Se taxa de abertura nao cair de forma grotesca ao migrar, dominio esta pronto"
+
+  estrutura_email_profissional_v2:
+    passos:
+      - "Banner/imagem de cabecalho (alinhado com oferta)"
+      - "Heading (fonte Helvetica, 28px, bold, maiusculo)"
+      - "Copy curta (Helvetica, 16px, pouco negrito)"
+      - "Botao CTA #1 (fundo preto, fonte branca, sem borda arredondada, alinhado a esquerda)"
+      - "Sessao de 2 colunas: foto produto + copy de qualidade (alternando lados)"
+      - "Botao CTA #2 (borda preta, fundo branco - variacao visual)"
+      - "Repetir sessao 2 colunas (3 vezes alternando)"
+      - "Sessao de produtos recomendados (2 colunas com foto, titulo, preco, parcelamento, botao)"
+      - "Botao 'Ver todas as camisas'"
+      - "Rodape: logo + redes sociais (Instagram, YouTube, TikTok) + CNPJ"
+    fonte: "Helvetica"
+    tamanho_texto: "16px"
+    tamanho_cabecalho: "28px"
+    botoes: "Quadrados (sem borda arredondada) - passa sofisticacao no subconsciente"
+    referencia: "Modelar Nike e Adidas"
+
+  assuntos_que_convertem:
+    exemplos:
+      - assunto: "Comece da melhor forma, [Nome]"
+        contexto: "Com cupom 5% no dia 1 do mes"
+        resultado: "R$3K conversao"
+      - assunto: "O mundo vai parar"
+        contexto: "Sobre semifinal"
+        resultado: "84% taxa abertura"
+      - assunto: "As mais desejadas do momento"
+        contexto: "Com emoji sugestivo para publico masculino"
+    regras_assunto:
+      - "Sempre usar pelo menos 1 emoji no assunto (max 2)"
+      - "Emojis no assunto aumentam 42-50% taxa abertura (pesquisa Gemini, fonte gringa)"
+      - "Gatilho de curiosidade e o mais eficaz"
+
+  frequencia_disparo: "2-3x por semana (normal: 2; sazonalidade: 3)"
+  taxa_desinscricao: "0.10% (abaixo de 1% e bom)"
+
+  regras_links:
+    multiplos_clubes: "Link para COLECAO"
+    nichado_1_clube: "Link para PRODUTO"
+
+  regras_spam:
+    - "Muito negrito/maiusculo aumenta chance de cair no spam"
+    - "Imagens em JPEG (mais leves que PNG)"
+    - "Comecar com V1 basico para construir reputacao"
+
+  funil_reverso:
+    descricao: "Entrar no funil reverso de grandes marcas"
+    como_fazer: "Gerar um PIX na Nike, abandonar carrinho na Adidas, para entender os e-mails deles"
+
+# =============================================================================
+# AUTOMACOES POR EVENTO
+# =============================================================================
+automacoes_por_evento:
+  pedido_pago:
+    janela: "3 dias"
+    acao: "Upsell com 15-20% desconto"
+    logica: "CPA ja foi pago, pode ser mais agressivo"
+    cta_adicional: "Convite para comunidade WhatsApp"
+
+  pix_gerado_vencido:
+    janela: "5 dias"
+    acao: "Oferta de desconto adicional (5%+) alem do desconto do PIX"
+    objecao_principal: "Preco"
+    diferencial: "90% das lojas so tem automacao padrao de PIX (lembrete). Poucas fazem CTA apos PIX vencido."
+
+  cartao_recusado:
+    janela: "3 dias"
+    acao: "Oferecer pagamento via PIX"
+    motivo: "NAO e cartao sem limite; e quando plataforma identifica possivel fraude"
+    vantagem_pix: "PIX nao tem como destornar (elimina risco de chargeback)"
+
+  carrinho_abandonado:
+    janela: "30 dias"
+    objecao: "Pode ser qualquer das 3 (preco, qualidade, confianca) -> sequencia para identificar"
+    resultado_2o_contato: "R$53/envio, R$533/clique"
+
+  rastreio:
+    eventos:
+      - "Pedido postado (CTA: baixar app)"
+      - "Saiu para entrega"
+      - "Falha na entrega"
+      - "Pedido entregue (CTA: programa afiliados)"
+
+  remarketing_pos_entrega:
+    janela: "90-120 dias"
+    conceito: "Baseado no tempo medio de recompra dos clientes recorrentes"
+    passos:
+      - "Identificar media de tempo para segunda/terceira compra"
+      - "Criar funil de automacao com essa duracao"
+      - "Enviar mensagens periodicas tentando reativar"
+      - "Oferecer desconto na automacao de pedido entregue"
+    em_desenvolvimento: "Mostrar no e-mail produtos que o cliente visualizou (nao nativo da Reportana; Klaviyo ja tem)"
+
+  automacao_sms:
+    evento: "PIX gerado"
+    acao: "SMS logo apos PIX ser gerado"
+    conteudo: "Reforcar pagamento + informar codigo PIX copiavel"
+    complemento: "Automacoes de e-mail e WhatsApp"
+
+# =============================================================================
+# SEGMENTACAO
+# =============================================================================
+segmentacao:
+  por_clube:
+    tipos:
+      - "Carrinho abandonado por clube (ex: produto contem Palmeiras)"
+      - "Compradores por clube"
+      - "Clientes dos ultimos 180 dias"
+      - "Clientes que abriram e-mails"
+      - "Clientes que ja receberam compras"
+    criacao: "Automatica e retroativa (puxa historico da loja). Atualiza sozinha."
+    uso: "Disparos nichados por clube + automacoes segmentadas"
+
+  matriz_rfm:
+    plataforma: "Reportana"
+    escala: "0 a 10 baseado no potencial"
+    nivel_8_10: "Comprou varias vezes, gastou muito -> muito mais facil converter"
+    nivel_0_1_2: "Campanhas especificas para reativar"
+
+  por_comportamento:
+    eventos_facebook:
+      - "Add to Cart 30 dias"
+      - "View Content 30 dias"
+      - "Interacao catalogo 180 dias"
+      - "Compradores ultimos 90 dias"
+    lista_compradores_180_dias:
+      descricao: "Exportar lista da Shopify -> criar publico no Facebook"
+      logica: "Tempo medio de recompra de camisa de time e 180 dias"
+
+  teste_ab:
+    plataforma: "Reportana"
+    funcionalidade: "Funcao Randomizar - 50% leads para versao A, 50% para versao B"
+    metricas:
+      - "Conversao por Envio: receita gerada por cada envio"
+      - "Conversao por Clique: receita gerada por cada clique"
+    como_calcular: "Pegar dados da Reportana e jogar no ChatGPT: 'Quero calcular conversao por envio' + dados"
+
+# =============================================================================
+# WHATSAPP
+# =============================================================================
+whatsapp:
+  recuperacao_x1:
+    descricao: "Recuperacao 1-para-1 via WhatsApp"
+    resultado: "~R$3M recuperados, ROAS ~10x"
+    sequencia: "4 mensagens ao longo de 4 dias"
+    tempo_resposta_maximo: "20 minutos"
+
+  api_oficial:
+    regra: "WhatsApp Business cai muito facil (3-4 disparos e cai). USAR API oficial."
+    plataforma: "Reportana (API oficial integrada)"
+    layout: "Video + copy + botao"
+    disparos: "Segmentados por clube"
+    resultado: "Absurdo a conversao"
+
+  comunidade_whatsapp:
+    tres_tipos_mensagem:
+      tipo_1_engajamento:
+        nome: "Engajamento e Interacao"
+        exemplos:
+          - "Enquetes em dia de jogo (Quem leva a vitoria?)"
+          - "Reacoes a lancamento de camisas"
+          - "Noticias importantes do futebol (SO as importantes)"
+        objetivo: "Medir engajamento dos leads (60-70 reacoes em 10 min)"
+
+      tipo_2_consciencia:
+        nome: "Elevar Nivel de Consciencia"
+        exemplos:
+          - "UGC/GC de clientes recebendo produto"
+          - "Videos de influenciadores"
+        efeito: "Quebra 2 das 3 objecoes: qualidade + confianca"
+        frequencia: "1 a cada 2 dias ou 1 por semana"
+
+      tipo_3_oferta:
+        nome: "Oferta/Desconto"
+        exemplos:
+          - "Cupom"
+          - "Desconto progressivo"
+          - "Parcelamento sem juros"
+          - "Hack dia fraco: Hoje personalizacao gratuita em todos os produtos"
+        frequencia: "1x por semana ou de 15 em 15 dias MAXIMO"
+        regra: "Se so manda cupom, ninguem fica"
+
+    resultados:
+      black_friday: "R$12-15K em 30 minutos"
+      percentual_faturamento: "10-15% do faturamento total"
+
+    lancamento_contagem_regressiva:
+      passos:
+        - "Dia 15: imagem 'faltam 15 dias' + video UGC"
+        - "Dia 14: imagem 'faltam 14 dias' + mensagem de engajamento"
+        - "Continuar ate o dia do lancamento"
+        - "No dia: soltar oferta agressiva"
+      resultado: "R$40k no dia (com trafego + outros canais)"
+
+  zapvoice:
+    descricao: "Audios pre-gravados para equipe de suporte/vendas"
+    custo: "~R$50/mes (serve 2-3 colaboradores)"
+    funcionalidade: "Gravar audios com rosto da marca para todas situacoes comuns"
+    beneficio: "Equipe responde com 1 clique em 5 segundos vs 5 minutos"
+    objetivo: "Reduzir 80% do trabalho operacional"
+
+  regras_decisao:
+    - "3 momentos mais quentes do funil: pedido pago (CTA comunidade), pedido postado (CTA app), compra entregue (CTA afiliados)"
+    - "Comunidade so cupom NAO funciona. Precisa dos 3 tipos de mensagem"
+    - "Ninguem esta em grupo de WhatsApp pra receber cupom toda hora"
+
+# =============================================================================
+# ESTRATEGIA CRM GERAL
+# =============================================================================
+crm_estrategia:
+  principio_fundamental: "Tem trafego rodando? TEM QUE TER automacao ativa. Automacao tem que ser crucial."
+  distribuicao_canal:
+    whatsapp: "60-70% do total de automacoes"
+    email: "30-40% do total de automacoes"
+  resultado_1_operacao: "R$85K total (R$55K WhatsApp + R$30K e-mail)"
+  disparo_email_1_loja: "R$15K/mes somente disparos de campanha"
+
+  funil_vendas_automacao:
+    extensao: "Ate 15-30 dias para carrinho abandonado"
+    canais: "Email E WhatsApp em paralelo"
+    copy: "Focar em persuasao e CURIOSIDADE"
+    metricas: "Valor por disparo (R$16/disparo) e valor por click (R$65/click)"
+    otimizacao: "Se contato 2 nao converteu, ajustar copy"
+
+  3_momentos_quentes:
+    - momento: "Pedido pago"
+      cta: "Comunidade WhatsApp"
+    - momento: "Pedido postado"
+      cta: "Baixar app"
+    - momento: "Compra entregue"
+      cta: "Programa de afiliados"
+
+  import_export:
+    descricao: "Reportana permite importar/exportar automacoes entre lojas"
+    processo: "Criar esqueleto V1, exportar, importar na nova loja, ajustar (logo, oferta, identidade visual)"
+
+  cdr_labs_dashboard:
+    atualizacao: "Automatica todo dia"
+    metricas:
+      - "Taxa de conversao por etapa do funil"
+      - "Taxa de adicao ao carrinho"
+      - "Conversao de checkout"
+      - "Conversao por sessao"
+      - "Taxa de pedido pago"
+      - "LTV"
+      - "Resultado de campanhas e-mail"
+      - "Resultado de automacoes"
+      - "Taxa de conversao diaria"
+
+# =============================================================================
+# PROGRAMA DE AFILIADOS
+# =============================================================================
+programa_afiliados:
+  descricao: "Cliente recebe produto -> convite para programa"
+  custo: "Zero"
+  processo:
+    - "Cliente recebe produto"
+    - "Convite humanizado para programa"
+    - "Cliente grava videos sobre a loja"
+    - "Recebe cupom exclusivo com comissao por venda"
+  resultado: "Voce tem um revendedor da sua loja de graca"
+  case_real: "Afiliada da Amor tirando R$3k/mes"
+
+# =============================================================================
+# COLETA DE UGC (USER GENERATED CONTENT)
+# =============================================================================
+coleta_ugc:
+  metodo_humanizado:
+    regra: "NAO usar automacao (cara de robo = lead nao responde)"
+    passos:
+      - "Usar numero comercial com foto de PESSOA (nao logo)"
+      - "Primeira mensagem: 'Boa tarde, tudo certo? Esse numero e do [nome]?'"
+      - "Explicar programa de afiliados/clientes exclusivos"
+      - "Oferecer incentivo: R$20 PIX + cupom de desconto"
+      - "Enviar AUDIO (nao texto) -> maior taxa de resposta"
+      - "Audio com voz da pessoa que e rosto da marca"
+    hierarquia_taxa_resposta: "automacao < texto humanizado < AUDIO humanizado"
+
+# =============================================================================
+# BENCHMARKS COMPLETOS
+# =============================================================================
+benchmarks:
+  recuperacao:
+    taxa_ivan: "31%"
+    taxa_mercado: "10-15%"
+    resultado_mensal: "R$155K"
+    case_evolucao: "2% -> 16-17%"
+    ltv_maximo: "32% ALTV em uma loja"
+
+  email:
+    taxa_abertura_automacoes: "23%"
+    taxa_abertura_campanhas_ivan: "40% (vs 15% media mercado)"
+    taxa_abertura_whatsapp: "90%+"
+    taxa_desinscricao: "0.10%"
+    resultado_2_meses: "R$30K (uma operacao)"
+    resultado_whatsapp: "R$55K (uma operacao)"
+    conversao_por_envio_carrinho_2: "R$53"
+    conversao_por_clique_carrinho_2: "R$533"
+    emojis_boost: "+42-50% taxa abertura"
+    proporcao_ideal: "80% imagem, 20% texto"
+
+  operacao:
+    adicao_carrinho_mercado: "8-10%"
+    adicao_carrinho_ivan: "13-15%"
+    conversao_checkout_mercado: "18-20%"
+    conversao_checkout_ivan: "25-30%"
+    conversao_sessao_mercado: "1%"
+    conversao_sessao_ivan: "1.5-1.7%"
+
+  ferramentas:
+    reportana: "R$159/mes"
+    klaviyo: "R$300-500+/mes"
+    zapvoice: "~R$50/mes"
+    shopify_forms_preenchimento: "15% (vs Klaviyo 12%)"
+
+# =============================================================================
+# FERRAMENTAS COMPLETAS
+# =============================================================================
+ferramentas:
+  reportana:
+    uso: "Automacoes e-mail + WhatsApp + listas + disparos + matriz RFM"
+    custo: "R$159/mes"
+  klaviyo:
+    uso: "E-mail marketing avancado (servidor proprio, segmentacao, produtos visualizados)"
+    custo: "R$300-500+/mes"
+  claude_ai:
+    uso: "Criar projetos de copy (metodologia Sexy Canvas)"
+  gemini:
+    uso: "Pesquisa de benchmarks e dados de mercado"
+  zapvoice:
+    uso: "Audios pre-gravados para equipe de suporte/vendas"
+    custo: "~R$50/mes"
+  api_whatsapp:
+    uso: "Disparos em massa sem risco de queda"
+  trello_kanban:
+    uso: "Organizar leads por status de recuperacao"
+  whatsapp_business:
+    uso: "Canal de recuperacao X1"
+    alerta: "Cai muito facil com 3-4 disparos - usar API oficial"
+
+# =============================================================================
+# QUOTES & MENTAL MODELS
+# =============================================================================
+quotes:
+  - "Nao menosprezem a porra do e-mail"
+  - "Automacao tem que ser crucial. Tem trafego rodando, tem que ter automacao ativa."
+  - "Com dados, voces tem respostas. Com dados, voces sabem pra onde ir."
+  - "A gente testa, olha pra numeros, olha pra dados, identifica padrao e ajusta."
+  - "Automacao e bom? Muito bom. Mas no X1 e um algo a mais."
+  - "Esse dinheiro esta na mesa. Se eu nao for atras, nao estaria no meu caixa."
+  - "Ola, esse numero e do [Nome]? (mensagem campea de curiosidade)"
+  - "Pessoas confiam em pessoas (humanizacao)"
+  - "A objecao e uma porta pra venda"
+  - "Entre no funil reverso de grandes marcas"
+  - "CDR = Constancia, Dados e Resultado"
+  - "Porcentagem de resposta: automacao < texto humanizado < AUDIO humanizado"
+  - "Depender cada vez mais do trafego pago - voce esta amarrando uma corda no pescoco"
+  - "A tendencia do trafego e metricas cada vez mais caras. Se nao aproveitar sua base, margem vai descer."

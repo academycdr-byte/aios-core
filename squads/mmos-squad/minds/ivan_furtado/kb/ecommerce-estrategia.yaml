@@ -1,0 +1,896 @@
+domain: ecommerce-estrategia
+title: "Estrategia Geral de E-commerce"
+confidence: 0.95
+source: "Aulas 01-10"
+last_updated: "2026-02-16"
+
+# =============================================================================
+# PLANEJAMENTO ANUAL
+# =============================================================================
+planejamento:
+  receita_duas_frentes:
+    nome: "Receita de Aquisicao vs Receita de Retencao"
+    erro_grave: "Olhar para receita de forma geral (receita captada) sem quebrar"
+    passos:
+      - "Receita de Aquisicao = novos clientes (primeira compra)"
+      - "Receita de Retencao = clientes recorrentes (segunda, terceira, quarta compra em diante)"
+      - "Calcular % de LTV (taxa de retencao) usando media dos ultimos 3 meses"
+      - "Calcular quanto da receita precisa vir de cada frente"
+    onde_buscar_dados: "Shopify, Nuvemshop (parte de analise), ou Google Analytics"
+
+  planejamento_trimestral:
+    passos:
+      - "Dividir o ano em 4 trimestres (Q1, Q2, Q3, Q4)"
+      - "Preencher janeiro usando a MEDIA dos ultimos 3 meses como base"
+      - "Ajustar a media com base na realidade do mes atual (feeling + dados)"
+      - "Preencher apenas as linhas em laranja (metricas de input)"
+      - "Para cada mes subsequente, projetar com base em sazonalidades e fatores externos"
+      - "Criar plano de acao por metrica para cada mes"
+    ferramenta: "Planilha de Planejamento Anual"
+
+  plano_acao_por_metrica:
+    nome: "Metas sobre Metricas"
+    conceito: "Para cada metrica do planejamento, criar acoes especificas para atingi-la"
+
+    exemplo_retencao_16:
+      acoes:
+        - "Quantos disparos de WhatsApp API na semana?"
+        - "Quantas mensagens na comunidade do WhatsApp?"
+        - "Mini lancamento com cupom agressivo + escassez (ex: cupom R$20 off, apenas 10 unidades)"
+        - "Quantos disparos de e-mail marketing? Que dia? Qual oferta?"
+
+    exemplo_aprovacao_pagamento:
+      acoes:
+        - "Automacao de SMS apos PIX gerado (reforcar pagamento + codigo PIX)"
+        - "Automacao de e-mail e WhatsApp padrao"
+
+    exemplo_ticket_medio:
+      acoes:
+        - "Order bumps"
+        - "Novos produtos"
+        - "Kits/combos"
+      regra: "Nao colocar metas fora da curva sem ter meios de atingi-las"
+
+    exemplo_taxa_conversao:
+      acoes:
+        - "Quebrar em: adicao ao carrinho + conversao de checkout"
+        - "Identificar qual etapa esta fraca e focar ajustes nela"
+
+    exemplo_sessoes_organicas:
+      acoes:
+        - "Publicacoes no Instagram com automacao de MiniChat levando ao site"
+        - "Publicacoes nos Stories com link"
+        - "Sessoes vindas da comunidade de WhatsApp"
+
+# =============================================================================
+# GESTAO DE EQUIPE
+# =============================================================================
+equipe:
+  principios:
+    - "Treinar equipe do zero e preferivel a contratar especialista caro"
+    - "Pessoa sem vicios de venda e mais barata e moldavel"
+    - "Delegar != Largar (diferenca enorme)"
+    - "Engrenagem deve rodar sem voce"
+    - "Bonificar equipe: Nao tem como querer que equipe seja engajada se recebe R$800/mes"
+    - "Carater > skill na contratacao"
+    - "Nao fico bravo se errar. O que me deixa bravo e falta de compromisso, sinceridade, carater."
+
+  delegacao_estruturada:
+    passos:
+      - "Contratar colaborador e treinar com seus conhecimentos"
+      - "Pessoa do zero = melhor (sem vicios)"
+      - "Compartilhar o Miro/estrategia com gestor/agencia"
+      - "Delegar != Largar"
+    objetivo: "Engrenagem deve rodar sem voce"
+
+  sala_de_guerra:
+    frequencia: "Sexta-feira"
+    participantes: "Lideres de setor"
+    regra: "Finjam que estao bebados, tirem todo filtro. Pode falar palavrao, ser direto."
+    pergunta_obrigatoria: "O que pode quebrar nosso negocio hoje?"
+    objetivo: "Desenvolver cabeca de dono nos colaboradores"
+
+  clickup:
+    uso: "Gestao completa (tarefas, squads, health score, formularios, automacoes)"
+    health_score:
+      entregou_antes: "10 pontos"
+      no_dia: "7 pontos"
+      atrasado: "3 pontos"
+    pastas: "CSO (clientes), Design, WebDesign, Trafego, Reunioes, POPs, Plano de Carreira, RH"
+    competicao: "Entre squads baseada em Health Score"
+    formularios: "Clientes solicitam demandas (vai automaticamente pro responsavel)"
+
+  comissao:
+    base: "Resultado dos CLIENTES (taxa conversao, recuperacao carrinho, ROAS)"
+    logica: "Equipe ganha quando cliente tem resultado"
+
+  area_membros:
+    uso: "Treinar equipe com videos de onboarding por funcao"
+
+  cultura:
+    ivan_quote_1: "A propria equipe expulsa quem nao gera resultado"
+    ivan_quote_2: "Sejam um otimo vendedor de sonho (sobre gestao de pessoas)"
+    ivan_quote_3: "Se o piloto do aviao comeca a chorar, voce desespera. Voces sao o piloto da empresa."
+    ivan_quote_4: "Melhor do que mostrar faturamento e mostrar a vida das pessoas que trabalham com voce."
+    ivan_quote_5: "O negocio e muito mais sobre pessoas do que o entregavel."
+
+# =============================================================================
+# BRANDING
+# =============================================================================
+branding:
+  framework_objetivo_inimigo:
+    nome: "Objetivo + Inimigo"
+    objetivo_exemplo: "Democratizar o acesso a camisa de time"
+    inimigo_exemplo: "Precos inacessiveis"
+    comunicacao: "Voltada para publico que se identifica com esse posicionamento"
+    humanizacao: "Em TUDO: feed, stories, banners, videos"
+    ivan_quote: "Se voce conseguir entender e aplicar, vai fazer muita grana"
+
+  instagram_como_vitrine:
+    caminho_real_lead: "Anuncio -> Clica foto perfil -> Olha Instagram -> Bio ou segue -> Compra"
+    feed: "Vitrine que converte (humanizado, nao pagina de futebol)"
+    reels: "Para viralizar (atrair seguidores organicos)"
+    marcados: "Influenciadores usando produto = mina de ouro"
+    destaques: "Humanizar capas (foto cliente, nao icones genericos)"
+    referencia_gringa: "ProDirect Soccer, FuteFanatics, e-commerces dos EUA"
+    regra: "Cuidar para nao se parecer com pagina de futebol. Se parecer com LOJA."
+    dado: "80% das vezes quem roda Face, a pessoa clica no perfil ANTES de ir pro site"
+
+  humanizacao:
+    principio: "Pessoas compram de pessoas. Nunca esteve tao forte como atualmente."
+    elementos:
+      - "Rosto na marca (influenciador ou colaborador)"
+      - "Audio > texto"
+      - "Video > imagem"
+      - "Feed humanizado (nao pagina de futebol)"
+      - "Pagina 'Quem Somos' com equipe real e espaco fisico"
+      - "Fotos humanizadas com IA (modelos vestindo)"
+      - "Avaliacoes com foto de clientes reais"
+    pagina_quem_somos:
+      referencia: "ShowMeme, Insider"
+      incluir: "Equipe real, espaco fisico (ou mockup com IA), historia"
+      diferencial: "Todo mundo tem 'estamos ha 5 anos no mercado' -> diferente e mostrar pessoas reais"
+      mockup_ia: "Facade com IA e valido. Pessoas + espaco fisico = credibilidade maxima."
+
+  facebook_organico:
+    regra: "Configurar Instagram para publicar automaticamente no Facebook"
+    dado: "12% das sessoes organicas vem do Facebook"
+    acao: "Pagina do Facebook e Instagram devem estar alinhadas (mesma logo, mesmas informacoes)"
+
+# =============================================================================
+# COMMUNITY MANAGEMENT
+# =============================================================================
+comunidade:
+  whatsapp:
+    tres_tipos_mensagem:
+      tipo_1_engajamento:
+        exemplos:
+          - "Enquetes em dia de jogo"
+          - "Reacoes a lancamento de camisas"
+          - "Noticias importantes do futebol (SO as importantes)"
+        medicao: "60-70 reacoes em 10 min"
+
+      tipo_2_elevar_consciencia:
+        exemplos:
+          - "UGC/GC de clientes recebendo produto"
+          - "Videos de influenciadores"
+        efeito: "Quebra 2 das 3 objecoes: qualidade + confianca"
+        frequencia: "1 a cada 2 dias ou 1 por semana"
+
+      tipo_3_oferta:
+        exemplos:
+          - "Cupom"
+          - "Desconto progressivo"
+          - "Parcelamento sem juros"
+          - "Hack dia fraco: personalizacao gratuita"
+        frequencia: "1x por semana ou 15/15 dias MAXIMO"
+        regra: "Se so manda cupom, ninguem fica"
+
+    resultados:
+      black_friday: "R$12-15K em 30 minutos"
+      percentual_faturamento: "10-15% do faturamento total"
+      lancamento_com_contagem: "R$40K no dia"
+
+    regra_fundamental: "Ninguem esta em grupo de WhatsApp pra receber cupom toda hora"
+
+  manychat:
+    uso: "Responda 'Timao' e ganha um presente"
+    quando: "Em Stories pos-jogo (aproveitar calor da emocao)"
+    metodologia: "Sexy Canvas + gatilho de curiosidade"
+
+  notificacoes_app:
+    modelo: "iFood"
+    titulos: "CURIOSIDADE: 'Voce nunca viu isso daqui!' + emoji"
+    regra: "NAO revelar oferta no titulo, apenas abaixo"
+    exemplo: "Todos os produtos do Timao com 40% off somente ate as 23h59"
+    rotacao: "Por clubes (sexta = Corinthians, sabado = Palmeiras, etc.)"
+
+# =============================================================================
+# 3 OBJECOES UNIVERSAIS
+# =============================================================================
+objecoes_universais:
+  lista:
+    - objecao: "Preco"
+      contornos:
+        - "Ancoragem de preco"
+        - "Parcelas sem juros"
+        - "Desconto progressivo"
+        - "Comparacao com oficial (R$700 vs R$250)"
+        - "Nivel de consciencia: mostrar 'cada camisa sai por R$94' ao inves de 'Pag2Leve3'"
+
+    - objecao: "Qualidade do produto"
+      contornos:
+        - "UGC de clientes"
+        - "VideoCommerce"
+        - "Fotos detalhadas"
+        - "Reviews com foto"
+        - "Influenciadores usando"
+
+    - objecao: "Confianca na loja"
+      contornos:
+        - "Humanizacao (rosto da marca)"
+        - "Reviews de clientes"
+        - "Reclame Aqui (nota 8.7+)"
+        - "Pagina 'Quem Somos'"
+        - "CNPJ, endereco, Google Maps"
+        - "YouTube da marca"
+        - "Instagram profissional"
+
+  onde_quebrar:
+    site: "Barra de anuncios, banners, pagina produto, checkout"
+    comunidade: "Tipo 2 de mensagem (UGC/influenciadores)"
+    x1: "Sequencia de 4 mensagens com contorno especifico"
+    criativos: "UGC, fotos profissionais, videocommerce"
+
+# =============================================================================
+# 10 REGRAS UNIVERSAIS DE IVAN FURTADO
+# =============================================================================
+regras_universais:
+  - numero: 1
+    regra: "Facebook e teste eterno"
+    detalhe: "Nunca parar de testar, nunca acreditar em formula magica"
+    aulas: "01, 04, 06, 09, 10"
+
+  - numero: 2
+    regra: "80/20 sempre"
+    detalhe: "80% no que funciona, 20% para testes"
+    aulas: "06"
+
+  - numero: 3
+    regra: "Escala horizontal > vertical"
+    detalhe: "Muitas campanhas trazendo resultado > 1 campanha que se morrer zera faturamento"
+    aulas: "04, 09"
+
+  - numero: 4
+    regra: "Humanizacao acima de tudo"
+    detalhe: "Pessoas compram de pessoas. Rosto > logo. Audio > texto. Video > imagem"
+    aulas: "03, 07, 09, 10"
+
+  - numero: 5
+    regra: "Nichar e converter"
+    detalhe: "Tudo nichado converte mais: publico, posicionamento, idade, clube, comunicacao"
+    aulas: "03, 04, 05, 09, 10"
+
+  - numero: 6
+    regra: "Nao depender so de trafego"
+    detalhe: "Comunidade, app, email, WhatsApp, afiliados = lucro sem custo de aquisicao"
+    aulas: "02, 06, 09, 10"
+
+  - numero: 7
+    regra: "Base e o segredo do lucro"
+    detalhe: "Trafego pago fica mais caro, base propria e o diferencial"
+    aulas: "01, 02, 05, 06"
+
+  - numero: 8
+    regra: "Faturamento e ego, lucro e real"
+    detalhe: "Sempre olhar margem, nao top line"
+    aulas: "01, 02, 05, 06"
+
+  - numero: 9
+    regra: "Antecipacao e preparacao"
+    detalhe: "Tudo pronto ANTES do evento. Quem prepara melhor, lucra mais"
+    aulas: "08"
+
+  - numero: 10
+    regra: "Detalhes fazem diferenca"
+    detalhe: "Fonte 2px maior, bordas consistentes, copy otimizada = taxa de conversao"
+    aulas: "07, 10"
+
+# =============================================================================
+# HIERARQUIA DE PRIORIDADES DE TRAFEGO
+# =============================================================================
+hierarquia_trafego:
+  etapas:
+    - posicao: 1
+      nome: "Coleta de Dados"
+      objetivo: "Baratear metricas"
+      estrutura: "1 campanha, 2 conjuntos (View Content R$7/dia + Add to Cart R$7/dia)"
+      duracao: "7 dias (~R$80-100 total)"
+      regra: "Primeira campanha que sobe e ULTIMA que mata"
+      benchmarks:
+        view_content: "< R$0.10 por acao"
+        add_to_cart: "< R$1.00"
+        cpm_antes: "R$22-25"
+        cpm_apos: "R$8"
+
+    - posicao: 2
+      nome: "Catalogo Advantage+"
+      objetivo: "Vendas sem esforco criativo"
+      quando: "Apos 7 dias de coleta"
+      resultado: "R$1.500 investido -> R$12.000 retorno (ROAS 7, CPA R$28)"
+      cpas_clientes: "R$2-6.50 (excepcionais)"
+      regra: "O pior inimigo no catalogo e a pressa. Catalogo precisa de tempo."
+      evolucao:
+        - "Campanha mae (todos os produtos, aberto)"
+        - "Identificar clubes que vendem mais"
+        - "Criar campanhas filiais nichadas por clube"
+      otimiza_em: "14-15 dias"
+      roas_esperado: "8-10"
+
+    - posicao: 3
+      nome: "Teste Criativo ABO"
+      objetivo: "Validar criativos (variavel isolada)"
+      estrutura: "1 campanha POR criativo, 3 conjuntos com MESMA segmentacao (so clube)"
+      por_que_abo: "Controlar orcamento por conjunto, garantir gasto em todos os criativos"
+      metricas_validacao: "CPA (principal), CPC, CTR, media de visualizacao"
+      organizacao_trello:
+        - "Coluna: Ideias de criativos"
+        - "Coluna: Criativos em teste"
+        - "Coluna: Criativos validados"
+        - "Coluna: Criativos reprovados"
+        - "Coluna: Criativos para segunda chance"
+
+    - posicao: 4
+      nome: "Teste Publico"
+      objetivo: "Validar segmentacoes (variavel isolada)"
+      estrutura: "1 campanha, 5+ conjuntos, CRIATIVO VALIDADO, segmentacoes diferentes"
+      variaveis: "Genero, idade, regiao, interesse, comportamento, posicionamento, dispositivo"
+      regra: "Pelo menos 1 conjunto com segmentacao fora da caixa"
+      publicos_fora_caixa_validados:
+        homem:
+          - "Cerveja, churrasco, Brahma"
+          - "Caze TV, TNT Sports, Sport TV"
+          - "Funkzinho carioca (para publico do Rio)"
+          - "Society/futebol amador"
+          - "Influenciadores que o publico acompanha"
+        mulher:
+          - "Compradores envolvidos + compras na internet"
+          - "Interesse no clube + interesse em Virginia + IPINC"
+          - "Faixa 18-24, estado especifico, so Instagram"
+      hack_feminino: "Adicionar 'compradores envolvidos em compras na internet' = CPA bizarro"
+
+    - posicao: 5
+      nome: "ABOMAX (Pre-Escala)"
+      objetivo: "Escala com duplicacao em massa"
+      estrutura: "1 campanha ABO, 5 conjuntos IGUAIS (publico validado + criativo validado)"
+      execucao:
+        - "Dos 5 conjuntos, manter os que vendem, matar os que nao"
+        - "Duplicar os que vendem para 3, 5, 10 novos conjuntos"
+        - "Repetir: vendeu -> duplicar; bateu CPA max -> matar"
+        - "Olhar gerenciador CONSTANTEMENTE"
+      rigor: "MUITO rigoroso com CPA. Com 60+ conjuntos nao precisa segurar CPA ruim."
+      limite: "Ja dupliquei 90, 150 conjuntos"
+      alerta: "NUNCA duplicar e dormir/sumir. Tem que monitorar."
+      roas: "6-7 (gastando R$3-5k/dia)"
+
+    - posicao: 6
+      nome: "Advantage+ 1-1-1"
+      objetivo: "Maxima inteligencia do Facebook"
+      estrutura: "1 campanha, 1 conjunto, 1 criativo por campanha"
+      regra: "So precisa validar CRIATIVO (Facebook escolhe publico)"
+      caso: "Campanha ativa por 3 meses, orcamento R$100 a R$1.500/dia, ROAS 6, R$80k investidos"
+      ivan_quote: "A campanha que mais vem funcionando hoje"
+      regra_advantage: "NUNCA duplicar conjuntos (sobreposicao de leilao). Otimizar apenas orcamento."
+      configuracao_publico:
+        engajado: "Add to Cart 30d + View Content 30d + interacao catalogo 180d"
+        clientes: "Compradores ultimos 90 dias"
+
+    - posicao: 7
+      nome: "CBO Semanal (Reciclagem)"
+      objetivo: "Segunda chance para criativos/publicos"
+      frequencia: "1 campanha CBO a cada 7-15 dias"
+      conteudo: "5 melhores publicos + 3 criativos que QUASE validaram"
+
+    - posicao: 8
+      nome: "Remarketing"
+      objetivo: "Converter publico que ja interagiu"
+      tipo: "Sempre ABO (nunca CBO - CBO gastaria so no publico frio)"
+      conjuntos:
+        quente: "7 dias"
+        morno: "14 dias (Ivan matou o de 15 dias)"
+        frio: "30 dias"
+        teste: "60-90 dias"
+      tipos_criativo:
+        - "UGC/Influenciador (manter mesma campanha, ir alimentando)"
+        - "Catalogo"
+        - "Imagem com desconto nichado (10% off Timao, cupom TIMAO10)"
+      quando_comecar: "Minimo 300-500 compras, ou ~5000 add to cart, ~1000 checkout"
+      se_cpm_alto: "Se CPM > R$100, ainda nao e momento"
+
+    - posicao: 9
+      nome: "Lookalike"
+      objetivo: "Expandir para publicos similares"
+      estrutura: "1 campanha, 10 conjuntos (cada um = uma % de semelhanca, 1-10%)"
+      criativos: "APENAS validados do clube especifico"
+      pre_requisito: "Gasto relevante, dados suficientes"
+      resultado: "R$14K investido -> R$90K retorno em 1 dia (ROAS 6)"
+      regra: "Publico no conjunto: APENAS o personalizado. Sem adicionar interesse do clube."
+
+  regra_paralela: "NAO e tabua engessada. Se teste criativo esta vendendo, NAO pause. Rode em paralelo."
+  ivan_quote: "Quando voce chegar na etapa de escala, provavelmente ja vai estar escalado"
+
+# =============================================================================
+# CRO (CONVERSION RATE OPTIMIZATION)
+# =============================================================================
+cro:
+  diagnostico:
+    passos:
+      - "Calcular taxa de conversao geral: (vendas / sessoes) x 100"
+      - "Se abaixo de 1%, quebrar em duas metricas:"
+      - "Taxa de adicao ao carrinho (benchmark: 8%)"
+      - "Taxa de conversao do checkout (benchmark: 18%+)"
+    se_adicao_ruim: "Problema na pagina do produto"
+    se_checkout_ruim: "Problema no checkout"
+
+  simulacao_impacto:
+    cenario_1: "10.132 sessoes, 54 compras = 0.53% conversao, R$23k receita, ROAS 4.6"
+    cenario_2: "10.132 sessoes, 101 compras = 1% conversao, R$44k receita, ROAS 8.7"
+    conclusao: "MESMO investimento em trafego (R$5k) -> quase DOBRO do ROAS"
+    ivan_quote: "A gente fica muito bitolado no trafego e as vezes precisa olhar para o site"
+
+  checklist_site:
+    barra_anuncios:
+      - "Ofertas que gerem desejo OU quebrem objecao"
+      - "Escassez: 'Promocao valida somente esta semana'"
+      - "Desejo: mostrar 'cada camisa sai por R$94' ao inves de 'Pag2Leve3'"
+      - "Preco: desconto PIX, parcelamento"
+      - "Autoridade: garantia, troca/devolucao"
+
+    banners:
+      - "MINIMO 3 banners, RENOVAR regularmente"
+      - "Priorizar HUMANIZACAO (pessoas nos banners = 10 passos a frente)"
+      - "Tipos: quebra objecao, desejo, oferta, sazonalidade, colecoes, escassez"
+      - "Banner de influenciadores"
+      - "Banner com nota Reclame Aqui (so se 8.7+)"
+      - "Banner para colecoes mais vendidas (renovar mensalmente)"
+      - "Banners para canais quentes (comunidade, app)"
+
+    home:
+      - "Seletor de colecoes/categorias (ref: Nike)"
+      - "Produtos mais vendidos (atualizar semanalmente)"
+      - "Produtos de lancamento"
+      - "Produtos das principais categorias"
+      - "Produtos com desconto (MAS NAO todos - 'se toda loja tem desconto, nada tem desconto')"
+      - "VideoCommerce: video institucional 25-45 segundos"
+      - "Social Commerce: elementos de redes sociais no site"
+      - "Pop-up para coletar email/telefone (benchmark: 8%)"
+
+    colecao:
+      - "Banner exclusivo por colecao (identidade visual do clube)"
+      - "Filtros: preco, disponibilidade, tamanho, categoria"
+      - "Produtos com maior rotatividade NO TOPO"
+      - "Ancoragem: 4o produto com preco alto sem desconto"
+      - "Produto esgotado em 6o lugar (escassez + efeito manada)"
+      - "Cadastrar produtos que fornecedor NAO tem como esgotados"
+      - "VideoCommerce por colecao"
+
+    pagina_produto:
+      - "Foto, nome, avaliacoes (estrelas), preco comparativo + preco de venda"
+      - "% de desconto, preco parcelado, desconto no PIX"
+      - "Tabela de medidas, seletor variantes, personalizacao"
+      - "ACIMA do botao: escassez ('quase esgotado', 'restam X unidades')"
+      - "Variantes esgotadas (PP, 4XG - gera escassez)"
+      - "Fotos humanizadas com IA (modelos vestindo)"
+      - "Fotos detalhadas do produto"
+      - "Foto explicando a oferta"
+      - "Review do cliente com video"
+      - "Calculadora de frete (AUMENTOU conversao do checkout)"
+      - "Copy em texto E imagem"
+      - "Linha suspensa: beneficios, prazo entrega, devolucao 7 dias"
+      - "Produtos recomendados e vistos recentemente"
+      - "Avaliacoes com fotos humanizadas por IA"
+      - "CITAR nome da loja nas avaliacoes importadas"
+      - "'Reviews' -> trocar para 'Avaliacoes' (publico pode nao saber ingles)"
+
+    checkout:
+      nao_fazer:
+        - "NAO colocar banners/ofertas de desconto progressivo (leva cliente a sair)"
+      fazer:
+        - "Ofertas de PAGAMENTO (parcelamento, % off PIX, frete gratis)"
+        - "Escassez ('ultimas unidades em promocao')"
+        - "Identidade visual consistente com o site"
+        - "Resumo do carrinho ABERTO por padrao"
+        - "Mais de uma opcao de frete (frete gratis + frete expresso R$9.90-19.90)"
+        - "Order bump por colecao"
+        - "Avaliacoes no checkout (abaixo do rodape)"
+      cartpanda: "Checkout com ate 35% de conversao (melhor que nativo Shopify)"
+      frete_pago: "R$15k de lucro adicional no mes (caso R$1M faturamento)"
+
+    rodape:
+      - "Newsletter, redes sociais"
+      - "Menu: colecoes, politicas, rastrear pedido, app, FAQ, historia, influenciadores"
+      - "Pagina de avaliacoes de clientes"
+      - "Central atendimento (canais, horarios, dias)"
+      - "Barra inferior cinza com copyright + CNPJ"
+
+    menu_cabecalho:
+      - "Inicio, mais vendidos, principais categorias/colecoes"
+      - "Hierarquia: Campeonatos > Ligas > Times dentro da liga"
+      - "Clientes/influenciadores, app, grupo VIP, rastrear pedido"
+
+  ancoragem_preco:
+    estrutura:
+      - "1o, 2o, 3o produto: com desconto (variando %)"
+      - "4o produto: SEM desconto, preco alto (ancora)"
+      - "6o produto: ESGOTADO (escassez + efeito manada)"
+    efeito: "Se tem produto esgotado, muita gente compra. Se tem produto caro, descontos sao de verdade."
+    regra: "Usar em produtos com BAIXA rotatividade de vendas (nao nos mais vendidos)"
+    caso: "Bobojaco cadastrado a R$700 (fornecedor nao tinha, comprou por R$300-400)"
+
+  social_commerce:
+    descricao: "Trazer elementos de redes sociais para o site (Stories, Reels)"
+    pesquisa: "EUA - taxa de rejeicao MENOR quando site tem elementos familiares de redes sociais"
+    tendencia: "Comecou em 2025 e vai ganhar cada vez mais forca"
+
+  seletores_navegacao:
+    tipos:
+      - "Seletor de clubes brasileiros"
+      - "Seletor de marcas (para chuteiras)"
+      - "Seletor de ligas (Premier League -> todos os times)"
+      - "Seletor de paises (pensando Copa do Mundo)"
+    principio: "O cliente tem que conseguir achar qualquer produto facilmente"
+
+  diagnostico_metricas_caras:
+    passos:
+      - "Verificar custo por adicao ao carrinho (ideal < R$3)"
+      - "Verificar custo por finalizacao de compra"
+      - "Verificar custo por inclusao info pagamento"
+      - "Identificar maior salto entre etapas = maior gargalo"
+      - "Ajustar site (pagina produto / checkout)"
+      - "Verificar pixel (todos eventos visiveis como conversao)"
+      - "Conectar Google Analytics na conta de anuncio"
+      - "Se nada funciona: trocar BM"
+
+# =============================================================================
+# STACK TECNOLOGICO COMPLETO
+# =============================================================================
+tech_stack:
+  ecommerce:
+    principal: "Shopify"
+    alternativa: "Nuvemshop"
+
+  trafego_pago:
+    - "Meta Ads"
+    - "Google Ads"
+
+  automacao:
+    email_whatsapp: "Reportana (R$159/mes - custo-beneficio)"
+    email_avancado: "Klaviyo (R$300-500+/mes - escala)"
+    api_whatsapp: "Reportana (API oficial integrada)"
+
+  analytics:
+    principal: "Google Analytics 4"
+    dashboard: "Looker Studio + InstaAI (API Facebook)"
+    crm: "Dashboard CDR Labs (Looker Studio customizado)"
+
+  contingencia:
+    contas: "AdSpower + Proxy"
+    pixel: "BM mae cria pixel, compartilha com BMs filiais"
+
+  organizacao:
+    criativos: "Trello (ideias, em teste, validados, reprovados, segunda chance)"
+    gestao: "ClickUp"
+    planejamento: "Planilhas Google"
+
+  ia:
+    copy: "Claude AI (projeto Sexy Canvas)"
+    pesquisa: "Gemini"
+    fotos: "IA para gerar fotos humanizadas de modelos vestindo"
+
+  shopify_apps:
+    facebook_instagram: "App nativo (melhor integracao pixel + catalogo)"
+    avaliacoes: "BkReviews / Live Reviews"
+    import_produtos: "PokeImports, Coala"
+    pop_up: "Shopify Forms (15% preenchimento)"
+    wishlist: "App gratuito"
+    filtros: "Search & Discovery (gratuito)"
+    menu: "Global Menu (gratuito)"
+    rastreio: "Parcel Panel / Nemo"
+    checkout: "CartPanda (ate 35% conversao)"
+    contador: "Coutimer (contador regressivo)"
+
+  mineracao:
+    anuncios: "Extensao Chrome Disparo (gratuita)"
+    concorrentes: "Extensao Chrome (filtro por replicas)"
+
+  suporte:
+    audios: "ZapVoice (~R$50/mes)"
+
+  integracao_facebook:
+    catalogo: "App nativo Shopify (Facebook & Instagram)"
+    dados: "Google Analytics conectado na conta de anuncios"
+    utms_nativas:
+      origem: "{{site_source_name}}"
+      meio: "{{adset.name}}"
+      campanha: "{{campaign.name}}"
+      conteudo: "{{ad.name}}"
+      term: "{{placement}}"
+
+  velocidade: "Fiverr (freelancer para otimizacao)"
+
+# =============================================================================
+# CRIATIVOS QUE FUNCIONAM
+# =============================================================================
+criativos:
+  tipos_validados:
+    - tipo: "Anuncio que NAO parece anuncio"
+      detalhe: "Gerar desejo, humanizacao"
+    - tipo: "Apito no inicio"
+      detalhe: "Chamar atencao nos 3 primeiros segundos"
+    - tipo: "Sem fala/narracao"
+      detalhe: "Musica de fundo + visual. Escalou muito para publico feminino"
+    - tipo: "UGC (User Generated Content)"
+      detalhe: "Para remarketing. Manter na mesma campanha e ir alimentando"
+      caso: "UGC vendeu R$25K em um dia"
+    - tipo: "UGC sem fala"
+      detalhe: "Influenciador so mostrando look"
+      resultado: "Rodou 4 meses na mesma campanha"
+    - tipo: "Story Ads"
+      detalhe: "Formato story com fontes de stories, parece conteudo organico"
+    - tipo: "Preco no criativo"
+      detalhe: "Afasta curioso, atrai qualificado"
+    - tipo: "Fotos profissionais"
+      detalhe: "Modelar Nike, Adidas, ProDirect"
+    - tipo: "Criativo tensao"
+      detalhe: "Narrativa de suspense sobre campeonato"
+      ctr: "Metricas absurdas"
+    - tipo: "Criativo emocional"
+      detalhe: "Torcedor emocionado, comemoracoes"
+      caso: "Botafogo torcedor chorando - CTR > 10%"
+
+  regras:
+    - "NUNCA usar foto com fundo de grade (a nao ser atacado)"
+    - "Testar variacoes: mesmo video com CTAs diferentes"
+    - "Fotos profissionais tipo Nike/Adidas mudam o nivel do catalogo"
+    - "Influenciador entrando no personagem, nao vendendo"
+    - "Pare de interromper e comece a entreter"
+    - "O que mais tem peso para CPA barata sao as pessoas por tras da marca"
+
+  organizacao_trello:
+    colunas:
+      - "Ideias de criativos"
+      - "Criativos em teste"
+      - "Criativos validados"
+      - "Criativos reprovados"
+      - "Criativos para segunda chance"
+
+# =============================================================================
+# CONFIGURACOES CRITICAS META ADS
+# =============================================================================
+configuracoes_meta:
+  app_nativo_shopify:
+    regra: "Integrar App Nativo da Shopify (Facebook & Instagram)"
+    beneficio: "Melhor performance de catalogo vs Flexify ou Quintas"
+    dados: "Compartilhados no MAXIMO"
+    alerta: "NAO ter pixel no codigo do tema simultaneamente (duplicacao de metrica)"
+
+  google_analytics:
+    como: "Gerenciador de Eventos > Integracoes de Parceiros > Analises"
+    beneficio: "Analytics e a plataforma mais avancada para coletar dados"
+    resultado: "Mais dados para o Facebook = melhor performance"
+
+  catalogo_anuncio:
+    nome_produto: "Product Name + descricao com preco atual"
+    cta_coleta: "Saiba Mais (nao Comprar Agora)"
+    otimizacoes: "TODAS exceto IA (gerar fundo, musica)"
+    formato: "Imagem unica em carrossel (NAO apresentacao multimidia)"
+    categoria_shopify: "Colocar 'futebol' (nao futebol americano)"
+
+  comentarios:
+    regra: "OCULTAR comentarios negativos, NUNCA excluir"
+    motivo: "Excluir prejudica metricas do Facebook"
+    instagram: "Limpar comentarios negativos em posts fixados regularmente"
+
+  contingencia:
+    nichada_agressiva: "AdSpower + Proxy"
+    generica: "Compartilhar ativos entre BMs"
+    pixel:
+      bm_mae: "Cria o pixel"
+      bm_filiais: "Recebem pixel e catalogo compartilhados"
+      se_mae_cai: "Assets continuam acessiveis nas filiais"
+
+# =============================================================================
+# PRINCIPIOS FUNDAMENTAIS (CROSS-CUTTING)
+# =============================================================================
+principios:
+  - numero: 1
+    principio: "Dados acima de tudo"
+    quote: "Olhem para numeros. Numeros falam com a gente."
+    aulas: "01, 04, 05"
+
+  - numero: 2
+    principio: "Faturamento e ego"
+    quote: "Lucro e margem sao o que importam"
+    aulas: "01, 02, 05, 06"
+
+  - numero: 3
+    principio: "Tudo que e nichado converte mais"
+    quote: "Lojas nichadas, publicos nichados, e-mails nichados"
+    aulas: "03, 04, 05, 09, 10"
+
+  - numero: 4
+    principio: "Teste infinito"
+    quote: "Nunca parar de testar. Nao existe resultado bom que nao possa melhorar."
+    aulas: "01, 04, 05"
+
+  - numero: 5
+    principio: "Trabalhe a base existente"
+    quote: "CPA ja foi pago; retencao e mais barata que aquisicao"
+    aulas: "01, 02, 03, 05"
+
+  - numero: 6
+    principio: "Modele grandes marcas"
+    quote: "Nike e Adidas como referencia para e-mails, site, fotos"
+    aulas: "04, 05"
+
+  - numero: 7
+    principio: "Entenda o objetivo"
+    quote: "Cada campanha, cada metrica, cada acao tem um objetivo especifico"
+    aulas: "01, 02, 04"
+
+  - numero: 8
+    principio: "Delegue (nao largue)"
+    quote: "Treinar equipe, criar processos, ser estrategico"
+    aulas: "04"
+
+  - numero: 9
+    principio: "Identifique padroes"
+    quote: "A habilidade mais valiosa em trafego e marketing"
+    aulas: "04, 05"
+
+  - numero: 10
+    principio: "Gamificacao funciona"
+    quote: "Shopee, Temu, barra de progressao"
+    aulas: "02"
+
+# =============================================================================
+# METRICAS REFERENCIA COMPLETAS
+# =============================================================================
+metricas_referencia:
+  trafego:
+    cps_midia_bom: "< R$0.22"
+    cpm_sem_coleta: "R$22-25"
+    cpm_apos_coleta: "R$8"
+    cpm_remarketing_limite: "R$90-100 (publico pequeno demais)"
+    custo_add_to_cart_coleta: "< R$1.00"
+    custo_view_content_coleta: "< R$0.10"
+    cpa_catalogo_excepcional: "R$2-6.50"
+    cpa_catalogo_medio: "R$28"
+    cpa_escala: "R$50-80"
+    cpa_nichado: "R$7-9"
+    cpa_amplo: "R$15-25"
+    cpa_mercado_inicio: "R$50-60"
+    roas_catalogo: "7-8"
+    roas_escala_lookalike: "6"
+    roas_coleta: "1.6 (normal, objetivo nao e vender)"
+    roas_medio_cdr: "7.7"
+    roas_remarketing: "8 (semanas com 14-15)"
+    investimento_coleta: "R$7/dia por conjunto (2 conjuntos = R$14/dia)"
+    advantage_plus_inicial: "R$30-50/dia"
+    campanhas_simultaneas: "10-15 campanhas na escala"
+
+  conversao_site:
+    taxa_conversao_mercado: "1%"
+    taxa_conversao_ivan: "1.5-1.7%"
+    adicao_carrinho_mercado: "8-10%"
+    adicao_carrinho_ivan: "13-15%"
+    conversao_checkout_mercado: "18-20%"
+    conversao_checkout_ivan: "25-30%"
+    custo_adicao_carrinho_ideal: "< R$3"
+    custo_adicao_carrinho_ruim: "> R$7"
+    custo_finalizacao_compra_ruim: "> R$37"
+    custo_inclusao_info_pagamento_ruim: "> R$271"
+    pop_up_preenchimento_media: "8%"
+    pop_up_shopify_forms: "15%"
+    pop_up_klaviyo: "12%"
+    fonte_mobile_minima: "16 pixels"
+    cartpanda_checkout: "Ate 35% conversao"
+    connect_rate_bom: "80-90%+"
+
+  automacao_crm:
+    taxa_recuperacao_ivan: "31%"
+    taxa_recuperacao_mercado: "10-15%"
+    taxa_abertura_email_automacao: "23%"
+    taxa_abertura_email_campanha: "40%"
+    taxa_abertura_whatsapp: "90%+"
+    taxa_desinscricao_email: "0.10%"
+    taxa_pagamento_total: "90% (com todas automacoes)"
+
+  financeiro:
+    margem_bruta_minima: "15%"
+    margem_bruta_ideal: "20%+"
+    markup_ideal: "2x+"
+    markup_apertado: "1.8x"
+    roas_break_even: "~3.36"
+
+  demografico:
+    compradores_homens: "98%"
+    faixa_etaria_top: "18-24 e 25-34"
+    posicionamentos_convertem: "Instagram Reels, Instagram Stories"
+    facebook_reels: "Quase zero compras (1 compra no caso)"
+
+  operacao:
+    ltv_retencao: "12-17% (media 3 meses, nicho camisa time)"
+    ltv_d90: "3-4%"
+    ltv_maximo: "32% ALTV"
+    taxa_pagamento_aprovado: "79.47%"
+    ticket_medio: "R$312.36"
+    investimento_midia: "R$6.614/mes"
+    sessoes_organicas: "~700-860/mes"
+    sessoes_instagram: "76%"
+    sessoes_facebook: "12%"
+    receita_comunidade: "10-15% do faturamento"
+    receita_app: "20-23% do faturamento"
+    tempo_recompra: "180 dias (camisa de time)"
+    operacao_referencia: "R$800k/mes com 100% Meta Ads"
+    operacao_4_mes: "R$200-250k/mes"
+
+# =============================================================================
+# QUOTES & MENTAL MODELS
+# =============================================================================
+quotes:
+  dados:
+    - "Olhem para numeros. Numeros falam com a gente. Basta saber escutar."
+    - "Um dos motivos que me fez ter resultado tao expressivo e rapido foi sempre olhar para numero."
+    - "Com dados, voces tem respostas. Com dados, voces sabem pra onde ir."
+    - "A gente testa, olha pra numeros, identifica padrao e ajusta."
+
+  negocio:
+    - "Faturamento e ego."
+    - "Voce prefere um ROAS de 12 faturando R$100K ou um ROAS de 6 faturando R$1M?"
+    - "A tendencia e: quanto mais investir, mais o ROAS vai descer."
+    - "Muitas vezes nao e o CPA que esta caro, o problema e na sua operacao."
+    - "Camisa de time e uma faculdade de empreendedorismo."
+    - "Drop e uma faculdade. O que trouxe a gente ate aqui nao vai levar pro proximo passo."
+
+  trafego:
+    - "Facebook e teste. Teste infinito. Voce nunca vai parar de testar no Face."
+    - "Nao existe resultado bom que nao possa melhorar."
+    - "Priorize escala horizontal."
+    - "Entenda o objetivo de cada campanha."
+    - "Tudo que e nichado tem uma conversao maior."
+    - "Catalogo, o pior inimigo vai ser a pressa."
+    - "Primeira campanha que a gente sobe e a ultima que a gente mata."
+    - "Se eu acertar esse publico fora da caixa, eu surfo sozinho."
+    - "Campanha de Advantage+ e batata. So precisa validar criativo."
+
+  equipe:
+    - "Delegar e largar tem uma diferenca muito grande."
+    - "Eu quero ensinar voces a serem empresarios fodas."
+    - "O que pode quebrar nosso negocio hoje?"
+    - "Sejam um otimo vendedor de sonho."
+    - "Se o piloto do aviao comeca a chorar, voce desespera."
+    - "O negocio e muito mais sobre pessoas do que o entregavel."
+    - "Intensidade distorce tempo. 3 anos pagando o preco pra mudar 60 anos."
+
+  criativos:
+    - "Anuncio que nao se parece com anuncio."
+    - "Pare de interromper e comece a entreter."
+    - "O que mais tem peso para CPA barata sao as pessoas por tras da marca."
+    - "O que manda pra esse CPS abaixar? Criativo."
+    - "Pare de usar foto com fundo de grade."
+
+  site:
+    - "Lojas que humanizam estao 10 passos a frente."
+    - "Pessoas compram de pessoas, e cada ano que passa isso se torna mais forte."
+    - "Se toda loja ta com desconto, nada vai estar com desconto."
+    - "Tudo no nosso e-commerce funciona como um funil."
+    - "Voce compraria na sua operacao?"
+    - "Sabio e aquele que executa, nao e aquele que sabe."
+    - "Comecam a olhar fora da bolha, fora de camisa de time."
+
+  automacao:
+    - "Nao menosprezem a porra do e-mail."
+    - "Automacao tem que ser crucial."
+    - "CDR = Constancia, Dados e Resultado."
+    - "Esse dinheiro esta na mesa. Se eu nao for atras, nao estaria no meu caixa."

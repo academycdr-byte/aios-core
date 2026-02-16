@@ -1,0 +1,743 @@
+domain: trafego-pago
+title: "Trafego Pago - Meta Ads & Google Ads"
+confidence: 0.95
+source: "Aulas 01, 04, 06, 08, 09, 10"
+last_updated: "2026-02-16"
+
+# =============================================================================
+# PIPELINE COMPLETO DE CAMPANHAS META ADS
+# =============================================================================
+pipeline_campanhas:
+  filosofia_central: "Facebook e teste. Teste infinito. Voce nunca vai parar de testar no Face."
+  regra_critica: "NAO e tabua engessada. Se teste criativo esta vendendo, NAO pause para ir pro teste publico. Rode em paralelo."
+  resultado_esperado: "Quando voce chegar na etapa de escala, provavelmente ja vai estar escalado"
+
+  etapa_1_coleta_de_dados:
+    nome: "Campanha de Coleta de Dados"
+    descricao: "Primeira campanha que a gente sobe e a ultima que a gente mata"
+    estrutura: "1 campanha, 2 conjuntos de anuncios"
+    conjunto_1:
+      objetivo: "Ver Conteudo"
+      tipo_catalogo: "padrao de todos os produtos (NAO Advantage+)"
+      orcamento: "R$7/dia"
+      metrica_boa: "< R$0.10 por acao"
+    conjunto_2:
+      objetivo: "Adicao ao Carrinho"
+      tipo_catalogo: "padrao de todos os produtos (NAO Advantage+)"
+      orcamento: "R$7/dia"
+      metrica_boa: "< R$1.00 por acao"
+    segmentacao: "Interesses relevantes (Brasileirao, Libertadores, ESPN, futebol, compradores envolvidos, compras online)"
+    duracao_minima: "7 dias (~R$80-100 total)"
+    otimizacao: "NENHUMA (nao mexer em orcamento, nao otimizar)"
+    regra: "Novos produtos sao incluidos no catalogo; compra dados continuamente"
+    resultados_reais:
+      cpm_antes_coleta: "R$22-25"
+      cpm_apos_coleta: "R$8"
+      custo_adicao_carrinho: "R$2.36"
+      custo_finalizacao_compra: "R$12"
+      roas_esperado: "1.6 (normal e esperado, objetivo nao e vender)"
+
+  etapa_2_catalogo_advantage_plus:
+    nome: "Campanha Advantage+ (Catalogo Todos os Produtos)"
+    quando_subir: "Apos 7 dias de Coleta de Dados rodando (pode acelerar investindo mais na coleta)"
+    estrutura: "1 campanha Advantage+, catalogo de todos os produtos"
+    publico: "Aberto (a coleta ja inteligenciou o catalogo)"
+    tempo_otimizacao: "14-15 dias"
+    regra_critica: "O pior inimigo no catalogo e a pressa. Catalogo precisa de tempo."
+    regra_advantage_plus: "NUNCA duplicar conjuntos (causa sobreposicao de leilao). Otimizar APENAS orcamento."
+    orcamento_inicial: "R$30-50/dia (depende do caixa)"
+    resultados_reais:
+      exemplo_retorno: "R$1,500 investido -> R$12,000 retorno (ROAS 7, CPA R$28)"
+      cpas_clientes: "R$2-6.50 (excepcionais)"
+      roas_tipico: "7-8"
+      roas_longo_prazo: "8-10"
+    evolucao:
+      passo_1: "Campanha mae (todos os produtos, aberto)"
+      passo_2: "Identificar clubes que vendem mais"
+      passo_3: "Criar campanhas filiais nichadas por clube (conjunto de catalogo + segmentacao do clube)"
+    configuracao_publico_advantage_plus:
+      publico_engajado: "Add to Cart 30d + View Content 30d + interacao catalogo 180d"
+      clientes_existentes: "compradores dos ultimos 90 dias (testou 30, 60, 90; 90 performou melhor)"
+    dica: "Da para escalar uma loja sem cabeca facilmente so com catalogo"
+    campanha_1_1_1:
+      descricao: "A campanha que mais vem funcionando hoje"
+      estrutura: "1 campanha, 1 conjunto, 1 criativo por campanha"
+      regra: "So precisa validar o CRIATIVO (Facebook escolhe publico)"
+      cada_criativo_validado: "nova campanha Advantage+"
+      caso_pratico: "campanha ativa por 3 meses, orcamento de R$100 a R$1,500/dia, ROAS de 6, R$80k investidos"
+
+  etapa_3_teste_criativo:
+    nome: "Teste de Criativo Individual (ABO)"
+    estrutura: "1 campanha POR criativo, 3 conjuntos, MESMA segmentacao, MESMO criativo em cada conjunto"
+    tipo: "ABO (garantir gasto igual em cada criativo)"
+    segmentacao: "Apenas interesse do clube (ex: Santos). Sem idade, sem genero, sem localizacao"
+    razao_mesma_segmentacao: "Testar APENAS o criativo como variavel"
+    razao_abo: "Controlar orcamento por conjunto, garantir gasto em todos os criativos"
+    se_testar_3_criativos: "3 campanhas, 9 conjuntos total"
+    metricas_para_validar:
+      - "CPA (principal)"
+      - "CPC"
+      - "CTR"
+      - "media de visualizacao do criativo"
+    organizacao_trello:
+      coluna_1: "Ideias de criativos"
+      coluna_2: "Criativos em teste"
+      coluna_3: "Criativos validados"
+      coluna_4: "Criativos reprovados"
+      coluna_5: "Criativos para segunda chance (vendeu algo mas nao validou)"
+
+  etapa_4_teste_publico:
+    nome: "Teste de Publico Individual"
+    estrutura: "1 campanha, 5 conjuntos (ou mais, ate 15), CRIATIVO VALIDADO em todos, SEGMENTACAO DIFERENTE em cada"
+    regra: "Pelo menos 1 conjunto com segmentacao fora da caixa"
+    variaveis_para_testar:
+      - "Genero"
+      - "Idade"
+      - "Regiao"
+      - "Interesse"
+      - "Comportamento"
+      - "Posicionamento"
+      - "Dispositivo"
+    publicos_fora_da_caixa_validados:
+      - "Cerveja, churrasco, Brahma"
+      - "Caze TV, TNT Sports, Sport TV"
+      - "Funkzinho carioca (para publico do Rio)"
+      - "Society/futebol amador"
+      - "Influenciadores que o publico acompanha"
+      - "Estado do clube, cidade (cuidado com CPM)"
+    publicos_validados_para_mulher:
+      - "Compradores envolvidos + compras na internet"
+      - "Interesse no clube + interesse em Virginia + IPINC"
+      - "Faixa 18-24, estado especifico, so Instagram"
+    hack_publico_feminino: "Adicionar 'compradores envolvidos em compras na internet' = CPA bizarro"
+    regra_segmentacao: "SEMPRE colocar pelo menos a segmentacao do clube"
+    quote: "Se eu acertar a porra desse publico fora da caixa, eu surfo sozinho"
+
+  etapa_5_pre_escala_abomax:
+    nome: "ABOmax / Estrategia de Duplicacao"
+    estrutura_inicial: "1 campanha ABO, 5 conjuntos, 1 anuncio (APENAS informacoes validadas)"
+    regra: "NAO matar campanhas anteriores (elas continuam rodando = escala horizontal)"
+    execucao:
+      passo_1: "Dos 5 conjuntos, 3 vendem -> matar os 2 que nao vendem"
+      passo_2: "Duplicar os 3 que vendem para 3, 5, 10 novos conjuntos"
+      passo_3: "Repetir: vendeu -> duplicar; bateu CPA max sem vender -> matar"
+      passo_4: "Olhar gerenciador CONSTANTEMENTE"
+    rigor: "Sou MUITO rigoroso em relacao a CPA nessa campanha"
+    limite_duplicacao: "Ja dupliquei 90, 150 conjuntos (depende do orcamento e atencao)"
+    alerta: "NUNCA duplicar e dormir/sumir. Tem que monitorar."
+    roas_tipico: "6-7 (gastando R$3-5k/dia)"
+    aplica_se_a: "Campanhas ABO e CBO. NAO aplica-se a Advantage+ (vertical, nao horizontal)"
+    insight: "Praticamente impossivel nao ter resultado com criativo + publico validados"
+
+  etapa_6_cbo_semanal_reciclagem:
+    nome: "CBO de Reciclagem"
+    conceito: "Dar segunda chance a criativos/publicos da coluna segunda chance do Trello"
+    frequencia: "1 campanha CBO a cada 7-15 dias"
+    conteudo: "5 melhores publicos que QUASE validaram + 3 criativos que QUASE validaram"
+    razao_cbo: "Facebook decide onde gastar; bom para testar em massa"
+
+  etapa_7_advantage_plus_escala:
+    nome: "Campanha Advantage+ (Escala Vertical)"
+    regra: "Campanha VERTICAL (um unico conjunto com orcamento alto)"
+    nao_duplicar_conjuntos: "Causa sobreposicao de leilao"
+    otimizacao: "APENAS orcamento (analogia da escada)"
+    descricao_extra: "Veja etapa_2 para configuracao de publico Advantage+"
+
+  etapa_8_remarketing:
+    nome: "Remarketing ABO (Quente/Morno/Frio)"
+    estrutura: "1 campanha ABO, 3 conjuntos"
+    razao_abo: "CBO gastaria so no publico frio (maior volume)"
+    divisao_publico:
+      quente: "7 dias"
+      morno: "14 dias (Ivan MATOU os 15 dias, 7/30/60 performou melhor que 7/15/30/60)"
+      frio: "30 dias"
+      teste_adicional: "60 dias e 90 dias"
+    tipos_remarketing_testados:
+      ugc_influenciador: "Manter mesma campanha e ir alimentando com novos UGCs (campanhas armazenam inteligencia)"
+      catalogo: "Todos os produtos nos 3 conjuntos de temperatura"
+      imagem_desconto_nichado: "10% off em todos os produtos do Timao. Use cupom TIMAO10"
+    eventos_para_testar:
+      - "Add to Cart"
+      - "Page View"
+      - "View Content"
+      - "Finalizacao de Compra"
+      - "Inclusao Info Pagamento"
+    quando_rodar: "Quando CPM nao estiver estourado (CPM R$90-100 = pouco publico ainda)"
+    quando_comecar: "Minimo 300-500 compras na conta de anuncio, ou ~5000 add to cart, ~1000 checkout"
+    regra_cpm: "Se CPM de remarketing > R$100, ainda nao e momento. Comprar mais dados antes."
+    resultados_reais:
+      roas_remarketing: "8 (semanas com ROAS de 14-15)"
+      remarketing_cpa_catalogo: "R$7 (3 compras) e R$18 (1 compra)"
+    catalogo_remarketing: "Campanhas ficam 3-4 meses ativas sem matar"
+
+# =============================================================================
+# ESTRATEGIAS DE ESCALA
+# =============================================================================
+escala:
+  principio_fundamental: "Escala horizontal > escala vertical. Odeio depender de uma unica campanha."
+  campanhas_simultaneas: "10-15 campanhas trazendo resultado todo dia"
+  regra_orcamento: "Destinar porcentagem fixa do orcamento para testar SEMPRE"
+  quote_escala: "Voce prefere um ROAS de 12 faturando R$100K ou um ROAS de 6 faturando R$1M?"
+  tendencia: "Quanto mais investir, mais o ROAS vai descer"
+
+  escadinha:
+    nome: "Estrategia da Escada / Alavancagem de Otimizacao"
+    aplica_se_a: "TODAS as campanhas exceto Coleta de Dados"
+    regras:
+      - "Bom resultado -> subir 1 degrau (aumentar orcamento)"
+      - "Bom resultado de novo (2 dias) -> subir mais 1 degrau"
+      - "Resultado ruim -> ficar no mesmo degrau por 2-3 dias"
+      - "Resultado ruim permaneceu -> descer 1 degrau"
+      - "Continua ruim -> descer mais 1 degrau"
+      - "Chegou em orcamento minimo e ainda ruim -> MATAR campanha"
+    aumento_orcamento: "Depende do valor (R$50 -> R$70; R$1000 -> R$1250). Nao existe regra fixa."
+    aumento_seguro: "R$50 para R$100 (tranquilo)"
+    aumento_arriscado: "R$500 para R$1.000 (ja arriscado, pode quebrar performance)"
+    exemplo_real: "Campanha que foi de R$75/dia ate R$1,200/dia e voltou, subindo e descendo varias vezes"
+    analise_minima: "Minimo 3-5 dias para analise justa. Nunca fazer analise diaria."
+
+  alavancagem_sazonal:
+    nome: "Alavancagem de Orcamento em Picos"
+    regra: "APENAS em dias de sazonalidade extrema (pos-campeonato, finais)"
+    execucao:
+      - "Identificar horarios de pico (10h-12h e 18h-22h30)"
+      - "Nos conjuntos com resultado otimo, jogar orcamento para R$25K-30K"
+      - "Nao vai gastar tudo (o periodo e curto)"
+      - "Quando acabar o horario de pico, VOLTAR o orcamento ao normal"
+      - "NUNCA dormir com orcamento alto"
+    alerta: "Pelo amor de Deus, nao facam isso no dia-a-dia. E loucura."
+    caso_real: "R$800/dia ROAS 55 -> R$4.800/dia ROAS 40 (so datas sazonais)"
+
+  lookalike:
+    nome: "Campanha Lookalike 1-10%"
+    estrutura: "1 campanha, 10 conjuntos (cada um = uma porcentagem de semelhanca)"
+    criativos: "APENAS validados do clube especifico"
+    pre_requisito: "Gasto relevante, dados suficientes"
+    publico_no_conjunto: "APENAS o personalizado (lookalike). Sem adicionar interesse do clube novamente."
+    duplicacao: "Conjuntos que vendem podem ser duplicados (ABOmax dentro do Lookalike)"
+    resultado_real: "R$14K investido -> R$90K retorno em 1 dia (ROAS 6)"
+
+  orcamento_80_20:
+    nome: "Distribuicao de Orcamento 80/20"
+    regra: "Separar 80% do orcamento total para aquilo que ja esta validado e funciona"
+    distribuicao_80:
+      campanhas_validadas: "70%"
+      remarketing: "30%"
+    testes_novos: "20% do orcamento total"
+    quando_usar: "Sempre, mas especialmente em periodos de alta competicao (Black Friday)"
+
+# =============================================================================
+# TESTE DE CRIATIVOS
+# =============================================================================
+teste_criativos:
+  filosofia: "Facebook e teste. Quanto mais criativo testar, mais rapido chega na escala."
+  regra_geral: "Destinar porcentagem do orcamento para testar SEMPRE. Nao existe resultado bom que nao possa melhorar."
+
+  criativos_que_funcionam:
+    anuncio_nao_parece_anuncio:
+      descricao: "Gerar desejo, humanizacao. Pare de interromper e comece a entreter."
+      exemplo: "Influenciador entrando no personagem, nao vendendo"
+      caso: "Recebi essa chuteira, joguei meu x1, fiz 3 gols (sem CTA explicito)"
+    apito_inicio: "Chamar atencao nos 3 primeiros segundos"
+    criativo_sem_fala:
+      descricao: "Musica de fundo + visual gerando desejo"
+      resultado: "Escalou muito para publico feminino"
+    ugc:
+      descricao: "User Generated Content - Para remarketing"
+      regra: "Manter na mesma campanha e ir alimentando"
+      caso_real: "Criativo UGC vendeu R$25k em um dia, R$90k em campanha de 1 dia (Botafogo campea)"
+      duracao: "UGC sem fala, so mostrando look: rodou 4 meses na mesma campanha"
+    story_ads: "Formato story com fontes de stories, parece conteudo organico"
+    preco_no_criativo: "Afasta curioso, atrai qualificado"
+    variacoes: "Mesmo video/imagem com CTAs diferentes (40% off, Leve 3 Pague 2, etc.)"
+    fotos_profissionais:
+      descricao: "Modelar Nike, Adidas, ProDirect"
+      quote: "E outro catalogo quando voce tem esse tipo de foto"
+      anti_pattern: "NUNCA usar foto com fundo de grade, a nao ser que venda atacado"
+    criativos_web_sem_camera:
+      descricao: "Pegar imagens/videos do Instagram oficial do clube e das lojas oficiais"
+      tipos: "estilo emocional (torcedor chorando), estilo tensao/suspense, estilo oferta direta"
+      caso_real: "CTR acima de 10% (caso Botafogo com torcedor chorando)"
+    criativos_tensao:
+      descricao: "Criativo que prende atencao com narrativa de suspense"
+      resultado: "Metricas (CPI, CTR) absurdas"
+      exemplo: "O Atletico Mineiro esta a um jogo da gloria eterna..."
+    criativos_influenciador: "O que mais funciona hoje"
+
+  organizacao:
+    nomenclatura: "Criativos nomeados (C1, C2, C3, C4...)"
+    trello: "Organizar por status (ideias, em teste, validados, reprovados, segunda chance)"
+    reciclagem:
+      descricao: "Manter aba/lista com criativos que nao foram campeoes mas trouxeram alguma venda"
+      quando_usar: "Quando campanhas atuais perdem performance, reativar criativos dessa aba"
+      uso_pos_black: "Quando oferta volta ao normal, reativar campanhas curva A"
+
+  analise_criativos_campeoes:
+    nome: "Identificacao de Padroes de Performance"
+    passos:
+      - "Pegar historico do ano inteiro de criativos"
+      - "Identificar os que tiveram melhor ROAS e metricas saudaveis"
+      - "Analisar: comeco do video tem padrao? Musica viral? Hino do clube? CTA especifico?"
+      - "Para imagem: preco no criativo? Titulo com nome da camisa ou oferta? CTA como? Imagem poluida ou simples?"
+      - "Focar nesse padrao de performance validado"
+
+  catalogos_com_moldura:
+    descricao: "Dentro do catalogo, adicionar TEMA com imagem personalizada"
+    especificacoes: "1080x1080, <1MB, fundo TRANSPARENTE"
+    caminho: "Anuncio > Carrossel > Editar Criativo > Adicionar Tema > Imagem Personalizada"
+    regra: "DESATIVAR opcao 'mostrar imagem apenas quando houver probabilidade de aumentar engajamento' (isolar variavel)"
+    testes_possiveis:
+      - "Moldura de oferta (Pag2Leve3)"
+      - "Moldura de % off"
+      - "Moldura de escassez"
+      - "Moldura generica"
+    resultado: "Nunca vi ninguem no nicho de camisa de time usar. Deu muito bom"
+
+  minimo_criativos_por_clube: "10-15 por time"
+
+# =============================================================================
+# REMARKETING (DETALHADO)
+# =============================================================================
+remarketing:
+  estrutura_principal:
+    tipo: "Sempre ABO (nunca CBO para remarketing)"
+    conjuntos: "3 conjuntos: frio (30 dias), morno (14 dias), quente (7 dias)"
+    baseado_em: "Page View, Add to Cart, Initiate Checkout"
+    criativos_recomendados:
+      - "Institucionais"
+      - "Interior da loja"
+      - "UGC/reviews"
+      - "Influenciadores"
+      - "Catalogo (mesmo eventos separados)"
+
+  remarketing_por_temperatura:
+    publico_quente: "7 dias"
+    publico_morno: "30 dias"
+    publico_frio: "60 dias"
+    teste_adicional: "90 dias (mais frio)"
+    insight: "Ivan MATOU os 15 dias. Separacao em 7/30/60 performou melhor que 7/15/30/60"
+    catalogo_remarketing: "Campanhas ficam 3-4 meses ativas sem matar"
+
+  lista_clientes_compradores_180_dias:
+    descricao: "Exportar lista da Shopify -> criar publico no Facebook"
+    logica: "Tempo medio de recompra de camisa de time e 180 dias"
+    como_calcular: "Usar analise de corte da Shopify ou mandar print para GPT calcular"
+
+  andromeda_advantage_plus:
+    descricao: "Meta agora identifica melhor o criativo (cores, logos, copy, imagens, narracoes)"
+    configuracao: "Deixar Advantage+ ativo em TUDO: campanha, conjunto, anuncio"
+    principio: "O criativo determina para quem o Facebook entrega"
+    uso_listas:
+      institucional: "Exportar compradores ultimos 90/180 dias"
+      clube_especifico: "Exportar lista filtrada por time"
+    resultado: "CBO menos campanhas, menos conjuntos, MAIS criativos diferentes"
+
+  engajamento_pre_final:
+    descricao: "ANTES da final, rodar campanha de ENGAJAMENTO para torcedores do clube"
+    objetivo: "NAO vender, apenas gerar seguidores e engajamento"
+    resultado: "Base grande de remarketing do clube especifico + seguidor barato"
+
+# =============================================================================
+# BLACK FRIDAY ESPECIFICO DE TRAFEGO
+# =============================================================================
+black_friday_traffic:
+  estrategia_orcamento: "80% para o que funciona, 20% para testes"
+  dentro_dos_80_porcento:
+    campanhas_validadas: "70%"
+    remarketing: "30%"
+
+  black_week_strategy:
+    conceito: "Comecar ofertando no inicio de novembro, nao esperar o dia da Black"
+    motivo: "No dia da Black, o leilao esta carisimo (CPM sobe muito por Magazine Luiza, Shopee, etc.)"
+    execucao:
+      dia_1_novembro: "Soltar desconto menor / progressivo menos agressivo"
+      ao_longo_novembro: "Ir aumentando a agressividade da oferta"
+      terceira_semana: "Oferta mais agressiva"
+      semana_da_black: "Acelerar e fechar forte"
+    resultado_real: "Dia 1 de novembro, soltamos desconto mais baixo, tivemos 15-20 mil em 30 minutos ate meia noite e meia. So com comunidade."
+    resultado_total: "R$1.400.000 na Black (ano passado)"
+
+  campanhas_curva_a:
+    regra: "NAO matar durante Black. Se performance cair, apenas reduzir orcamento."
+    pos_black: "Reativar imediatamente pos-Black"
+
+  programar_antecedencia:
+    regra: "Na semana da Black, demora muito para campanhas ficarem ativas (volume alto de anunciantes)"
+
+  catalogos_moldura_black:
+    testes: "Moldura de oferta, moldura de % off, moldura de escassez"
+
+  reciclagem_pos_black:
+    regra: "Quando oferta volta ao normal, reativar campanhas curva A da aba de reciclagem"
+
+  pre_black:
+    foco: "Captacao de leads para canais quentes (comunidade, app, canal Instagram, Stories, status WhatsApp)"
+    comunicacao: "Rodar o mes inteiro de novembro com comunicacao/oferta da Black"
+
+  pos_black:
+    sem_libertadores: "Queda de vendas ate dia 3 de dezembro -> preparar comunicacao de Natal"
+    com_libertadores: "Maior oportunidade de venda (exceto Copa do Mundo) -> estender oferta Black + emocao do titulo"
+    natal: "Site repaginado NO DIA SEGUINTE a Black (incluindo logo com chapeu de Natal, foto perfil WhatsApp)"
+
+# =============================================================================
+# BENCHMARKS DE TRAFEGO
+# =============================================================================
+benchmarks:
+  roas:
+    medio_operacao_cdr: 7.7
+    considerado_saudavel: "7.7+"
+    catalogo_advantage_plus: "7-8"
+    escala_lookalike: 6
+    coleta_de_dados: "1.6 (normal e esperado)"
+    campanha_advantage_plus_3_meses: 6
+    abomax: "6-7"
+    remarketing: "8 (semanas com 14-15)"
+    roas_break_even: "~3.36 (para operacao com markup 2x e custos tipicos)"
+    roas_para_margem_16_porcento: 7.6
+    roas_para_margem_19_porcento: 10
+    caso_alavancagem: "R$800/dia ROAS 55 -> R$4,800/dia ROAS 40 (so datas sazonais)"
+
+  cpa:
+    medio_mercado_inicio: "R$50-60"
+    catalogo_baixo: "R$2-6.50"
+    catalogo_medio: "R$28"
+    campanha_escala: "R$50-80"
+    remarketing_catalogo: "R$7 (3 compras) e R$18 (1 compra)"
+    nichos_segmentados: "R$7-9 (vs R$15-25 com segmentacao ampla)"
+    reducao_impacto: "CPA de R$50 = margem 16%; CPA de R$35 = margem 20% (4pp de diferenca)"
+
+  cpm:
+    antes_coleta: "R$22-25"
+    apos_coleta: "R$8"
+    geral_referencia: "~R$9"
+    remarketing_ok: "similar ao geral"
+    remarketing_ruim: ">R$90 (pouco publico ainda)"
+    remarketing_nao_rodar: ">R$100"
+
+  cps:
+    custo_por_sessao_bom: "< R$0.22"
+    regra: "CPS alto demais = problema nos CRIATIVOS, nao no publico"
+
+  ctr:
+    criativo_botafogo_torcedor_chorando: "Acima de 10%"
+
+  connect_rate:
+    bom: "Acima de 80-90%"
+
+  investimento:
+    coleta_de_dados: "R$7/dia por conjunto (2 conjuntos = R$14/dia)"
+    advantage_plus_inicial: "R$30-50/dia"
+
+  conversao_trafego:
+    compradores_homens_camisa_time: "98%"
+    faixa_etaria_top: "18-24 e 25-34"
+    facebook_reels_compras: "Muito baixo (1 compra)"
+    posicionamentos_que_convertem: "Instagram Reels, Instagram Stories"
+
+  operacao:
+    faturamento_referencia: "R$800k/mes com 100% Meta Ads"
+    operacao_4o_mes: "R$200-250k/mes"
+
+# =============================================================================
+# REGRAS DE DECISAO
+# =============================================================================
+decision_rules:
+  trafego_geral:
+    - regra: "Facebook e teste - destinar porcentagem do orcamento para testar SEMPRE"
+    - regra: "Nunca dependa de uma unica campanha - escala horizontal"
+    - regra: "Acertou a mao? Continue testando - nao existe resultado bom que nao possa melhorar"
+    - regra: "Entenda o objetivo de cada campanha (coleta=dados, catalogo=CPA barato, escala=faturamento)"
+
+  quando_matar_conjunto:
+    - "Bateu CPA max sem vender -> matar (ser rigoroso em duplicacao)"
+    - "ABOMAX com 60+ conjuntos -> nao precisa segurar CPA ruim -> corta"
+    - "Escadinha: chegou em orcamento minimo e ainda ruim -> MATAR campanha"
+
+  diagnostico_performance:
+    - "Se campanha perde performance sem motivo: verificar (1) aumento expressivo de orcamento, (2) frequencia aumentou (publico saturou), (3) Facebook testando nova fatia de publico"
+    - "Se criativo/oferta desatualizada -> pode ser causa de queda -> verificar precos e ofertas"
+    - "Se CBO e novo anuncio nao gasta: tente subir novo conjunto -> se nao gastar -> crie nova campanha"
+    - "Se ABO: voce consegue controlar orcamento por conjunto -> suba novo conjunto para teste"
+
+  sazonalidades:
+    - "Final de mes: CPA mais caro (normal para TODAS as lojas)"
+    - "Comeco de mes: CPA mais barato -> testar mais criativos no inicio do mes"
+    - "Final de campeonato: melhor momento para camisa de time"
+    - "Janeiro: queda (principalmente se drop com feriado chines)"
+    - "Fevereiro: pior mes (feriado chines = pausa de 15 dias); foco em retencao"
+    - "Marco em diante: aumento gradual"
+    - "Copa do Mundo: faturamento pode dobrar/triplicar"
+    - "Pos-Copa: queda inevitavel, voltar ao baseline"
+    - "Outubro: mes mais fraco (antecede Black Friday, consumidores esperam)"
+    - "Novembro (Black Friday): pico"
+    - "Dezembro: final de campeonatos, segundo pico"
+
+  cps_alto:
+    regra: "Problema esta nos CRIATIVOS, nao necessariamente no publico"
+    quote: "O pessoal fala muito de publico errado... Voces normalmente clicam em anuncios que nao fazem sentido pra voce?"
+
+  configuracoes_tecnicas:
+    pixel: "Pixel no codigo do tema + App nativo: NAO ter os dois (duplicacao de metrica). Escolher um."
+    app_nativo: "App nativo da Shopify (Facebook & Instagram): Melhor performance de catalogo; compartilhamento de dados no MAXIMO"
+    comentarios: "OCULTAR comentarios negativos, nunca excluir. Excluir prejudica metricas do Facebook."
+
+  clube_para_rodar: "Escolher o que esta em HYPE (Santos/Neymar, Corinthians/Paulistao, Mundial)"
+  posicionamento: "Se gastou R$150 no Feed sem vendas e R$150 no Reels com 10 vendas -> REMOVER Feed"
+
+# =============================================================================
+# ESTRUTURA COMPLETA DE 8 ESTAGIOS (HOT SEAT 01)
+# =============================================================================
+estrutura_8_estagios:
+  descricao: "Pipeline completo de trafego do inicio a escala, apresentado no Hot Seat 01"
+  estagios:
+    1_coleta_dados:
+      campanhas: 1
+      conjuntos: 2
+      objetivo_conjunto_1: "View Content (R$7/dia)"
+      objetivo_conjunto_2: "Add to Cart (R$7/dia)"
+      catalogo: "TODOS os produtos"
+      duracao: "7 dias (~R$80-100 total)"
+      resultado: "Barateia CPM, custo por adicao ao carrinho, CPA"
+
+    2_catalogo_advantage_plus:
+      quando: "Apos 7 dias de coleta"
+      estrutura: "Campanha Advantage+ com catalogo completo"
+      tempo_otimizacao: "14-15 dias"
+      roas_esperado: "8-10"
+      nao_depende: "Validar criativo (foto do produto = catalogo)"
+
+    3_teste_criativo_abo:
+      estrutura: "1 campanha POR criativo, 3 conjuntos, MESMA segmentacao"
+      metricas: "CPA (principal), CPC, CTR, media visualizacao"
+      regra: "SEMPRE ABO (garantir gasto igual)"
+
+    4_teste_publico:
+      estrutura: "Criativo VALIDADO, 1 campanha, 5 conjuntos, segmentacoes DIFERENTES"
+      variaveis: "Idade, estado, genero, detalhamento (interesses), comportamento"
+
+    5_pre_escala_abomax:
+      estrutura: "1 campanha ABO, 5 conjuntos IGUAIS (publico + criativo validados)"
+      duplicacao: "De 5 para 15, 30, 60+ conjuntos"
+      rigor: "CPA ideal -> ruim -> cortar imediatamente"
+
+    6_cbo_semanal:
+      estrutura: "1 campanha CBO a cada 7-15 dias"
+      conteudo: "5 melhores publicos quase validados + 3 criativos quase validados"
+
+    7_advantage_plus_1_1_1:
+      descricao: "A campanha que mais vem funcionando hoje"
+      estrutura: "1 campanha, 1 conjunto, 1 criativo"
+      regra: "So precisa validar o CRIATIVO"
+      cada_criativo_validado: "Nova campanha Advantage+"
+
+    8_remarketing:
+      quando_comecar: "300-500 compras ou 5000 add to cart + 1000 finalizacoes"
+      tipo: "Sempre ABO"
+      conjuntos: "Frio (30d), morno (14d), quente (7d)"
+      se_cpm_maior_100: "Ainda nao e momento"
+
+# =============================================================================
+# ANALISE POR NICHO (HOT SEAT 02)
+# =============================================================================
+analise_por_nicho:
+  principio: "Tudo que e nichado tem uma taxa de conversao maior. Seja na loja, seja nas campanhas."
+  detalhamento_gerenciador:
+    descricao: "Localizar aba de 'detalhamento' abaixo do seletor de data no gerenciador"
+    filtros:
+      - "Idade"
+      - "Posicionamento"
+      - "Dispositivo"
+      - "Estado"
+    acoes:
+      - "Identificar CPA e ROAS por faixa etaria -> nichar para melhor faixa"
+      - "Identificar CPA e ROAS por posicionamento -> remover posicionamentos caros"
+      - "Criar conjuntos nichados: so Reels + Stories, so 18-24 anos, so SP"
+
+  advantage_plus_com_sugestao:
+    descricao: "Criar conjunto Advantage+ MAS com sugestao de publico que performa melhor"
+    teste: "Criar outro conjunto SEM Advantage+ segmentado pro mesmo publico"
+    rodar: "Ambos simultaneamente"
+    resultado: "Aumenta vida util dos criativos validados"
+
+  segmentacao_validada_caso_pratico: "Mulheres 18-24, interesse Corinthians + Virginia, comportamento compras internet, SP"
+
+  regra_exemplo: "Se 99% dos compradores e homem, por que deixar mulher na segmentacao?"
+  regra_posicionamento: "Se gastou R$150 no Feed sem vendas e R$150 no Reels com 10 vendas -> REMOVER Feed"
+
+  processo_identificar_top_produtos_catalogo:
+    passo_1: "Colocar UTM na campanha de catalogo"
+    passo_2: "Ir na Shopify -> Relatorios -> Pedidos"
+    passo_3: "Filtrar pela UTM da campanha de catalogo"
+    passo_4: "Identificar top 20-25 produtos mais vendidos"
+    passo_5: "Criar conjunto de catalogo so com esses produtos"
+    passo_6: "Se 10 de 25 sao Corinthians -> campanha nichada Corinthians"
+
+# =============================================================================
+# SAZONALIDADES E PREPARACAO DE FINAIS
+# =============================================================================
+sazonalidades:
+  preparacao_pre_final:
+    nome: "Engatilhamento Duplo"
+    regra: "Ter TUDO pronto para AMBOS os times ANTES da final"
+    checklist_por_time:
+      - "Criativos (min 10-15 por clube)"
+      - "E-mails prontos"
+      - "Disparos API prontos"
+      - "Mensagens comunidade"
+      - "Arts story/feed"
+      - "Banner campeao"
+      - "Cupom desconto"
+      - "Video videocommerce"
+      - "Notificacao app"
+      - "Copy completa"
+    patch_campeao:
+      comprar: "Mercado Livre, 1 semana antes da final"
+      estampar: "Ferro de passar roupa (para foto/criativo)"
+      preco_teste_1: "R$19.90 -> 60% dos pedidos com patch (vs media order bump 15-18%)"
+      preco_teste_2: "R$29.90 -> ainda porcentagem absurda"
+      preco_teste_3: "R$40.00 -> ainda vendendo muito"
+      preco_recomendado: "R$29-30 minimo"
+      quote: "80% do trafico pagou so com venda de patch (no dia do titulo)"
+
+  kits_por_momento:
+    descricao: "Criar produto novo na Shopify com combinacoes"
+    tipos: "Kit masculino + feminino, Camisa 1 + Camisa 2 com patch"
+    organizacao_colecao: "40% off > Masculino > Feminino > Infantil > KITS"
+
+  horarios_pico: "10h-12h e 18h-22h30"
+  melhor_dia: "1 dia apos final da Libertadores (melhor dia de faturamento da vida de Ivan)"
+  quote: "Tirando Copa do Mundo, final de Libertadores e o momento mais oportuno para vender camisa de time"
+  regra: "A venda pos-campeonato e pura EMOCAO. Abusar de escassez."
+  regra_pos_final: "Mudar TODA comunicacao do site para Natal imediatamente"
+
+# =============================================================================
+# CONFIGURACOES TECNICAS META ADS
+# =============================================================================
+configuracoes_tecnicas:
+  app_nativo_shopify:
+    descricao: "Integrar App Nativo da Shopify (Facebook & Instagram)"
+    beneficios:
+      - "Dados compartilhados no MAXIMO"
+      - "Melhor performance de catalogo vs Flexify ou Quintas"
+      - "Cria catalogos automaticamente por colecao"
+    regra: "NAO ter pixel no codigo do tema simultaneamente"
+
+  google_analytics_integrado:
+    caminho: "Gerenciador de Eventos > Integracoes de Parceiros > Analises"
+    razao: "Analytics e a plataforma mais avancada para coletar dados. Mais dados para o Facebook = melhor performance"
+
+  utms_nativas:
+    descricao: "Traqueamento sem plataforma paga"
+    configuracao:
+      origem: "{{site_source_name}}"
+      meio: "{{adset.name}}"
+      nome_campanha: "{{campaign.name}}"
+      conteudo: "{{ad.name}}"
+      utm_term: "{{placement}}"
+    instrucao: "Copiar tudo apos '?' e colar em 'Parametros de URL'"
+
+  configuracao_catalogo_anuncio:
+    product_name: "Com descricao com preco atual"
+    cta: "Saiba Mais (nao Comprar Agora) para coleta de dados"
+    otimizacoes: "TODAS exceto IA (gerar fundo, musica)"
+    formato: "Imagem unica em carrossel (NAO apresentacao multimidia)"
+
+  categoria_produto_shopify: "Colocar 'futebol' (nao futebol americano)"
+
+  contingencia:
+    operacao_nichada_agressiva: "AdSpower + Proxy"
+    ambos:
+      descricao: "Contingencia de Pixel"
+      passos:
+        - "BM mae cria o pixel"
+        - "Compartilha pixel e catalogo com BMs filiais"
+        - "Rodar trafego pelas BMs filiais"
+        - "Se BM mae cai, assets continuam acessiveis nas filiais"
+    operacao_generica: "Nao precisa contingencia tao estruturada, mas SEMPRE compartilhar ativos"
+
+  diagnosticar_loja_metricas_caras:
+    passo_1: "Verificar custo por adicao ao carrinho (ideal < R$3)"
+    passo_2: "Verificar custo por finalizacao de compra"
+    passo_3: "Verificar custo por inclusao info pagamento"
+    passo_4: "Identificar maior 'salto' entre etapas = maior gargalo"
+    passo_5: "Ajustar site (pagina produto / checkout)"
+    passo_6: "Verificar pixel (todos eventos visiveis como conversao)"
+    passo_7: "Conectar Google Analytics na conta de anuncio"
+    passo_8: "Se nada funciona: trocar BM"
+
+# =============================================================================
+# FERRAMENTAS DE TRAFEGO
+# =============================================================================
+ferramentas:
+  meta_ads:
+    plataforma: "Meta Ads (Facebook & Instagram)"
+    uso: "Trafego pago principal"
+  app_nativo_shopify:
+    nome: "Facebook & Instagram (Shopify)"
+    uso: "Integracao de catalogo e pixel"
+  google_analytics:
+    uso: "Conectar na conta de anuncios para mais dados"
+  instaai:
+    uso: "Puxar dados do Facebook via API para Looker Studio"
+  looker_studio:
+    uso: "Dashboard de analise de metricas"
+  adspower:
+    uso: "Contingencia de contas de anuncio"
+  proxy:
+    uso: "Evitar identificacao de padrao entre contas"
+  extensao_chrome_mineracao:
+    uso: "Ver anuncios escalados de concorrentes, filtrar por replicas"
+    nome_alternativo: "Disparo (extensao gratuita)"
+  trello:
+    uso: "Organizar criativos (ideias, em teste, validados, reprovados, segunda chance)"
+  reportana:
+    uso: "UTM por campanha -> relatorio Shopify -> filtrar produtos vendidos por campanha"
+  page_speed_insights:
+    uso: "Verificar velocidade do site antes da Black"
+  coutimer:
+    uso: "Aplicativo de contador regressivo para Shopify (sessao de escassez)"
+  capcut:
+    uso: "Edicao de video para criativos"
+
+# =============================================================================
+# QUOTES E MODELOS MENTAIS
+# =============================================================================
+quotes_e_modelos_mentais:
+  quotes_trafego:
+    - "Facebook e teste. Teste infinito. Voce nunca vai parar de testar no Face."
+    - "Nao existe resultado bom que nao possa melhorar"
+    - "Priorize escala horizontal"
+    - "Entenda o objetivo de cada campanha"
+    - "Tudo que e nichado tem uma conversao maior"
+    - "Se eu acertar esse publico fora da caixa, eu surfo sozinho"
+    - "Primeira campanha que a gente sobe e a ultima que a gente mata (coleta de dados)"
+    - "Catalogo, o pior inimigo vai ser a pressa"
+    - "Voce prefere um ROAS de 12 faturando R$100K ou um ROAS de 6 faturando R$1M?"
+    - "A tendencia e: quanto mais investir, mais o ROAS vai descer"
+    - "Numeros falam com a gente. Basta saber escutar."
+    - "Anuncio que nao se parece com anuncio"
+    - "Faturamento e ego"
+    - "80% do orcamento para o que funciona, 20% para testes."
+    - "Eu gosto de isolar as variaveis para saber se aquilo que estou testando me trouxe resultado ou nao."
+    - "O que trouxe a gente ate aqui nao vai ser o que vai levar a gente pro proximo passo."
+    - "Facebook e um eterno teste, acerto e erro."
+    - "Campanha de Advantage+ e batata. So precisa validar criativo."
+    - "Pare de interromper e comece a entreter."
+    - "80% das vezes quem roda Face, a pessoa clica no perfil ANTES de ir pro site."
+    - "O dia que eu escalei 100k dia no Facebook, criativo de UGC vendeu 20-25k."
+    - "Quanto mais nichado, mais converte."
+
+  sala_de_guerra:
+    descricao: "Reuniao semanal (sexta-feira) com lideres de setor"
+    regra: "Finjam que estao bebados, tirem todo filtro"
+    pergunta_obrigatoria: "O que pode quebrar nosso negocio hoje?"
+    objetivo: "Desenvolver cabeca de dono nos colaboradores"
+
+  delegacao_estruturada:
+    principios:
+      - "Contratar colaborador e treinar com seus conhecimentos"
+      - "Pessoa do zero = melhor (sem vicios)"
+      - "Compartilhar o Miro/estrategia com gestor/agencia"
+      - "Delegar != Largar"
+      - "Engrenagem deve rodar sem voce"
+      - "Bonificar equipe: nao tem como querer que equipe seja engajada se recebe R$800/mes"

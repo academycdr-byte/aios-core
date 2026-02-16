@@ -1,0 +1,357 @@
+domain: sazonalidades
+title: "Estrategias Sazonais & Eventos"
+confidence: 0.90
+source: "Aulas 08, 01, 06"
+last_updated: "2026-02-16"
+
+# =============================================================================
+# FRAMEWORK DE PREPARACAO DUAL (ENGATILHAMENTO DUPLO)
+# =============================================================================
+preparacao_dual:
+  nome: "Engatilhamento Duplo"
+  conceito: "Ter TUDO pronto para AMBOS os times ANTES da final de qualquer campeonato"
+  quando_usar: "Toda final de campeonato importante (Libertadores, Copa do Mundo, Brasileirao)"
+
+  checklist_por_time:
+    - "Criativos (minimo 10-15 por clube)"
+    - "E-mails preparados"
+    - "Disparos API WhatsApp prontos"
+    - "Mensagens para comunidade WhatsApp"
+    - "Arts de Story/Feed"
+    - "Banner de campeao"
+    - "Cupom de desconto"
+    - "Video videocommerce"
+    - "Notificacao de app"
+    - "Copy completa"
+
+  patch_campeao:
+    onde_comprar: "Mercado Livre, 1 semana antes da final"
+    como_estampar: "Ferro de passar roupa (para foto/criativo, nao para venda)"
+    fotos: "Subir no site ANTES do resultado"
+    criativos: "Ja ter criativos com patch estampado prontos"
+    rascunhos: "Sabado da final: ter rascunhos prontos para trocar instantaneamente"
+
+  pagina_produto_patch:
+    principal: "Patch de campeao na pagina do produto"
+    order_bump: "Patch de participacao no checkout"
+    foto_dinamica: "Foto do produto MUDA automaticamente quando seleciona opcao de patch (Shopify)"
+    efeito: "Cliente VE o patch antes de adicionar -> aumenta desejo"
+
+  precos_patch_testados:
+    teste_1: "R$19.90 -> 60% dos pedidos com patch (vs media order bump 15-18%)"
+    teste_2: "R$29.90 -> ainda porcentagem absurda"
+    teste_3: "R$40.00 -> ainda vendendo muito"
+    recomendacao_minima: "R$29-30"
+    ivan_quote: "Nao tenha medo de cobrar caro pelo patch"
+    resultado: "80% do trafego pagou so com venda de patch no dia do titulo"
+
+# =============================================================================
+# PRODUTO ISCA
+# =============================================================================
+produto_isca:
+  nome: "Produto Isca Nacional"
+  conceito: "Produto barato de producao nacional para funcionar como cross-sell e resolver problemas logisticos"
+
+  execucao:
+    encontrar_fabrica: "Fabrica local para produzir produto barato (poster, adesivo)"
+    producao: "Producao em massa"
+    custo_total_com_frete: "R$6-7 por unidade"
+    preco_venda: "R$40-50"
+    markup: "~9x"
+    logistica: "Enviar como carta (logistica nacional, rapida e barata)"
+
+  pontos_venda:
+    - "Cross-sell na pagina do produto"
+    - "Order bump no checkout"
+
+  beneficios:
+    - "Tranquilizar cliente (chegou rapido, nao e golpe)"
+    - "Lucro alto com markup absurdo"
+    - "Reduzir chargeback"
+
+  ivan_quote: "A gente fez no intuito de evitar chargeback, mas quando foi ver, vendeu pra caralho e deu puta margem."
+
+  quando_usar:
+    - "Periodos de problema logistico com importacao"
+    - "Finais de campeonato"
+    - "Feriado chines (pausa de 15 dias em fevereiro)"
+
+# =============================================================================
+# PATCHWORK STRATEGY (CRIATIVOS SEM CAMERA)
+# =============================================================================
+patchwork_criativos:
+  nome: "Criativos com Material de Instagram"
+  conceito: "Montar criativos usando material disponivel sem precisar gravar"
+
+  fontes_de_material:
+    - "Instagram oficial do clube"
+    - "Lojas oficiais"
+    - "Takes emocionais (torcedor chorando, comemoracoes)"
+    - "Narracoes de texto sobre imagens"
+
+  variacoes_para_testar:
+    - "Estilo emocional (torcedor emocionado)"
+    - "Estilo tensao/suspense (narrativa que prende)"
+    - "Estilo oferta direta"
+    - "Mesma imagem com copys diferentes"
+
+  resultado_caso_real:
+    criativo: "Botafogo com torcedor chorando"
+    ctr: "Acima de 10%"
+
+  criativo_tensao:
+    descricao: "Criativo que prende atencao com narrativa de suspense"
+    exemplo: "O Atletico Mineiro esta a um jogo da gloria eterna..."
+    resultado: "Metricas (CPI, CTR) absurdas"
+    ivan_quote: "Nunca vi ninguem rodar esse tipo de criativo no nicho"
+
+# =============================================================================
+# CRIATIVOS SEM CAMERA (ABORDAGENS GERAIS)
+# =============================================================================
+criativos_sem_camera:
+  tipos:
+    material_instagram:
+      descricao: "Pegar imagens/videos do Instagram oficial dos clubes e lojas"
+      variacao: "Montar com takes emocionais, narracoes de texto"
+    criativo_tensao:
+      descricao: "Narrativa de suspense sobre momento do campeonato"
+      exemplo: "O Atletico Mineiro esta a um jogo da gloria eterna..."
+    ugc_sem_fala:
+      descricao: "Influenciador so mostrando look, sem falar"
+      resultado: "Rodou 4 meses na mesma campanha"
+      caso: "UGC vendeu R$25K em um dia, R$90K em campanha de 1 dia (Botafogo campea)"
+    variacoes_copy:
+      descricao: "Mesmo video/imagem com CTAs diferentes (40% off, Leve 3 Pague 2, etc.)"
+
+  referencia_mineracao:
+    onde_buscar: "Biblioteca de anuncios da Sangerman, Vintage, Minimal"
+    ferramenta: "Extensao Chrome Disparo (pesquisa por palavra-chave, gratuita)"
+
+  regra_geral: "Um anuncio que nao se parece um anuncio"
+  ivan_quote: "Pare de interromper e comece a entreter"
+
+# =============================================================================
+# CAMPANHA DE ENGAJAMENTO PRE-FINAL
+# =============================================================================
+campanha_engajamento:
+  nome: "Aquecimento de Publico por Clube"
+  descricao: "ANTES da final, rodar campanha de ENGAJAMENTO para torcedores do clube"
+  objetivo: "NAO vender, apenas gerar seguidores e engajamento"
+  custo: "Custo por seguidor muito barato nesse formato"
+  resultado: "Base grande de remarketing do clube especifico"
+  logica: "Quando time for campeao: base enorme para converter"
+  quando_usar: "Semanas antes de uma final importante"
+
+# =============================================================================
+# PLANEJAMENTO ANUAL POR TRIMESTRE
+# =============================================================================
+planejamento_trimestral:
+  nome: "Planejamento Anual Baseado em Dados"
+  quando_usar: "No inicio de cada ano, usando dados dos ultimos 3 meses do ano anterior (outubro, novembro, dezembro)"
+
+  passos:
+    - "Dividir o ano em 4 trimestres (Q1, Q2, Q3, Q4)"
+    - "Preencher janeiro usando a MEDIA dos ultimos 3 meses como base"
+    - "Ajustar a media com base na realidade do mes atual (feeling + dados)"
+    - "Preencher apenas as linhas em laranja (metricas de input)"
+    - "Para cada mes subsequente, projetar com base em sazonalidades e fatores externos"
+    - "Criar plano de acao por metrica para cada mes"
+
+  ferramenta: "Planilha de Planejamento Anual (disponibilizada para alunos)"
+  regra: "Preencher apenas linhas laranja; demais sao calculadas automaticamente"
+
+# =============================================================================
+# CALENDARIO E-COMMERCE (DATAS IMPORTANTES)
+# =============================================================================
+calendario:
+  sazonalidades_camisa_time:
+    janeiro:
+      tendencia: "Queda"
+      nota: "Principalmente se drop com feriado chines"
+      estrategia: "Focar mais em retencao do que em aquisicao"
+      acoes:
+        - "Mini lancamentos na comunidade do WhatsApp"
+        - "Aquecer publico por periodo curto + cupom agressivo com escassez"
+        - "Descontos mais agressivos para base existente (ja pagou CPA)"
+
+    fevereiro:
+      tendencia: "Pior mes do ano"
+      nota: "Feriado chines = pausa de 15 dias de fornecedores"
+      estrategia: "Foco total em retencao e produto isca nacional"
+
+    marco_em_diante:
+      tendencia: "Aumento gradual"
+
+    sazonalidades_futebol:
+      paulistao_carioca:
+        descricao: "Campeonatos estaduais geram picos por clube"
+        exemplo: "Corinthians no Paulistao = pico de vendas"
+      libertadores:
+        descricao: "Maior oportunidade de venda (exceto Copa do Mundo)"
+        resultado: "Melhor dia de faturamento da vida de Ivan = 1 dia apos final"
+        faturamento_caso: "Expressivo (muito acima do Brasileirao)"
+      brasileirao:
+        descricao: "Final gera pico, mas menor que Libertadores"
+        faturamento_caso: "R$50-60k (Botafogo campeao)"
+      copa_mundo:
+        descricao: "Faturamento pode dobrar/triplicar durante Copa"
+        pos_copa: "Queda inevitavel, voltar ao baseline"
+
+    outubro:
+      tendencia: "Mes mais fraco"
+      nota: "Antecede Black Friday, consumidores esperam"
+      estrategia: "Preparacao para Black (criativos, site, ofertas)"
+
+    novembro:
+      tendencia: "Pico - Black Friday / Black Week"
+      estrategia: "Ver framework_black_week completo"
+
+    dezembro:
+      tendencia: "Segundo pico"
+      nota: "Final de campeonatos + Natal"
+      estrategia: "Conciliar oferta Black estendida + tematica Natal + finais"
+
+  sazonalidades_gerais:
+    final_de_mes:
+      efeito: "CPA mais caro (normal para TODAS as lojas)"
+    comeco_de_mes:
+      efeito: "CPA mais barato"
+      acao: "Testar mais criativos no inicio do mes"
+    dia_jogo_importante:
+      efeito: "Pico de emocao = pico de vendas"
+      acao: "Campanhas de engajamento pre-jogo + criativos emocionais pos-jogo"
+
+  hierarquia_impacto_sazonalidades:
+    - posicao: 1
+      evento: "Copa do Mundo"
+      impacto: "Faturamento pode dobrar/triplicar"
+    - posicao: 2
+      evento: "Final de Libertadores"
+      impacto: "Melhor dia de faturamento fora Copa"
+    - posicao: 3
+      evento: "Black Friday / Black Week"
+      impacto: "R$1.4M resultado Ivan"
+    - posicao: 4
+      evento: "Final Brasileirao"
+      impacto: "R$50-60K (bom mas nao expressivo como Libertadores)"
+    - posicao: 5
+      evento: "Natal"
+      impacto: "Segundo pico do ano (combinar com final de campeonato)"
+    - posicao: 6
+      evento: "Campeonatos Estaduais"
+      impacto: "Picos por clube especifico"
+
+# =============================================================================
+# ESTRATEGIA DE KITS
+# =============================================================================
+estrategia_kits:
+  nome: "Criacao de Kits por Momento"
+  quando: "Pos-titulo de campeonato"
+
+  execucao:
+    - "Criar produto novo na Shopify com combinacoes: Camisa 1 + Camisa 2 com patch"
+    - "Kit masculino + feminino"
+    - "Colecao organizada: 40% off > Masculino > Feminino > Infantil > KITS"
+    - "Preparar fotos com patch (Photoshop antes da final)"
+    - "Foto muda automaticamente quando seleciona opcao de patch"
+
+  resultado: "Aumento significativo do ticket medio"
+
+# =============================================================================
+# NATAL POS-BLACK/LIBERTADORES
+# =============================================================================
+natal:
+  transicao:
+    quando: "NO DIA SEGUINTE a Black ou final de campeonato"
+    acoes:
+      - "Mudar TODA identidade visual: banners, logo (chapeu Natal), foto perfil WhatsApp"
+      - "Manter mesma oferta da Black"
+      - "Criativos de Natal (com logo com gorro, tematica natalina)"
+    copy_exemplo: "Comprando apenas hoje, voce garante 45% de desconto + personalizacao gratuita para presentear quem voce mais ama neste Natal"
+
+  conciliar: "Desconto/oportunidade + emocao do titulo (se houver) + Natal"
+
+  site:
+    contador_regressivo: "Com visual natalino (gorro)"
+    banners: "Tematica natalina com mesma oferta"
+    logo: "Com chapeu de Natal"
+
+# =============================================================================
+# ESTRATEGIA DE ALAVANCAGEM (SAZONALIDADE EXTREMA)
+# =============================================================================
+alavancagem:
+  nome: "Alavancagem de Orcamento em Picos"
+  regra: "APENAS em dias de sazonalidade extrema (pos-campeonato, finais)"
+
+  execucao:
+    - "Identificar horarios de pico (10h-12h e 18h-22h30)"
+    - "Nos conjuntos com resultado otimo, jogar orcamento para R$25K-30K"
+    - "Nao vai gastar tudo (o periodo e curto)"
+    - "Quando acabar o horario de pico, VOLTAR o orcamento ao normal"
+    - "NUNCA dormir com orcamento alto"
+
+  caso_real: "R$800/dia ROAS 55 -> R$4.800/dia ROAS 40 (so datas sazonais)"
+
+  alerta: "Pelo amor de Deus, nao facam isso no dia-a-dia. E loucura."
+
+  horarios_pico_ivan: "10h-12h e 18h-22h30"
+
+# =============================================================================
+# REGRAS DE DECISAO SAZONAIS
+# =============================================================================
+regras_decisao:
+  - "Quanto mais perto da final, maior o resultado. Um dia apos = pico maximo"
+  - "Quanto mais distante da final, menor o resultado. Decai progressivamente"
+  - "Venda pos-campeonato e pura EMOCAO: abusar de escassez"
+  - "Pos-final: mudar TODA comunicacao do site para Natal imediatamente"
+  - "Conciliar: desconto/oportunidade + emocao do titulo + Natal"
+  - "Estender oferta da Black para Natal: mesma oferta, comunicacao diferente"
+  - "Janeiro (mes fraco): focar em retencao, nao aquisicao"
+  - "Fevereiro (pior mes): foco total em retencao + produto isca nacional"
+  - "Outubro (fraco): preparacao para Black, consumidores esperam"
+  - "Comeco de mes: CPA barato -> testar mais criativos"
+  - "Final de mes: CPA mais caro (normal)"
+  - "Final de campeonato: melhor momento para camisa de time"
+
+# =============================================================================
+# FERRAMENTAS SAZONAIS
+# =============================================================================
+ferramentas:
+  mercado_livre: "Comprar patch de campeao antecipado"
+  photoshop: "Preparar fotos com patch antes da final"
+  coutimer: "App de contador regressivo para Shopify"
+  fabrica_local: "Para produto isca (poster, adesivo) - envio como carta"
+  capcut: "Edicao de video para criativos sazonais"
+  disparo_extensao: "Pesquisa de mercado - ver criativos mais escalados (gratuita)"
+  ia_fotos: "Gerar fotos de modelos vestindo produtos (qualidade ja profissional)"
+
+# =============================================================================
+# BENCHMARKS SAZONAIS
+# =============================================================================
+benchmarks:
+  melhor_dia_ivan: "1 dia apos final da Libertadores"
+  ctr_criativo_emocional: "Acima de 10% (caso Botafogo torcedor chorando)"
+  patch_taxa_adesao: "60% dos pedidos (vs media order bump 15-18%)"
+  poster_markup: "~9x"
+  poster_custo: "R$6-7 com frete"
+  poster_venda: "R$40-50"
+  brasileirao_faturamento: "R$50-60k (Botafogo campeao)"
+  criativos_minimo_por_clube: "10-15 por time"
+  black_friday_total: "R$1.400.000"
+  ugc_dia_titulo: "R$25K em um dia, R$90K em campanha"
+  alavancagem_caso: "R$800/dia ROAS 55 -> R$4.800/dia ROAS 40"
+
+# =============================================================================
+# QUOTES & MENTAL MODELS
+# =============================================================================
+quotes:
+  - "Tirando Copa do Mundo, final de Libertadores e o momento mais oportuno para vender camisa de time."
+  - "A venda vai ser por pura emocao."
+  - "Antecipacao e a chave."
+  - "Nao e lancamento de camisa que mais vende. E final de campeonato."
+  - "O cara nao quer saber se e camisa 1, 2 ou 3, ele vai comprar alguma coisa."
+  - "Nao tenha medo de ser agressivo na oferta."
+  - "80% do trafego pagou so com venda de patch (no dia do titulo)."
+  - "Janeiro tende a ser um pouco pior do que dezembro."
+  - "A gente tem que pensar em todos os pontos que a gente deve executar pra chegar nessas metricas."
+  - "O dia que eu mais faturei na minha vida foi um dia depois da Libertadores."

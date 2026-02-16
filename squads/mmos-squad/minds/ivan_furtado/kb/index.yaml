@@ -1,0 +1,96 @@
+# Knowledge Base Index - Ivan Furtado
+# Gerado automaticamente das aulas Kiwify (10 aulas)
+# Data: 2026-02-16
+
+version: "1.0"
+mind: ivan_furtado
+total_domains: 6
+total_lines: 3818
+source: "10 aulas gravadas para comunidade de alunos (Kiwify)"
+
+domains:
+  - file: trafego-pago.yaml
+    domain: trafego-pago
+    title: "Trafego Pago - Meta Ads & Google Ads"
+    lines: 743
+    source_classes: [1, 4, 6, 8, 9, 10]
+    topics:
+      - Pipeline completo de campanhas Meta Ads (6 etapas)
+      - Estrutura de 8 estagios de trafego
+      - Escala (ABOmax, CBO, Advantage+, Lookalike)
+      - Teste de criativos e publicos
+      - Remarketing e retargeting
+      - Benchmarks (ROAS, CPA, CTR, CPM)
+      - Regras de decisao por metricas
+      - Analise por nicho (idade, placement, device)
+
+  - file: cro.yaml
+    domain: cro
+    title: "CRO - Conversion Rate Optimization"
+    lines: 892
+    source_classes: [7, 8, 9]
+    topics:
+      - Checklist 230+ pontos
+      - Framework de diagnostico de conversao
+      - Social Commerce
+      - Ancoragem de preco
+      - Humanizacao de e-commerce
+      - Produto ISCA (loss-leader)
+      - Otimizacao de checkout
+
+  - file: automacao-crm.yaml
+    domain: automacao-crm
+    title: "Automacoes, CRM & Retencao"
+    lines: 554
+    source_classes: [5, 9, 10]
+    topics:
+      - Recuperacao de carrinho (31% vs 10-15%)
+      - Reportana (ferramenta)
+      - Sexy Canvas (metodologia)
+      - Fluxos de email V1/V2
+      - Segmentacao por clube/comportamento
+      - WhatsApp X1 e comunidade
+      - RFM Matrix
+
+  - file: black-friday.yaml
+    domain: black-friday
+    title: "Estrategias de Black Friday & Black Week"
+    lines: 376
+    source_classes: [2, 6]
+    topics:
+      - Framework Black Week completo
+      - Simulacao de margem
+      - Desconto progressivo como oferta favorita
+      - Budget 80/20
+      - Escadinha de escala
+      - Resultado R$1.4M
+      - Timeline pre/durante/pos
+
+  - file: sazonalidades.yaml
+    domain: sazonalidades
+    title: "Estrategias Sazonais & Eventos"
+    lines: 357
+    source_classes: [8, 1]
+    topics:
+      - Framework de preparacao dual
+      - Produto ISCA
+      - Patchwork strategy (criativos)
+      - Criativos sem camera
+      - Planejamento trimestral
+      - Calendario e-commerce
+
+  - file: ecommerce-estrategia.yaml
+    domain: ecommerce-estrategia
+    title: "Estrategia Geral de E-commerce"
+    lines: 896
+    source_classes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    topics:
+      - Planejamento anual (aquisicao vs retencao)
+      - Gestao de equipe (character > skill)
+      - Branding (Objective+Enemy)
+      - Comunidade e UGC
+      - 3 objecoes universais do e-commerce
+      - 10 regras universais
+      - Hierarquia de prioridades de trafego
+      - Stack tecnologico completo
+      - Metricas de referencia
