@@ -1,0 +1,146 @@
+import crypto from 'crypto'
+
+const SHOPIFY_API_VERSION = '2025-01'
+const SHOPIFY_SCOPES = 'read_checkouts,read_orders,read_customers,read_products'
+
+/**
+ * Build the Shopify OAuth authorization URL.
+ * The user is redirected here to grant access.
+ */
+export function getShopifyAuthUrl(
+  shop: string,
+  redirectUri: string,
+  state: string,
+  clientId: string,
+): string {
+  const params = new URLSearchParams({
+    client_id: clientId,
+    scope: SHOPIFY_SCOPES,
+    redirect_uri: redirectUri,
+    state,
+  })
+  return `https://${shop}/admin/oauth/authorize?${params.toString()}`
+}
+
+/**
+ * Exchange the authorization code for a permanent access token.
+ */
+export async function exchangeShopifyCode(
+  shop: string,
+  code: string,
+  credentials: { clientId: string; clientSecret: string },
+): Promise<{ access_token: string; scope: string }> {
+  const body = new URLSearchParams({
+    client_id: credentials.clientId,
+    client_secret: credentials.clientSecret,
+    code,
+  })
+
+  const response = await fetch(`https://${shop}/admin/oauth/access_token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`Token exchange failed (${response.status}): ${text}`)
+  }
+
+  const data = await response.json()
+  return { access_token: data.access_token, scope: data.scope }
+}
+
+/**
+ * Validate Shopify HMAC signature on OAuth callback.
+ */
+export function validateShopifyHmac(
+  query: Record<string, string>,
+  clientSecret: string,
+): boolean {
+  const { hmac, ...rest } = query
+  if (!hmac) return false
+
+  const sorted = Object.keys(rest)
+    .sort()
+    .map((key) => `${key}=${rest[key]}`)
+    .join('&')
+
+  const digest = crypto
+    .createHmac('sha256', clientSecret)
+    .update(sorted)
+    .digest('hex')
+
+  return crypto.timingSafeEqual(
+    Buffer.from(digest, 'hex'),
+    Buffer.from(hmac, 'hex'),
+  )
+}
+
+/**
+ * Register a webhook for abandoned checkouts on a Shopify store.
+ */
+export async function registerAbandonedCartWebhook(
+  shop: string,
+  accessToken: string,
+  webhookUrl: string,
+): Promise<{ id: string } | null> {
+  const response = await fetch(
+    `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/webhooks.json`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': accessToken,
+      },
+      body: JSON.stringify({
+        webhook: {
+          topic: 'checkouts/create',
+          address: webhookUrl,
+          format: 'json',
+        },
+      }),
+    },
+  )
+
+  if (!response.ok) {
+    const text = await response.text()
+    console.error(`[Shopify] Failed to register webhook: ${text}`)
+    return null
+  }
+
+  const data = await response.json()
+  return { id: String(data.webhook.id) }
+}
+
+/**
+ * Validate a Shopify webhook request signature.
+ */
+export function validateWebhookSignature(
+  body: string,
+  hmacHeader: string,
+  secret: string,
+): boolean {
+  const digest = crypto
+    .createHmac('sha256', secret)
+    .update(body, 'utf8')
+    .digest('base64')
+
+  return crypto.timingSafeEqual(
+    Buffer.from(digest),
+    Buffer.from(hmacHeader),
+  )
+}
+
+/**
+ * Normalize a Shopify domain (ensure it ends with .myshopify.com).
+ */
+export function normalizeShopDomain(input: string): string {
+  let domain = input.trim().toLowerCase()
+  domain = domain.replace(/^https?:\/\//, '')
+  domain = domain.replace(/\/.*$/, '')
+  if (!domain.includes('.myshopify.com')) {
+    domain = `${domain}.myshopify.com`
+  }
+  return domain
+}
