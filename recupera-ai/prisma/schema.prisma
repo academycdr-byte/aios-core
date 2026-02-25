@@ -1,0 +1,379 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  avatar    String?
+  stores    Store[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ============================================================
+// STORES
+// ============================================================
+
+model Store {
+  id              String    @id @default(cuid())
+  userId          String    @map("user_id")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  platform        Platform
+  domain          String?
+  accessToken     String?   @map("access_token")
+
+  // Shopify specific
+  shopifyDomain      String?   @map("shopify_domain")
+  shopifyWebhookId   String?   @map("shopify_webhook_id")
+  shopifyClientId    String?   @map("shopify_client_id")
+  shopifyClientSecret String?  @map("shopify_client_secret")
+  shopifyScopes      String?   @map("shopify_scopes")
+  connectionStatus   String    @default("CONNECTED") @map("connection_status")
+
+  // Nuvemshop specific
+  nuvemshopStoreId String?  @map("nuvemshop_store_id")
+
+  // WhatsApp
+  whatsappPhone   String?   @map("whatsapp_phone")
+  whatsappConnected Boolean @default(false) @map("whatsapp_connected")
+
+  // Config
+  settings        StoreSettings?
+  recoveryConfig  RecoveryConfig?
+
+  // Data
+  abandonedCarts  AbandonedCart[]
+  conversations   Conversation[]
+  dailyMetrics    DailyMetrics[]
+
+  isActive        Boolean   @default(true) @map("is_active")
+  webhookSecret   String?   @map("webhook_secret")
+  lastSyncAt      DateTime? @map("last_sync_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@map("stores")
+}
+
+enum Platform {
+  SHOPIFY
+  NUVEMSHOP
+}
+
+// ============================================================
+// STORE SETTINGS (per-store AI behavior + policies)
+// ============================================================
+
+model StoreSettings {
+  id                String   @id @default(cuid())
+  storeId           String   @unique @map("store_id")
+  store             Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  // Store info for AI context
+  storeName         String?  @map("store_name")
+  storeDescription  String?  @map("store_description") @db.Text
+  mainProducts      String?  @map("main_products") @db.Text
+  targetAudience    String?  @map("target_audience") @db.Text
+
+  // Policies (AI uses these to answer questions)
+  shippingPolicy    String?  @map("shipping_policy") @db.Text
+  returnPolicy      String?  @map("return_policy") @db.Text
+  paymentMethods    String?  @map("payment_methods") @db.Text
+  warrantyPolicy    String?  @map("warranty_policy") @db.Text
+  faqContent        String?  @map("faq_content") @db.Text
+
+  // Offers & Discounts
+  currentOffers     String?  @map("current_offers") @db.Text
+  canOfferDiscount  Boolean  @default(false) @map("can_offer_discount")
+  maxDiscountPercent Float?  @map("max_discount_percent")
+  couponCode        String?  @map("coupon_code")
+  couponDiscount    Float?   @map("coupon_discount")
+
+  // AI Behavior
+  aiTone            String   @default("profissional") @map("ai_tone")
+  aiName            String   @default("Assistente") @map("ai_name")
+  customInstructions String? @map("custom_instructions") @db.Text
+
+  // Business hours
+  businessHoursStart String? @map("business_hours_start")
+  businessHoursEnd   String? @map("business_hours_end")
+  sendOutsideHours   Boolean @default(false) @map("send_outside_hours")
+  timezone           String  @default("America/Sao_Paulo")
+
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("store_settings")
+}
+
+// ============================================================
+// RECOVERY CONFIG (per-store recovery flow settings)
+// ============================================================
+
+model RecoveryConfig {
+  id                    String   @id @default(cuid())
+  storeId               String   @unique @map("store_id")
+  store                 Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  isActive              Boolean  @default(true) @map("is_active")
+
+  // === ABANDONED CART RECOVERY ===
+  // Timing (in minutes)
+  firstMessageDelay     Int      @default(30) @map("first_message_delay")
+  followUp1Delay        Int      @default(360) @map("follow_up_1_delay")
+  followUp2Delay        Int      @default(1440) @map("follow_up_2_delay")
+  followUp3Delay        Int?     @map("follow_up_3_delay")
+  maxAttempts           Int      @default(3) @map("max_attempts")
+
+  // Message templates (if null, AI generates dynamically)
+  firstMessageTemplate  String?  @map("first_message_template") @db.Text
+  followUp1Template     String?  @map("follow_up_1_template") @db.Text
+  followUp2Template     String?  @map("follow_up_2_template") @db.Text
+  followUp3Template     String?  @map("follow_up_3_template") @db.Text
+
+  // Conditions
+  minCartValue          Float    @default(0) @map("min_cart_value")
+  excludeReturning      Boolean  @default(false) @map("exclude_returning")
+
+  // === PIX PENDING RECOVERY ===
+  pixRecoveryEnabled    Boolean  @default(true) @map("pix_recovery_enabled")
+  pixFirstDelay         Int      @default(15) @map("pix_first_delay")
+  pixFollowUpDelay      Int      @default(120) @map("pix_follow_up_delay")
+  pixMaxAttempts        Int      @default(2) @map("pix_max_attempts")
+
+  // === CARD DECLINED RECOVERY ===
+  cardRecoveryEnabled   Boolean  @default(true) @map("card_recovery_enabled")
+  cardFirstDelay        Int      @default(10) @map("card_first_delay")
+  cardMaxAttempts       Int      @default(2) @map("card_max_attempts")
+
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("recovery_configs")
+}
+
+// ============================================================
+// ABANDONED CARTS
+// ============================================================
+
+model AbandonedCart {
+  id              String        @id @default(cuid())
+  storeId         String        @map("store_id")
+  store           Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  // Customer info
+  customerName    String?       @map("customer_name")
+  customerEmail   String?       @map("customer_email")
+  customerPhone   String?       @map("customer_phone")
+
+  // Cart info
+  cartTotal       Float         @map("cart_total")
+  currency        String        @default("BRL")
+  cartItems       Json          @map("cart_items")
+  itemCount       Int           @default(1) @map("item_count")
+  checkoutUrl     String?       @map("checkout_url")
+
+  // Platform reference
+  platformCartId  String?       @map("platform_cart_id")
+  platformOrderId String?       @map("platform_order_id")
+
+  // Type & Status
+  type            CartType      @default(ABANDONED_CART)
+  status          CartStatus    @default(PENDING)
+
+  // Recovery tracking
+  recoveryAttempts Int          @default(0) @map("recovery_attempts")
+  lastAttemptAt   DateTime?     @map("last_attempt_at")
+  recoveredAt     DateTime?     @map("recovered_at")
+  recoveredValue  Float?        @map("recovered_value")
+  paidAt          DateTime?     @map("paid_at")
+  paidValue       Float?        @map("paid_value")
+
+  // Conversation
+  conversation    Conversation?
+
+  // Timestamps
+  abandonedAt     DateTime      @map("abandoned_at")
+  expiresAt       DateTime?     @map("expires_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  @@index([storeId, status])
+  @@index([storeId, abandonedAt])
+  @@map("abandoned_carts")
+}
+
+enum CartType {
+  ABANDONED_CART
+  PIX_PENDING
+  CARD_DECLINED
+}
+
+enum CartStatus {
+  PENDING
+  CONTACTING
+  RECOVERED
+  PAID
+  LOST
+  EXPIRED
+}
+
+// ============================================================
+// CONVERSATIONS
+// ============================================================
+
+model Conversation {
+  id              String            @id @default(cuid())
+  storeId         String            @map("store_id")
+  store           Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  abandonedCartId String?           @unique @map("abandoned_cart_id")
+  abandonedCart   AbandonedCart?     @relation(fields: [abandonedCartId], references: [id])
+
+  // Customer
+  customerPhone   String            @map("customer_phone")
+  customerName    String?           @map("customer_name")
+
+  // Status
+  status          ConversationStatus @default(ACTIVE)
+
+  // Messages
+  messages        Message[]
+
+  // AI metadata
+  aiModel         String?           @map("ai_model")
+  totalTokens     Int               @default(0) @map("total_tokens")
+  estimatedCost   Float             @default(0) @map("estimated_cost")
+
+  // Abandonment tracking
+  abandonmentReason AbandonmentReason? @map("abandonment_reason")
+  closingReason     String?            @map("closing_reason")
+
+  // Timestamps
+  startedAt       DateTime          @default(now()) @map("started_at")
+  lastMessageAt   DateTime?         @map("last_message_at")
+  closedAt        DateTime?         @map("closed_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@index([storeId, status])
+  @@map("conversations")
+}
+
+enum ConversationStatus {
+  ACTIVE
+  RECOVERED
+  LOST
+  ESCALATED
+  EXPIRED
+}
+
+// ============================================================
+// MESSAGES
+// ============================================================
+
+model Message {
+  id              String       @id @default(cuid())
+  conversationId  String       @map("conversation_id")
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  // Message content
+  role            MessageRole
+  content         String       @db.Text
+
+  // WhatsApp tracking
+  whatsappMsgId   String?      @map("whatsapp_msg_id")
+  messageStatus   MessageStatus @default(SENT) @map("message_status")
+
+  // Intent classification (set when role=CUSTOMER)
+  intent          String?
+
+  // AI metadata
+  tokensUsed      Int?         @map("tokens_used")
+  modelUsed       String?      @map("model_used")
+
+  // Timestamps
+  sentAt          DateTime     @default(now()) @map("sent_at")
+  deliveredAt     DateTime?    @map("delivered_at")
+  readAt          DateTime?    @map("read_at")
+
+  @@index([conversationId, sentAt])
+  @@map("messages")
+}
+
+enum MessageRole {
+  AI
+  CUSTOMER
+  SYSTEM
+}
+
+enum MessageStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum AbandonmentReason {
+  PRICE
+  SHIPPING
+  PRODUCT_DOUBT
+  FOUND_ELSEWHERE
+  CHANGED_MIND
+  PAYMENT_ISSUE
+  NO_RESPONSE
+  OTHER
+}
+
+// ============================================================
+// DAILY METRICS (aggregated per store per day)
+// ============================================================
+
+model DailyMetrics {
+  id                 String   @id @default(cuid())
+  storeId            String   @map("store_id")
+  store              Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  date               DateTime @db.Date
+
+  // Cart metrics
+  abandonedCount     Int      @default(0) @map("abandoned_count")
+  abandonedValue     Float    @default(0) @map("abandoned_value")
+
+  // Recovery metrics
+  contactedCount     Int      @default(0) @map("contacted_count")
+  recoveredCount     Int      @default(0) @map("recovered_count")
+  recoveredValue     Float    @default(0) @map("recovered_value")
+
+  // Payment confirmation
+  paidCount          Int      @default(0) @map("paid_count")
+  paidValue          Float    @default(0) @map("paid_value")
+
+  // Calculated metrics
+  avgTicket          Float    @default(0) @map("avg_ticket")
+  recoveryRate       Float    @default(0) @map("recovery_rate")
+
+  // Conversation metrics
+  totalConversations Int      @default(0) @map("total_conversations")
+  avgMessagesPerConv Float    @default(0) @map("avg_messages_per_conv")
+  aiCost             Float    @default(0) @map("ai_cost")
+
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@unique([storeId, date])
+  @@index([storeId, date])
+  @@map("daily_metrics")
+}

@@ -1,0 +1,164 @@
+'use client'
+
+import { useState, type FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
+import { Zap, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useAuth } from '@/lib/auth-context'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const { login } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setError('')
+
+    if (!email || !password) {
+      setError('Preencha todos os campos.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      await login(email, password)
+      router.push('/')
+      router.refresh()
+    } catch {
+      setError('Credenciais invalidas. Tente novamente.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="gradient-bg flex min-h-screen items-center justify-center px-4">
+      {/* Subtle glow effect */}
+      <div className="pointer-events-none fixed left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-3xl" />
+
+      <div className="relative w-full max-w-md animate-fade-in">
+        {/* Logo */}
+        <div className="mb-8 flex flex-col items-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-xl)] bg-accent shadow-[var(--shadow-lg)]">
+            <Zap className="h-8 w-8 text-text-inverse" />
+          </div>
+          <h1 className="text-3xl font-bold text-text-primary">RecuperaAI</h1>
+          <p className="mt-2 text-text-secondary">
+            Seu vendedor IA que nunca dorme
+          </p>
+        </div>
+
+        {/* Login Card */}
+        <div className="rounded-[var(--radius-xl)] border border-border bg-surface p-8 shadow-[var(--shadow-xl)]">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-text-primary">
+              Bem-vindo de volta
+            </h2>
+            <p className="mt-1 text-sm text-text-secondary">
+              Entre na sua conta para continuar
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-1.5 block text-sm font-medium text-text-secondary"
+              >
+                E-mail
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
+                className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent-light"
+                autoComplete="email"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1.5 block text-sm font-medium text-text-secondary"
+              >
+                Senha
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Sua senha"
+                  className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-4 py-3 pr-11 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent-light"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="rounded-[var(--radius-md)] bg-error-light px-4 py-3 text-sm text-error">
+                {error}
+              </div>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={cn(
+                'flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 py-3 text-sm font-semibold text-text-inverse',
+                'hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                'transition-all'
+              )}
+            >
+              {loading ? (
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-text-inverse border-t-transparent" />
+              ) : (
+                <>
+                  Entrar
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Forgot Password */}
+          <div className="mt-6 text-center">
+            <button className="text-sm text-text-secondary hover:text-accent transition-colors">
+              Esqueci minha senha
+            </button>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="mt-8 text-center text-xs text-text-tertiary">
+          RecuperaAI - Recuperacao inteligente de carrinhos abandonados
+        </p>
+      </div>
+    </div>
+  )
+}
