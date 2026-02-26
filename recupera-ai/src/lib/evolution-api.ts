@@ -83,6 +83,7 @@ export class EvolutionAPI {
     const headers: Record<string, string> = {
       apikey: this.apiKey,
       'Content-Type': 'application/json',
+      'bypass-tunnel-reminder': 'true',
     }
 
     const options: RequestInit = {
@@ -104,14 +105,18 @@ export class EvolutionAPI {
         errorBody = await response.text()
       }
 
-      const message =
-        typeof errorBody === 'object' && errorBody.message
-          ? Array.isArray(errorBody.message)
-            ? errorBody.message.join(', ')
-            : errorBody.message
-          : typeof errorBody === 'string'
-            ? errorBody
-            : `HTTP ${response.status}`
+      // Extract message - v1 uses response.message, v2 uses top-level message
+      let message = `HTTP ${response.status}`
+      if (typeof errorBody === 'string') {
+        message = errorBody
+      } else if (typeof errorBody === 'object') {
+        // Try top-level message (v2) then nested response.message (v1)
+        const raw = errorBody.message
+          ?? (errorBody as { response?: { message?: string | string[] } }).response?.message
+        if (raw) {
+          message = Array.isArray(raw) ? raw.join(', ') : String(raw)
+        }
+      }
 
       throw new Error(`Evolution API error (${response.status}): ${message}`)
     }
