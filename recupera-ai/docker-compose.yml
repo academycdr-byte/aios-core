@@ -1,6 +1,6 @@
-# RecuperaAI - Evolution API v2 (WhatsApp)
+# RecuperaAI - Evolution API (WhatsApp)
 # Usage: docker compose up -d
-# Dashboard: http://localhost:8080/manager
+# Dashboard: http://localhost:8081/manager
 
 services:
   evolution-api:
@@ -8,7 +8,7 @@ services:
     container_name: recupera-ai-evolution
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       # Server
       - SERVER_URL=http://localhost:8080
@@ -25,20 +25,17 @@ services:
       # CORS
       - CORS_ORIGIN=*
 
-      # Database (internal SQLite - simple setup)
-      - DATABASE_PROVIDER=postgresql
-      - DATABASE_CONNECTION_URI=postgresql://postgres:evolution_pass@postgres:5432/evolution
-      - DATABASE_SAVE_DATA_INSTANCE=true
-      - DATABASE_SAVE_DATA_NEW_MESSAGE=true
-      - DATABASE_SAVE_MESSAGE_UPDATE=true
-      - DATABASE_SAVE_DATA_CONTACTS=true
-      - DATABASE_SAVE_DATA_CHATS=true
+      # Database - disabled for simplicity (uses internal file storage)
+      - DATABASE_ENABLED=false
+      - DATABASE_SAVE_DATA_INSTANCE=false
+      - DATABASE_SAVE_DATA_NEW_MESSAGE=false
+      - DATABASE_SAVE_MESSAGE_UPDATE=false
+      - DATABASE_SAVE_DATA_CONTACTS=false
+      - DATABASE_SAVE_DATA_CHATS=false
 
-      # Redis (for sessions)
-      - CACHE_REDIS_ENABLED=true
-      - CACHE_REDIS_URI=redis://redis:6379
-      - CACHE_REDIS_PREFIX_KEY=recupera-ai
-      - CACHE_LOCAL_ENABLED=false
+      # Cache - local only (no Redis needed)
+      - CACHE_REDIS_ENABLED=false
+      - CACHE_LOCAL_ENABLED=true
 
       # Webhook global (update after Vercel deploy)
       - WEBHOOK_GLOBAL_URL=
@@ -80,29 +77,6 @@ services:
 
     volumes:
       - evolution_instances:/evolution/instances
-    depends_on:
-      - redis
-      - postgres
-
-  redis:
-    image: redis:7-alpine
-    container_name: recupera-ai-redis
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: recupera-ai-postgres-evo
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=evolution_pass
-      - POSTGRES_DB=evolution
-    volumes:
-      - postgres_evo_data:/var/lib/postgresql/data
 
 volumes:
   evolution_instances:
-  redis_data:
-  postgres_evo_data:
