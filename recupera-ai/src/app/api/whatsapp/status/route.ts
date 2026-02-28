@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     let state: 'open' | 'close' | 'connecting' = 'close'
     try {
       const connectionState = await evolutionApi.getInstanceStatus(instanceName)
-      state = connectionState.state ?? 'close'
+      state = connectionState.instance?.state ?? 'close'
     } catch {
       // Instance may not exist yet - that means disconnected
       state = 'close'
