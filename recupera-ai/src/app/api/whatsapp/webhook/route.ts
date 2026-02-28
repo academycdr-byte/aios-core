@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { processIncomingMessage } from '@/lib/ai/message-processor'
 
+export const maxDuration = 60
+
 /**
  * POST /api/whatsapp/webhook
  * Receives incoming messages from Evolution API webhook.
@@ -138,17 +140,15 @@ export async function POST(request: NextRequest) {
 
       console.log(`[WhatsApp Webhook] Saved message in conversation ${conversation.id}`)
 
-      // Trigger AI response generation (non-blocking)
-      // We fire-and-forget so the webhook returns 200 quickly to Evolution API
-      processIncomingMessage(conversation.id, messageContent)
-        .then((result) => {
-          console.log(
-            `[WhatsApp Webhook] AI response for ${conversation.id}: action=${result.action}, intent=${result.intent}, tokens=${result.tokensUsed}`
-          )
-        })
-        .catch((err) => {
-          console.error(`[WhatsApp Webhook] AI processing error for ${conversation.id}:`, err)
-        })
+      // Process AI response (awaited to prevent Vercel from killing the function)
+      try {
+        const result = await processIncomingMessage(conversation.id, messageContent)
+        console.log(
+          `[WhatsApp Webhook] AI response for ${conversation.id}: action=${result.action}, intent=${result.intent}, tokens=${result.tokensUsed}`
+        )
+      } catch (err) {
+        console.error(`[WhatsApp Webhook] AI processing error for ${conversation.id}:`, err)
+      }
 
       return NextResponse.json({
         received: true,

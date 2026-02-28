@@ -23,8 +23,10 @@ export interface EvolutionQRCode {
 }
 
 export interface EvolutionConnectionState {
-  instance: string
-  state: 'open' | 'close' | 'connecting'
+  instance: {
+    instanceName: string
+    state: 'open' | 'close' | 'connecting'
+  }
 }
 
 export interface EvolutionMessageResponse {
@@ -133,15 +135,25 @@ export class EvolutionAPI {
   // ============================================================
 
   /**
-   * Create a new WhatsApp instance
+   * Create a new WhatsApp instance.
+   * When `phone` is provided, returns a pairing code instead of (or alongside) a QR code.
    * POST /instance/create
    */
-  async createInstance(instanceName: string): Promise<EvolutionInstance & { qrcode?: EvolutionQRCode }> {
-    return this.request('POST', '/instance/create', {
+  async createInstance(
+    instanceName: string,
+    phone?: string
+  ): Promise<EvolutionInstance & { qrcode?: EvolutionQRCode }> {
+    const body: Record<string, unknown> = {
       instanceName,
       integration: 'WHATSAPP-BAILEYS',
       qrcode: true,
-    })
+    }
+
+    if (phone) {
+      body.number = phone
+    }
+
+    return this.request('POST', '/instance/create', body)
   }
 
   /**

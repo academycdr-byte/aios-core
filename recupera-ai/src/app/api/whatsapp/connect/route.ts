@@ -5,8 +5,11 @@ import { evolutionApi } from '@/lib/evolution-api'
 
 /**
  * POST /api/whatsapp/connect
- * Creates an Evolution API instance for the store and returns the QR code.
- * Body: { storeId: string }
+ * Creates an Evolution API instance for the store and returns QR code + pairing code.
+ * Body: { storeId: string, phone?: string }
+ *
+ * When `phone` is provided (e.g. "5511999999999"), the API returns a pairing code
+ * that the user types in WhatsApp instead of scanning a QR code.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Parse body
     const body = await request.json()
-    const { storeId } = body as { storeId?: string }
+    const { storeId, phone } = body as { storeId?: string; phone?: string }
 
     if (!storeId) {
       return NextResponse.json(
@@ -54,49 +57,85 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 5. Create instance on Evolution API
+    // 5. Normalize phone: remove non-digits, ensure country code
+    let normalizedPhone: string | undefined
+    if (phone) {
+      normalizedPhone = phone.replace(/\D/g, '')
+      // Add Brazil country code if missing
+      if (normalizedPhone.length === 10 || normalizedPhone.length === 11) {
+        normalizedPhone = `55${normalizedPhone}`
+      }
+    }
+
+    // 6. Instance name for this store
     const instanceName = `recupera-${storeId}`
 
-    let result: Awaited<ReturnType<typeof evolutionApi.createInstance>>
+    // 7. Strategy: reuse existing instance, only create if it doesn't exist.
+    //    Evolution API v2.3.7 + PostgreSQL has FK constraints that break on delete+recreate.
+
+    // Try to reconnect existing instance first (generates fresh QR code)
     try {
-      result = await evolutionApi.createInstance(instanceName)
-    } catch (error) {
-      // If instance already exists, try to get QR code
-      const errorMessage = error instanceof Error ? error.message : ''
-      if (errorMessage.includes('already') || errorMessage.includes('exists')) {
+      const qrcode = await evolutionApi.getQRCode(instanceName)
+      if (qrcode.base64 || qrcode.code || qrcode.pairingCode) {
+        if (normalizedPhone && !store.whatsappPhone) {
+          await prisma.store.update({
+            where: { id: storeId },
+            data: { whatsappPhone: normalizedPhone },
+          })
+        }
+        return NextResponse.json({
+          data: {
+            instanceName,
+            qrcode: qrcode.base64 ?? null,
+            pairingCode: qrcode.pairingCode ?? null,
+          },
+        })
+      }
+    } catch {
+      // Instance might not exist or might already be connected — check status
+      try {
+        const status = await evolutionApi.getInstanceStatus(instanceName)
+        if (status.instance?.state === 'open') {
+          await prisma.store.update({
+            where: { id: storeId },
+            data: { whatsappConnected: true },
+          })
+          return NextResponse.json({
+            data: { instanceName, connected: true, state: 'open' },
+          })
+        }
+        // Instance exists but is in 'close' state — restart it to get a new QR
         try {
           const qrcode = await evolutionApi.getQRCode(instanceName)
-          return NextResponse.json({
-            data: {
-              instanceName,
-              qrcode: qrcode.base64 ?? qrcode.code ?? null,
-              pairingCode: qrcode.pairingCode ?? null,
-            },
-          })
-        } catch {
-          // Instance exists but may already be connected
-          const status = await evolutionApi.getInstanceStatus(instanceName)
-          if (status.state === 'open') {
-            // Already connected, update DB
-            await prisma.store.update({
-              where: { id: storeId },
-              data: { whatsappConnected: true },
-            })
+          if (qrcode.base64 || qrcode.code) {
             return NextResponse.json({
               data: {
                 instanceName,
-                connected: true,
-                state: 'open',
+                qrcode: qrcode.base64 ?? null,
+                pairingCode: qrcode.pairingCode ?? null,
               },
             })
           }
-          throw error
+        } catch {
+          // Could not get QR from existing instance — will create new below
         }
+      } catch {
+        // Instance truly doesn't exist — will create new below
       }
-      throw error
     }
 
-    // 6. Extract QR code from response
+    // 8. Create new instance (only reached if instance doesn't exist)
+    const result = await evolutionApi.createInstance(instanceName, normalizedPhone)
+
+    // 9. Save phone to store if provided
+    if (normalizedPhone && !store.whatsappPhone) {
+      await prisma.store.update({
+        where: { id: storeId },
+        data: { whatsappPhone: normalizedPhone },
+      })
+    }
+
+    // 10. Extract QR code and pairing code from response
     const qrBase64 = result.qrcode?.base64 ?? null
     const pairingCode = result.qrcode?.pairingCode ?? null
 

@@ -9,6 +9,8 @@ import {
   RefreshCcw,
   Smartphone,
   Unplug,
+  Hash,
+  QrCode,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +21,7 @@ interface WhatsappConnectModalProps {
   onStatusChange: (connected: boolean) => void
 }
 
-type ModalState = 'idle' | 'loading' | 'qr' | 'connected' | 'error'
+type ModalState = 'idle' | 'loading' | 'pairing' | 'qr' | 'connected' | 'error'
 
 export function WhatsappConnectModal({
   storeId,
@@ -28,6 +30,8 @@ export function WhatsappConnectModal({
   onStatusChange,
 }: WhatsappConnectModalProps) {
   const [state, setState] = useState<ModalState>('idle')
+  const [phone, setPhone] = useState('')
+  const [pairingCode, setPairingCode] = useState<string | null>(null)
   const [qrCode, setQrCode] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -50,6 +54,16 @@ export function WhatsappConnectModal({
     }
   }, [isOpen])
 
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setState('idle')
+      setPairingCode(null)
+      setQrCode(null)
+      setErrorMessage(null)
+    }
+  }, [isOpen])
+
   const checkStatus = useCallback(async () => {
     try {
       const res = await fetch(`/api/whatsapp/status?storeId=${storeId}`)
@@ -58,7 +72,6 @@ export function WhatsappConnectModal({
       if (json.data?.connected) {
         setState('connected')
         onStatusChange(true)
-        // Stop polling
         if (pollingRef.current) {
           clearInterval(pollingRef.current)
           pollingRef.current = null
@@ -76,50 +89,68 @@ export function WhatsappConnectModal({
     pollingRef.current = setInterval(checkStatus, 3000)
   }, [checkStatus])
 
-  const generateQrCode = useCallback(async () => {
-    setState('loading')
-    setQrCode(null)
-    setErrorMessage(null)
+  const connect = useCallback(
+    async (usePhone: boolean) => {
+      setState('loading')
+      setPairingCode(null)
+      setQrCode(null)
+      setErrorMessage(null)
 
-    try {
-      const res = await fetch('/api/whatsapp/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ storeId }),
-      })
+      try {
+        const bodyPayload: Record<string, string> = { storeId }
+        if (usePhone && phone.trim()) {
+          bodyPayload.phone = phone.trim()
+        }
 
-      const json = await res.json()
+        const res = await fetch('/api/whatsapp/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyPayload),
+        })
 
-      if (!res.ok) {
-        setErrorMessage(json.message ?? 'Erro ao conectar WhatsApp')
+        const json = await res.json()
+
+        if (!res.ok) {
+          setErrorMessage(json.message ?? 'Erro ao conectar WhatsApp')
+          setState('error')
+          return
+        }
+
+        // Check if already connected
+        if (json.data?.connected) {
+          setState('connected')
+          onStatusChange(true)
+          return
+        }
+
+        // Pairing code method (preferred)
+        if (json.data?.pairingCode) {
+          setPairingCode(json.data.pairingCode)
+          setQrCode(json.data.qrcode ?? null)
+          setState('pairing')
+          startPolling()
+          return
+        }
+
+        // Fallback to QR code
+        if (json.data?.qrcode) {
+          setQrCode(json.data.qrcode)
+          setState('qr')
+          startPolling()
+          return
+        }
+
+        setErrorMessage('Nenhum codigo de pareamento retornado. Tente novamente.')
         setState('error')
-        return
-      }
-
-      // Check if already connected
-      if (json.data?.connected) {
-        setState('connected')
-        onStatusChange(true)
-        return
-      }
-
-      // Show QR code
-      if (json.data?.qrcode) {
-        setQrCode(json.data.qrcode)
-        setState('qr')
-        // Start polling for connection status
-        startPolling()
-      } else {
-        setErrorMessage('QR Code nao retornado pela API. Tente novamente.')
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : 'Erro desconhecido'
+        )
         setState('error')
       }
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : 'Erro desconhecido ao gerar QR Code'
-      )
-      setState('error')
-    }
-  }, [storeId, onStatusChange, startPolling])
+    },
+    [storeId, phone, onStatusChange, startPolling]
+  )
 
   const handleDisconnect = useCallback(async () => {
     setState('loading')
@@ -133,6 +164,7 @@ export function WhatsappConnectModal({
       if (res.ok) {
         setState('idle')
         setQrCode(null)
+        setPairingCode(null)
         onStatusChange(false)
       } else {
         const json = await res.json()
@@ -146,6 +178,28 @@ export function WhatsappConnectModal({
       setState('error')
     }
   }, [storeId, onStatusChange])
+
+  // Format phone for display: (11) 99999-9999
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '')
+    if (digits.length <= 2) return digits
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '')
+    if (digits.length <= 11) {
+      setPhone(digits)
+    }
+  }
+
+  const isPhoneValid = phone.replace(/\D/g, '').length >= 10
+
+  // Format pairing code for display: XXXX-XXXX
+  const formattedPairingCode = pairingCode
+    ? `${pairingCode.slice(0, 4)}-${pairingCode.slice(4)}`
+    : ''
 
   if (!isOpen) return null
 
@@ -172,24 +226,51 @@ export function WhatsappConnectModal({
 
         {/* Content */}
         <div className="flex flex-col items-center gap-4">
-          {/* IDLE - Initial state */}
+          {/* IDLE - Phone number input */}
           {state === 'idle' && (
             <>
-              <div className="flex h-32 w-32 items-center justify-center rounded-[var(--radius-lg)] bg-bg-tertiary">
-                <Smartphone className="h-12 w-12 text-text-tertiary" />
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent/10">
+                <Smartphone className="h-10 w-10 text-accent" />
               </div>
-              <p className="text-center text-sm text-text-secondary">
-                Clique no botao abaixo para gerar o QR Code e conectar seu WhatsApp Business.
-              </p>
-              <p className="text-center text-xs text-text-tertiary">
-                Abra o WhatsApp {'>'} Configuracoes {'>'} Dispositivos Conectados {'>'} Conectar
-                Dispositivo
-              </p>
+
+              <div className="w-full space-y-1">
+                <label className="block text-sm font-medium text-text-primary">
+                  Numero do WhatsApp Business
+                </label>
+                <input
+                  type="tel"
+                  value={formatPhone(phone)}
+                  onChange={handlePhoneChange}
+                  placeholder="(11) 99999-9999"
+                  className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2.5 text-center text-lg tracking-wider text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  autoFocus
+                />
+                <p className="text-center text-xs text-text-tertiary">
+                  O numero que sera usado para enviar mensagens de recuperacao
+                </p>
+              </div>
+
               <button
-                onClick={generateQrCode}
-                className="w-full rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover"
+                onClick={() => connect(true)}
+                disabled={!isPhoneValid}
+                className="w-full rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Gerar QR Code
+                <Hash className="mr-1.5 inline h-4 w-4" />
+                Gerar Codigo de Pareamento
+              </button>
+
+              <div className="flex w-full items-center gap-3">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs text-text-tertiary">ou</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+
+              <button
+                onClick={() => connect(false)}
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-border px-4 py-2 text-sm text-text-secondary hover:bg-surface-hover"
+              >
+                <QrCode className="h-4 w-4" />
+                Usar QR Code
               </button>
             </>
           )}
@@ -198,15 +279,58 @@ export function WhatsappConnectModal({
           {state === 'loading' && (
             <>
               <Loader2 className="h-10 w-10 animate-spin text-accent" />
-              <p className="text-sm text-text-secondary">Processando...</p>
+              <p className="text-sm text-text-secondary">Gerando codigo...</p>
             </>
           )}
 
-          {/* QR CODE */}
+          {/* PAIRING CODE */}
+          {state === 'pairing' && pairingCode && (
+            <>
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
+                <Hash className="h-8 w-8 text-accent" />
+              </div>
+
+              <div className="space-y-2 text-center">
+                <p className="text-sm text-text-secondary">
+                  Digite este codigo no seu WhatsApp:
+                </p>
+                <div className="rounded-[var(--radius-lg)] border-2 border-accent/30 bg-accent/5 px-6 py-4">
+                  <p className="font-mono text-3xl font-bold tracking-[0.3em] text-text-primary">
+                    {formattedPairingCode}
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-full rounded-[var(--radius-md)] border border-border bg-bg-tertiary p-3">
+                <p className="text-xs font-medium text-text-primary mb-1.5">Como conectar:</p>
+                <ol className="list-inside list-decimal space-y-0.5 text-xs text-text-secondary">
+                  <li>Abra o <strong>WhatsApp Business</strong></li>
+                  <li>Va em <strong>Configuracoes</strong> {'>'} <strong>Dispositivos Conectados</strong></li>
+                  <li>Toque em <strong>Conectar Dispositivo</strong></li>
+                  <li>Toque em <strong>&quot;Conectar com numero de telefone&quot;</strong></li>
+                  <li>Digite o codigo <strong>{formattedPairingCode}</strong></li>
+                </ol>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-text-tertiary">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Aguardando conexao...
+              </div>
+
+              <button
+                onClick={() => connect(true)}
+                className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline"
+              >
+                <RefreshCcw className="h-3 w-3" />
+                Gerar novo codigo
+              </button>
+            </>
+          )}
+
+          {/* QR CODE (fallback) */}
           {state === 'qr' && qrCode && (
             <>
               <div className="rounded-[var(--radius-lg)] border border-border bg-white p-3">
-                {/* QR code is base64 data URI - next/image not suitable for dynamic base64 */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={
@@ -231,7 +355,7 @@ export function WhatsappConnectModal({
                 Aguardando conexao...
               </div>
               <button
-                onClick={generateQrCode}
+                onClick={() => connect(false)}
                 className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline"
               >
                 <RefreshCcw className="h-3 w-3" />
@@ -287,7 +411,7 @@ export function WhatsappConnectModal({
                 </p>
               </div>
               <button
-                onClick={generateQrCode}
+                onClick={() => setState('idle')}
                 className="w-full rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover"
               >
                 Tentar Novamente
