@@ -16,6 +16,7 @@ import {
   Save,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button, Toggle } from '@/components/ui'
 import type { MockRecoveryConfig } from '@/lib/mock-stores'
 
 // ============================================================
@@ -437,46 +438,25 @@ export function RecoveryFlowBuilder({ config: initial, onSave }: {
       </div>
 
       {/* Active/Inactive Toggle */}
-      <div className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface px-4 py-3">
-        <span className="text-sm text-text-primary">
-          {activeFlow === 'abandoned' ? 'Recuperacao de Carrinho' : activeFlow === 'pix' ? 'Recuperacao PIX' : 'Recuperacao Cartao'}
-        </span>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={
-            activeFlow === 'abandoned' ? form.isActive :
-            activeFlow === 'pix' ? form.pixRecoveryEnabled :
-            form.cardRecoveryEnabled
-          }
-          onClick={() => {
-            if (activeFlow === 'abandoned') setForm((p) => ({ ...p, isActive: !p.isActive }))
-            else if (activeFlow === 'pix') setForm((p) => ({ ...p, pixRecoveryEnabled: !p.pixRecoveryEnabled }))
-            else setForm((p) => ({ ...p, cardRecoveryEnabled: !p.cardRecoveryEnabled }))
-          }}
-          className="flex items-center gap-2"
-        >
-          <div className={cn(
-            'relative h-6 w-11 shrink-0 rounded-full transition-colors',
-            (activeFlow === 'abandoned' ? form.isActive : activeFlow === 'pix' ? form.pixRecoveryEnabled : form.cardRecoveryEnabled)
-              ? 'bg-accent'
-              : 'bg-border'
-          )}>
-            <div className={cn(
-              'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform',
-              (activeFlow === 'abandoned' ? form.isActive : activeFlow === 'pix' ? form.pixRecoveryEnabled : form.cardRecoveryEnabled)
-                ? 'translate-x-[22px]'
-                : 'translate-x-0.5'
-            )} />
+      {(() => {
+        const isFlowActive = activeFlow === 'abandoned' ? form.isActive : activeFlow === 'pix' ? form.pixRecoveryEnabled : form.cardRecoveryEnabled
+        return (
+          <div className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface px-4 py-3">
+            <span className="text-sm text-text-primary">
+              {activeFlow === 'abandoned' ? 'Recuperacao de Carrinho' : activeFlow === 'pix' ? 'Recuperacao PIX' : 'Recuperacao Cartao'}
+            </span>
+            <Toggle
+              checked={isFlowActive}
+              onChange={() => {
+                if (activeFlow === 'abandoned') setForm((p) => ({ ...p, isActive: !p.isActive }))
+                else if (activeFlow === 'pix') setForm((p) => ({ ...p, pixRecoveryEnabled: !p.pixRecoveryEnabled }))
+                else setForm((p) => ({ ...p, cardRecoveryEnabled: !p.cardRecoveryEnabled }))
+              }}
+              label={isFlowActive ? 'Ativo' : 'Inativo'}
+            />
           </div>
-          <span className="text-xs text-text-tertiary">
-            {(activeFlow === 'abandoned' ? form.isActive : activeFlow === 'pix' ? form.pixRecoveryEnabled : form.cardRecoveryEnabled)
-              ? 'Ativo'
-              : 'Inativo'
-            }
-          </span>
-        </button>
-      </div>
+        )
+      })()}
 
       {/* Flow Visualization */}
       <div className="rounded-[var(--radius-lg)] border border-dashed border-border bg-bg-tertiary p-6">
@@ -493,14 +473,10 @@ export function RecoveryFlowBuilder({ config: initial, onSave }: {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
-        >
-          <Save className="h-4 w-4" />
+        <Button loading={saving} onClick={handleSave}>
+          {!saving && <Save className="h-4 w-4" />}
           {saving ? 'Salvando...' : 'Salvar Fluxo'}
-        </button>
+        </Button>
       </div>
     </div>
   )

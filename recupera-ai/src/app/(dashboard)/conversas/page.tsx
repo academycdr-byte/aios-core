@@ -7,11 +7,11 @@ import {
   Search,
   Bot,
   ArrowLeft,
-  Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatRelativeTime } from '@/lib/format'
 import { ConversationDetail } from '@/components/conversation-detail'
+import { Input, Spinner, Avatar, Badge, Button } from '@/components/ui'
 import type { Conversation, Store } from '@/types'
 
 // ============================================================
@@ -61,10 +61,9 @@ function ConversationItem({ conversation, isSelected, onClick }: ConversationIte
           : 'hover:bg-surface-hover'
       )}
     >
-      {/* Avatar */}
-      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-accent text-sm font-semibold text-text-inverse">
-        {conversation.customerName?.charAt(0) ?? '?'}
-        {/* Status dot */}
+      {/* Avatar with status dot */}
+      <div className="relative">
+        <Avatar name={conversation.customerName ?? '?'} size="md" />
         <div
           className={cn(
             'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-[var(--radius-full)] border-2 border-bg-secondary',
@@ -87,15 +86,9 @@ function ConversationItem({ conversation, isSelected, onClick }: ConversationIte
           {conversation.lastMessage ?? 'Sem mensagens'}
         </p>
         <div className="mt-1.5 flex items-center gap-2">
-          <span
-            className={cn(
-              'rounded-[var(--radius-full)] px-2 py-0.5 text-[10px] font-medium',
-              statusCfg.bg,
-              statusCfg.color
-            )}
-          >
+          <Badge variant={conversation.status === 'ACTIVE' ? 'info' : conversation.status === 'RECOVERED' ? 'success' : conversation.status === 'LOST' ? 'error' : conversation.status === 'ESCALATED' ? 'warning' : 'neutral'} size="sm">
             {statusCfg.label}
-          </span>
+          </Badge>
           {conversation.cartTotal != null && conversation.cartTotal > 0 && (
             <span className="text-[10px] font-medium text-text-secondary">
               {formatCurrency(conversation.cartTotal)}
@@ -109,27 +102,6 @@ function ConversationItem({ conversation, isSelected, onClick }: ConversationIte
         </div>
       </div>
     </button>
-  )
-}
-
-// ============================================================
-// EMPTY STATE
-// ============================================================
-
-function EmptyState() {
-  return (
-    <div className="flex h-full flex-col items-center justify-center p-8">
-      <div className="rounded-[var(--radius-xl)] bg-accent-light p-4">
-        <MessageSquare className="h-8 w-8 text-accent" />
-      </div>
-      <h3 className="mt-4 text-lg font-semibold text-text-primary">
-        Selecione uma conversa
-      </h3>
-      <p className="mt-1 max-w-sm text-center text-sm text-text-tertiary">
-        Escolha uma conversa na lista ao lado para ver os detalhes e o historico
-        de mensagens.
-      </p>
-    </div>
   )
 }
 
@@ -155,7 +127,7 @@ function ConversasLoading() {
         </p>
       </div>
       <div className="flex h-[calc(100vh-220px)] items-center justify-center rounded-[var(--radius-lg)] border border-border bg-surface">
-        <Loader2 className="h-6 w-6 animate-spin text-accent" />
+        <Spinner size="md" />
       </div>
     </div>
   )
@@ -216,7 +188,7 @@ function ConversasContent() {
     }
   }, [statusFilter, storeFilter])
 
-  // Client-side search filter (since we already have all conversations loaded)
+  // Client-side search filter
   const filteredConversations = search.trim()
     ? conversations.filter((c) => {
         const q = search.toLowerCase()
@@ -262,17 +234,14 @@ function ConversasContent() {
           >
             {/* Filters */}
             <div className="space-y-2 border-b border-border p-3">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-tertiary" />
-                <input
-                  type="text"
-                  placeholder="Buscar conversa..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-bg-tertiary py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-tertiary"
-                />
-              </div>
+              <Input
+                type="text"
+                placeholder="Buscar conversa..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                icon={<Search className="h-4 w-4" />}
+                className="bg-bg-tertiary"
+              />
 
               {/* Status tabs */}
               <div className="flex gap-1 overflow-x-auto">
@@ -311,7 +280,7 @@ function ConversasContent() {
             <div className="flex-1 divide-y divide-border overflow-y-auto">
               {loading ? (
                 <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                  <Spinner size="md" />
                   <p className="mt-2 text-sm text-text-tertiary">Carregando...</p>
                 </div>
               ) : (
@@ -354,13 +323,10 @@ function ConversasContent() {
             {/* Mobile back button */}
             {mobileShowDetail && (
               <div className="border-b border-border p-2 lg:hidden">
-                <button
-                  onClick={handleBack}
-                  className="flex items-center gap-1 rounded-[var(--radius-md)] px-2 py-1 text-sm text-text-secondary hover:text-text-primary"
-                >
+                <Button variant="ghost" size="sm" onClick={handleBack}>
                   <ArrowLeft className="h-4 w-4" />
                   Voltar
-                </button>
+                </Button>
               </div>
             )}
 
@@ -370,7 +336,18 @@ function ConversasContent() {
                 onClose={handleBack}
               />
             ) : (
-              <EmptyState />
+              <div className="flex h-full flex-col items-center justify-center p-8">
+                <div className="rounded-[var(--radius-xl)] bg-accent-light p-4">
+                  <MessageSquare className="h-8 w-8 text-accent" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-text-primary">
+                  Selecione uma conversa
+                </h3>
+                <p className="mt-1 max-w-sm text-center text-sm text-text-tertiary">
+                  Escolha uma conversa na lista ao lado para ver os detalhes e o historico
+                  de mensagens.
+                </p>
+              </div>
             )}
           </div>
         </div>

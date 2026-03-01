@@ -10,22 +10,30 @@ import {
   Check,
   CheckCheck,
   X,
-  Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/format'
+import { Badge, Spinner } from '@/components/ui'
 import type { Conversation, Message, AbandonedCart } from '@/types'
 
 // ============================================================
-// STATUS CONFIG
+// CONVERSATION STATUS → Badge variant mapping
 // ============================================================
 
-const CONV_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  ACTIVE: { label: 'Ativa', color: 'text-info', bg: 'bg-info-light' },
-  RECOVERED: { label: 'Recuperada', color: 'text-success', bg: 'bg-success-light' },
-  LOST: { label: 'Perdida', color: 'text-error', bg: 'bg-error-light' },
-  ESCALATED: { label: 'Escalada', color: 'text-warning', bg: 'bg-warning-light' },
-  EXPIRED: { label: 'Expirada', color: 'text-text-tertiary', bg: 'bg-surface-active' },
+const CONV_VARIANT: Record<string, 'info' | 'success' | 'error' | 'warning' | 'neutral'> = {
+  ACTIVE: 'info',
+  RECOVERED: 'success',
+  LOST: 'error',
+  ESCALATED: 'warning',
+  EXPIRED: 'neutral',
+}
+
+const CONV_LABEL: Record<string, string> = {
+  ACTIVE: 'Ativa',
+  RECOVERED: 'Recuperada',
+  LOST: 'Perdida',
+  ESCALATED: 'Escalada',
+  EXPIRED: 'Expirada',
 }
 
 // ============================================================
@@ -160,8 +168,6 @@ export function ConversationDetail({ conversation, onClose }: ConversationDetail
     }
   }, [conversation.id])
 
-  const statusCfg = CONV_STATUS_CONFIG[conversation.status] ?? CONV_STATUS_CONFIG.ACTIVE
-
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
@@ -175,15 +181,9 @@ export function ConversationDetail({ conversation, onClose }: ConversationDetail
               <h3 className="text-sm font-semibold text-text-primary">
                 {conversation.customerName ?? 'Desconhecido'}
               </h3>
-              <span
-                className={cn(
-                  'rounded-[var(--radius-full)] px-2 py-0.5 text-[10px] font-medium',
-                  statusCfg.bg,
-                  statusCfg.color
-                )}
-              >
-                {statusCfg.label}
-              </span>
+              <Badge variant={CONV_VARIANT[conversation.status] ?? 'neutral'} size="sm">
+                {CONV_LABEL[conversation.status] ?? conversation.status}
+              </Badge>
             </div>
             <div className="flex items-center gap-3 text-xs text-text-tertiary">
               <span className="flex items-center gap-1">
@@ -213,7 +213,7 @@ export function ConversationDetail({ conversation, onClose }: ConversationDetail
       <div className="flex-1 space-y-3 overflow-y-auto p-4">
         {loading ? (
           <div className="flex h-full items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-accent" />
+            <Spinner size="md" />
           </div>
         ) : (
           <>

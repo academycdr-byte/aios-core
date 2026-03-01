@@ -12,55 +12,10 @@ import {
 } from 'recharts'
 import type { DailyMetric } from '@/types/charts'
 import { formatCurrencyShort } from '@/lib/format'
+import { ChartTooltip } from '@/components/patterns'
 
 interface ValueComparisonChartProps {
   data: DailyMetric[]
-}
-
-interface TooltipPayloadItem {
-  dataKey: string
-  name: string
-  value: number
-  color: string
-}
-
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: TooltipPayloadItem[]
-  label?: string
-}
-
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload?.length) return null
-
-  return (
-    <div
-      className="rounded-[var(--radius-md)] border border-[var(--border)] px-3 py-2"
-      style={{
-        background: 'var(--bg-elevated)',
-        boxShadow: 'var(--shadow-lg)',
-      }}
-    >
-      <p
-        className="mb-1.5 text-xs font-medium"
-        style={{ color: 'var(--text-tertiary)' }}
-      >
-        {label}
-      </p>
-      {payload.map((entry) => (
-        <div key={entry.dataKey} className="flex items-center gap-2 text-sm">
-          <span
-            className="inline-block h-2 w-2 rounded-full"
-            style={{ background: entry.color }}
-          />
-          <span style={{ color: 'var(--text-secondary)' }}>{entry.name}:</span>
-          <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-            {formatCurrencyShort(entry.value)}
-          </span>
-        </div>
-      ))}
-    </div>
-  )
 }
 
 function formatYAxis(value: number): string {
@@ -112,7 +67,7 @@ export function ValueComparisonChart({ data }: ValueComparisonChartProps) {
               tickFormatter={formatYAxis}
             />
 
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<ChartTooltip formatter={(v) => formatCurrencyShort(v)} />} />
 
             <Legend
               wrapperStyle={{ paddingTop: 12 }}

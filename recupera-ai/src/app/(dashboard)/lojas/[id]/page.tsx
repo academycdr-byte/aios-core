@@ -20,7 +20,6 @@ import {
   PowerOff,
   CheckCircle2,
   XCircle,
-  Loader2,
   Unplug,
   Download,
   Send,
@@ -31,6 +30,7 @@ import { StoreSettingsForm } from '@/components/store-settings-form'
 import { RecoveryConfigForm } from '@/components/recovery-config-form'
 import { KnowledgeBaseForm } from '@/components/knowledge-base-form'
 import { WhatsappConnectModal } from '@/components/whatsapp-connect-modal'
+import { Button, Badge, Input, Spinner, PageSpinner } from '@/components/ui'
 import type { MockStoreSettings, MockRecoveryConfig } from '@/lib/mock-stores'
 
 type TabId = 'overview' | 'knowledge' | 'settings' | 'recovery' | 'whatsapp'
@@ -71,7 +71,7 @@ interface StoreData {
   }
 }
 
-function StatCard({ icon: Icon, label, value, color }: {
+function OverviewStatCard({ icon: Icon, label, value, color }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
   value: string | number
@@ -196,33 +196,13 @@ function OverviewTab({ store }: { store: StoreData }) {
   }, [store.id])
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="animate-fade-in space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          icon={ShoppingCart}
-          label="Carrinhos Total"
-          value={cartCount}
-          color="warning"
-        />
-        <StatCard
-          icon={RefreshCcw}
-          label="Conversas Total"
-          value={convCount}
-          color="success"
-        />
-        <StatCard
-          icon={TrendingUp}
-          label="Plataforma"
-          value={store.platform === 'SHOPIFY' ? 'Shopify' : 'Nuvemshop'}
-          color="accent"
-        />
-        <StatCard
-          icon={DollarSign}
-          label="Status"
-          value={store.isActive ? 'Ativa' : 'Inativa'}
-          color="info"
-        />
+        <OverviewStatCard icon={ShoppingCart} label="Carrinhos Total" value={cartCount} color="warning" />
+        <OverviewStatCard icon={RefreshCcw} label="Conversas Total" value={convCount} color="success" />
+        <OverviewStatCard icon={TrendingUp} label="Plataforma" value={store.platform === 'SHOPIFY' ? 'Shopify' : 'Nuvemshop'} color="accent" />
+        <OverviewStatCard icon={DollarSign} label="Status" value={store.isActive ? 'Ativa' : 'Inativa'} color="info" />
       </div>
 
       {/* Sync (Shopify only) */}
@@ -233,14 +213,10 @@ function OverviewTab({ store }: { store: StoreData }) {
               <h3 className="text-sm font-semibold text-text-primary">Sincronizar Carrinhos</h3>
               <p className="text-xs text-text-tertiary">Importar carrinhos abandonados do Shopify</p>
             </div>
-            <button
-              onClick={handleSync}
-              disabled={syncing}
-              className="inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 py-2 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
-            >
-              {syncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            <Button onClick={handleSync} loading={syncing}>
+              <Download className="h-4 w-4" />
               {syncing ? 'Sincronizando...' : 'Sincronizar'}
-            </button>
+            </Button>
           </div>
           {syncResult && (
             <div className="mt-3 rounded-[var(--radius-md)] bg-success/10 p-3">
@@ -265,7 +241,7 @@ function OverviewTab({ store }: { store: StoreData }) {
         </h3>
         {chartLoading ? (
           <div className="flex h-40 items-center justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-text-tertiary" />
+            <Spinner size="sm" className="text-text-tertiary" />
           </div>
         ) : chartData.length > 0 ? (
           <SimpleBarChart data={chartData} />
@@ -283,15 +259,9 @@ function OverviewTab({ store }: { store: StoreData }) {
               <dt className="text-sm text-text-secondary">Plataforma</dt>
               <dd className="flex items-center gap-1.5 text-sm font-medium text-text-primary">
                 {store.platform === 'SHOPIFY' ? (
-                  <>
-                    <ShoppingBag className="h-4 w-4 text-purple-400" />
-                    Shopify
-                  </>
+                  <><ShoppingBag className="h-4 w-4 text-purple-400" /> Shopify</>
                 ) : (
-                  <>
-                    <Cloud className="h-4 w-4 text-blue-400" />
-                    Nuvemshop
-                  </>
+                  <><Cloud className="h-4 w-4 text-blue-400" /> Nuvemshop</>
                 )}
               </dd>
             </div>
@@ -322,15 +292,9 @@ function OverviewTab({ store }: { store: StoreData }) {
               <dt className="text-sm text-text-secondary">Status</dt>
               <dd className={cn('flex items-center gap-1.5 text-sm font-medium', store.whatsappConnected ? 'text-success' : 'text-error')}>
                 {store.whatsappConnected ? (
-                  <>
-                    <CheckCircle2 className="h-4 w-4" />
-                    Conectado
-                  </>
+                  <><CheckCircle2 className="h-4 w-4" /> Conectado</>
                 ) : (
-                  <>
-                    <XCircle className="h-4 w-4" />
-                    Desconectado
-                  </>
+                  <><XCircle className="h-4 w-4" /> Desconectado</>
                 )}
               </dd>
             </div>
@@ -364,10 +328,8 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
   const [testTokens, setTestTokens] = useState(0)
   const [testCost, setTestCost] = useState(0)
 
-  // Check real status from Evolution API on mount
   useEffect(() => {
     let cancelled = false
-
     async function checkStatus() {
       setStatusLoading(true)
       try {
@@ -384,12 +346,10 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
         if (!cancelled) setStatusLoading(false)
       }
     }
-
     checkStatus()
     return () => { cancelled = true }
   }, [store.id, onStatusChange])
 
-  // Fetch carts for test message dropdown
   useEffect(() => {
     async function fetchCarts() {
       try {
@@ -482,7 +442,7 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
   }, [store.id, onStatusChange])
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="animate-fade-in space-y-6">
       {/* Connection Status */}
       <div className={cn(
         'rounded-[var(--radius-lg)] border p-6',
@@ -496,7 +456,7 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
             liveConnected ? 'bg-success/20' : 'bg-error/20'
           )}>
             {statusLoading ? (
-              <Loader2 className="h-6 w-6 animate-spin text-text-tertiary" />
+              <Spinner size="md" className="text-text-tertiary" />
             ) : liveConnected ? (
               <CheckCircle2 className="h-6 w-6 text-success" />
             ) : (
@@ -538,12 +498,9 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
             <p className="text-center text-xs text-text-tertiary">
               Abra o WhatsApp Business {'>'} Configuracoes {'>'} Dispositivos Conectados {'>'} Conectar Dispositivo
             </p>
-            <button
-              onClick={() => setShowModal(true)}
-              className="rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover"
-            >
+            <Button onClick={() => setShowModal(true)}>
               Gerar QR Code
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -570,18 +527,10 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
             </div>
           </dl>
           <div className="mt-4 border-t border-border pt-4">
-            <button
-              onClick={handleDisconnect}
-              disabled={statusLoading}
-              className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-error/30 px-4 py-2 text-sm font-medium text-error hover:bg-error-light disabled:opacity-50"
-            >
-              {statusLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Unplug className="h-4 w-4" />
-              )}
+            <Button variant="danger" loading={statusLoading} onClick={handleDisconnect}>
+              <Unplug className="h-4 w-4" />
               Desconectar WhatsApp
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -596,12 +545,12 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
 
           <div className="mb-3">
             <label className="mb-1 block text-xs font-medium text-text-secondary">Numero do WhatsApp *</label>
-            <input
+            <Input
               type="text"
               placeholder="5511999999999"
               value={testPhone}
               onChange={(e) => setTestPhone(e.target.value)}
-              className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none"
+              className="bg-bg-primary"
             />
           </div>
 
@@ -622,22 +571,14 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
           </div>
 
           <div className="flex gap-2">
-            <button
-              onClick={handleTestPreview}
-              disabled={testLoading || !testPhone.trim()}
-              className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-border px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-hover disabled:opacity-50"
-            >
-              {testLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+            <Button variant="secondary" loading={testLoading} disabled={!testPhone.trim()} onClick={handleTestPreview}>
+              <Eye className="h-4 w-4" />
               Visualizar
-            </button>
-            <button
-              onClick={handleTestSend}
-              disabled={testLoading || !testPhone.trim()}
-              className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] bg-accent px-4 py-2 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
-            >
-              {testLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            </Button>
+            <Button loading={testLoading} disabled={!testPhone.trim()} onClick={handleTestSend}>
+              <Send className="h-4 w-4" />
               Enviar Teste
-            </button>
+            </Button>
           </div>
 
           {generatedMessage && (
@@ -665,7 +606,6 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
         </div>
       )}
 
-      {/* WhatsApp Connect Modal */}
       <WhatsappConnectModal
         storeId={store.id}
         isOpen={showModal}
@@ -686,12 +626,10 @@ export default function StoreDetailPage() {
   const [recoveryConfig, setRecoveryConfig] = useState<MockRecoveryConfig | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Callback to update whatsapp status in local store state
   const handleWhatsappStatusChange = useCallback((connected: boolean) => {
     setStore((prev) => prev ? { ...prev, whatsappConnected: connected } : prev)
   }, [])
 
-  // Fetch store data
   useEffect(() => {
     const controller = new AbortController()
     let cancelled = false
@@ -720,12 +658,7 @@ export default function StoreDetailPage() {
   }, [storeId])
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-accent" />
-        <p className="ml-2 text-sm text-text-tertiary">Carregando loja...</p>
-      </div>
-    )
+    return <PageSpinner message="Carregando loja..." />
   }
 
   if (!store) {
@@ -757,16 +690,13 @@ export default function StoreDetailPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="animate-fade-in space-y-6">
       {/* Back Button + Store Header */}
       <div>
-        <button
-          onClick={() => router.push('/lojas')}
-          className="mb-3 inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary"
-        >
+        <Button variant="ghost" size="sm" onClick={() => router.push('/lojas')} className="mb-3">
           <ArrowLeft className="h-4 w-4" />
           Voltar para Lojas
-        </button>
+        </Button>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className={cn(
@@ -785,20 +715,13 @@ export default function StoreDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={cn(
-              'inline-flex items-center gap-1.5 rounded-[var(--radius-full)] px-3 py-1 text-xs font-medium',
-              store.isActive ? 'bg-success-light text-success' : 'bg-surface-hover text-text-tertiary'
-            )}>
-              {store.isActive ? <Power className="h-3 w-3" /> : <PowerOff className="h-3 w-3" />}
+            <Badge variant={store.isActive ? 'success' : 'neutral'} dot>
               {store.isActive ? 'Ativa' : 'Inativa'}
-            </span>
-            <span className={cn(
-              'inline-flex items-center gap-1.5 rounded-[var(--radius-full)] px-3 py-1 text-xs font-medium',
-              store.whatsappConnected ? 'bg-success-light text-success' : 'bg-error-light text-error'
-            )}>
+            </Badge>
+            <Badge variant={store.whatsappConnected ? 'success' : 'error'} dot>
               <MessageCircle className="h-3 w-3" />
               {store.whatsappConnected ? 'WhatsApp OK' : 'WhatsApp Off'}
-            </span>
+            </Badge>
           </div>
         </div>
       </div>

@@ -3,8 +3,9 @@
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Zap, Eye, EyeOff, ArrowRight } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth-context'
+import { Button } from '@/components/ui'
+import { Input } from '@/components/ui'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -73,13 +74,13 @@ export default function LoginPage() {
               >
                 E-mail
               </label>
-              <input
+              <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
-                className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent-light"
+                className="bg-bg-primary"
                 autoComplete="email"
               />
             </div>
@@ -93,13 +94,13 @@ export default function LoginPage() {
                 Senha
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Sua senha"
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-4 py-3 pr-11 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent-light"
+                  className="bg-bg-primary pr-11"
                   autoComplete="current-password"
                 />
                 <button
@@ -125,32 +126,22 @@ export default function LoginPage() {
             )}
 
             {/* Submit */}
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className={cn(
-                'flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 py-3 text-sm font-semibold text-text-inverse',
-                'hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                'transition-all'
-              )}
+              loading={loading}
+              size="lg"
+              className="w-full"
             >
-              {loading ? (
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-text-inverse border-t-transparent" />
-              ) : (
-                <>
-                  Entrar
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </button>
+              Entrar
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </form>
 
           {/* Forgot Password */}
           <div className="mt-6 text-center">
-            <button className="text-sm text-text-secondary hover:text-accent transition-colors">
+            <Button variant="ghost" size="sm" className="text-text-secondary">
               Esqueci minha senha
-            </button>
+            </Button>
           </div>
         </div>
 

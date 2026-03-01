@@ -1,0 +1,101 @@
+'use client'
+
+import { useEffect, useCallback } from 'react'
+import { X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+export interface ModalProps {
+  open: boolean
+  onClose: () => void
+  title?: string
+  subtitle?: string
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl'
+  children: React.ReactNode
+  footer?: React.ReactNode
+  className?: string
+}
+
+const maxWidthStyles: Record<string, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+}
+
+export function Modal({
+  open,
+  onClose,
+  title,
+  subtitle,
+  maxWidth = 'lg',
+  children,
+  footer,
+  className,
+}: ModalProps) {
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    },
+    [onClose]
+  )
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'hidden'
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [open, handleKeyDown])
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Content */}
+      <div
+        className={cn(
+          'relative w-full animate-fade-in rounded-[var(--radius-xl)] border border-border bg-bg-secondary shadow-[var(--shadow-xl)]',
+          maxWidthStyles[maxWidth],
+          className
+        )}
+      >
+        {/* Header */}
+        {title && (
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <div>
+              <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
+              {subtitle && (
+                <p className="text-sm text-text-tertiary">{subtitle}</p>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="rounded-[var(--radius-md)] p-1.5 text-text-tertiary hover:bg-surface-hover hover:text-text-primary"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="px-6 py-4">{children}</div>
+
+        {/* Footer */}
+        {footer && (
+          <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
+            {footer}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

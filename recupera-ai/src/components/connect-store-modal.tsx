@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { X, ShoppingBag, Cloud, ArrowRight, ArrowLeft, CheckCircle2, Info, Loader2 } from 'lucide-react'
+import { X, ShoppingBag, Cloud, ArrowRight, ArrowLeft, CheckCircle2, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button, Input } from '@/components/ui'
 import type { Platform } from '@/generated/prisma/enums'
 
 interface ConnectStoreModalProps {
@@ -215,12 +216,11 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   Nome do Cliente
                 </label>
-                <input
+                <Input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ex: CDR Group, Manto Classe, Space Sports..."
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
                 <p className="mt-1 text-xs text-text-tertiary">
                   Opcional. Facilita identificar a loja nas tasks e selecoes.
@@ -231,12 +231,11 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   Dominio da loja
                 </label>
-                <input
+                <Input
                   type="text"
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
                   placeholder="minha-loja.myshopify.com"
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
                 <p className="mt-1 text-xs text-text-tertiary">
                   Exemplo: minha-loja ou minha-loja.myshopify.com
@@ -247,12 +246,11 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   Client ID (ID do cliente)
                 </label>
-                <input
+                <Input
                   type="text"
                   value={clientId}
                   onChange={(e) => setClientId(e.target.value)}
                   placeholder="ID do cliente do app Shopify"
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
               </div>
 
@@ -260,12 +258,11 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   Client Secret (Chave secreta)
                 </label>
-                <input
+                <Input
                   type="password"
                   value={clientSecret}
                   onChange={(e) => setClientSecret(e.target.value)}
                   placeholder="Chave secreta do app Shopify"
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
               </div>
             </div>
@@ -281,24 +278,22 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   Nome do Cliente
                 </label>
-                <input
+                <Input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ex: FutFanatics, Nike Store..."
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   ID da Loja Nuvemshop
                 </label>
-                <input
+                <Input
                   type="text"
                   value={nuvemshopStoreId}
                   onChange={(e) => setNuvemshopStoreId(e.target.value)}
                   placeholder="12345"
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
                 <p className="mt-1 text-xs text-text-tertiary">
                   Encontre o ID no painel da Nuvemshop
@@ -308,12 +303,11 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                 <label className="mb-1.5 block text-sm font-medium text-text-primary">
                   Token de Autorizacao
                 </label>
-                <input
+                <Input
                   type="password"
                   value={accessToken}
                   onChange={(e) => setAccessToken(e.target.value)}
                   placeholder="Token de acesso"
-                  className="w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                 />
               </div>
             </div>
@@ -324,42 +318,25 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
         <div className="flex items-center justify-between border-t border-border px-6 py-4">
           <div>
             {step > 1 && (
-              <button
-                onClick={() => setStep(1)}
-                disabled={loading}
-                className="flex items-center gap-1.5 rounded-[var(--radius-md)] px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface-hover hover:text-text-primary disabled:opacity-50"
-              >
+              <Button variant="ghost" onClick={() => setStep(1)} disabled={loading}>
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
-              </button>
+              </Button>
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleClose}
-              disabled={loading}
-              className="rounded-[var(--radius-md)] px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface-hover hover:text-text-primary disabled:opacity-50"
-            >
+            <Button variant="ghost" onClick={handleClose} disabled={loading}>
               Cancelar
-            </button>
+            </Button>
             {step === 2 && (
-              <button
+              <Button
                 onClick={handleConnect}
-                disabled={!canConnect() || loading}
-                className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-accent px-5 py-2 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
+                disabled={!canConnect()}
+                loading={loading}
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Conectando...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-4 w-4" />
-                    Conectar {platform === 'SHOPIFY' ? 'Shopify' : 'Nuvemshop'}
-                  </>
-                )}
-              </button>
+                {!loading && <CheckCircle2 className="h-4 w-4" />}
+                {loading ? 'Conectando...' : `Conectar ${platform === 'SHOPIFY' ? 'Shopify' : 'Nuvemshop'}`}
+              </Button>
             )}
           </div>
         </div>

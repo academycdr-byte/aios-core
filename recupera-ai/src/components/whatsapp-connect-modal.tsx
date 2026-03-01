@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   X,
-  Loader2,
   CheckCircle2,
   AlertCircle,
   RefreshCcw,
@@ -13,6 +12,7 @@ import {
   QrCode,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button, Spinner } from '@/components/ui'
 
 interface WhatsappConnectModalProps {
   storeId: string
@@ -250,14 +250,14 @@ export function WhatsappConnectModal({
                 </p>
               </div>
 
-              <button
+              <Button
                 onClick={() => connect(true)}
                 disabled={!isPhoneValid}
-                className="w-full rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full"
               >
-                <Hash className="mr-1.5 inline h-4 w-4" />
+                <Hash className="h-4 w-4" />
                 Gerar Codigo de Pareamento
-              </button>
+              </Button>
 
               <div className="flex w-full items-center gap-3">
                 <div className="h-px flex-1 bg-border" />
@@ -265,20 +265,21 @@ export function WhatsappConnectModal({
                 <div className="h-px flex-1 bg-border" />
               </div>
 
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => connect(false)}
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-border px-4 py-2 text-sm text-text-secondary hover:bg-surface-hover"
+                className="w-full"
               >
                 <QrCode className="h-4 w-4" />
                 Usar QR Code
-              </button>
+              </Button>
             </>
           )}
 
           {/* LOADING */}
           {state === 'loading' && (
             <>
-              <Loader2 className="h-10 w-10 animate-spin text-accent" />
+              <Spinner size="lg" />
               <p className="text-sm text-text-secondary">Gerando codigo...</p>
             </>
           )}
@@ -313,7 +314,7 @@ export function WhatsappConnectModal({
               </div>
 
               <div className="flex items-center gap-2 text-xs text-text-tertiary">
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <Spinner size="sm" />
                 Aguardando conexao...
               </div>
 
@@ -351,7 +352,7 @@ export function WhatsappConnectModal({
                 </p>
               </div>
               <div className="flex items-center gap-2 text-xs text-text-tertiary">
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <Spinner size="sm" />
                 Aguardando conexao...
               </div>
               <button
@@ -379,21 +380,13 @@ export function WhatsappConnectModal({
                 </p>
               </div>
               <div className="flex w-full gap-2">
-                <button
-                  onClick={onClose}
-                  className="flex-1 rounded-[var(--radius-md)] bg-accent px-4 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover"
-                >
+                <Button onClick={onClose} className="flex-1">
                   Fechar
-                </button>
-                <button
-                  onClick={handleDisconnect}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-error/30 px-4 py-2.5 text-sm font-medium text-error hover:bg-error-light'
-                  )}
-                >
+                </Button>
+                <Button variant="danger" onClick={handleDisconnect}>
                   <Unplug className="h-4 w-4" />
                   Desconectar
-                </button>
+                </Button>
               </div>
             </>
           )}
@@ -410,12 +403,9 @@ export function WhatsappConnectModal({
                   {errorMessage ?? 'Ocorreu um erro inesperado.'}
                 </p>
               </div>
-              <button
-                onClick={() => setState('idle')}
-                className="w-full rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover"
-              >
+              <Button onClick={() => setState('idle')} className="w-full">
                 Tentar Novamente
-              </button>
+              </Button>
             </>
           )}
         </div>

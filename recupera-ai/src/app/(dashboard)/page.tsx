@@ -8,7 +8,6 @@ import {
   CheckCircle,
   DollarSign,
   MessageSquare,
-  Loader2,
 } from 'lucide-react'
 import { KpiCard } from '@/components/kpi-card'
 import { RecoveryTrendChart } from '@/components/charts/recovery-trend-chart'
@@ -16,6 +15,7 @@ import { ValueComparisonChart } from '@/components/charts/value-comparison-chart
 import { TypeDistributionChart } from '@/components/charts/type-distribution-chart'
 import { AbandonmentReasonsChart } from '@/components/charts/abandonment-reasons-chart'
 import { RecentCartsTable } from '@/components/recent-carts-table'
+import { PageSpinner } from '@/components/ui'
 import {
   formatCurrencyShort,
   formatPercent,
@@ -118,11 +118,7 @@ export default function DashboardPage() {
   }, [])
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-text-secondary" />
-      </div>
-    )
+    return <PageSpinner message="Carregando dashboard..." />
   }
 
   // Format daily metrics for charts

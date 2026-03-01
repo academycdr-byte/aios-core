@@ -17,6 +17,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button, Input, Textarea, Toggle } from '@/components/ui'
 import type { MockStoreSettings } from '@/lib/mock-stores'
 
 interface KnowledgeBaseFormProps {
@@ -352,20 +353,18 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
                         {field.label}
                       </label>
                       {field.rows === 1 ? (
-                        <input
+                        <Input
                           type="text"
                           value={value ?? ''}
                           onChange={(e) => update(field.key, e.target.value as MockStoreSettings[typeof field.key])}
                           placeholder={field.placeholder}
-                          className="w-full rounded-[var(--radius-md)] border border-border bg-bg-tertiary px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                         />
                       ) : (
-                        <textarea
+                        <Textarea
                           value={value ?? ''}
                           onChange={(e) => update(field.key, e.target.value as MockStoreSettings[typeof field.key])}
                           rows={field.rows}
                           placeholder={field.placeholder}
-                          className="w-full rounded-[var(--radius-md)] border border-border bg-bg-tertiary px-3 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary"
                         />
                       )}
                       <div className="mt-1 flex items-center justify-between">
@@ -381,26 +380,11 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
                 {/* Discount sub-section for offers */}
                 {section.id === 'offers' && (
                   <div className="space-y-3 rounded-[var(--radius-md)] border border-dashed border-border bg-bg-tertiary p-3">
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={form.canOfferDiscount}
-                        onClick={() => update('canOfferDiscount', !form.canOfferDiscount)}
-                        className="flex items-center gap-3"
-                      >
-                        <div className={cn(
-                          'relative h-6 w-11 shrink-0 rounded-full transition-colors',
-                          form.canOfferDiscount ? 'bg-accent' : 'bg-border'
-                        )}>
-                          <div className={cn(
-                            'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform',
-                            form.canOfferDiscount ? 'translate-x-[22px]' : 'translate-x-0.5'
-                          )} />
-                        </div>
-                        <span className="text-sm text-text-primary">IA pode oferecer desconto?</span>
-                      </button>
-                    </div>
+                    <Toggle
+                      checked={form.canOfferDiscount}
+                      onChange={(v) => update('canOfferDiscount', v)}
+                      label="IA pode oferecer desconto?"
+                    />
 
                     {form.canOfferDiscount && (
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 animate-fade-in">
@@ -408,38 +392,35 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
                           <label className="mb-1 block text-xs font-medium text-text-secondary">
                             Desconto Maximo (%)
                           </label>
-                          <input
+                          <Input
                             type="number"
                             min={0}
                             max={100}
                             value={form.maxDiscountPercent ?? 0}
                             onChange={(e) => update('maxDiscountPercent', Number(e.target.value))}
-                            className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2 text-sm text-text-primary"
                           />
                         </div>
                         <div>
                           <label className="mb-1 block text-xs font-medium text-text-secondary">
                             Codigo do Cupom
                           </label>
-                          <input
+                          <Input
                             type="text"
                             value={form.couponCode ?? ''}
                             onChange={(e) => update('couponCode', e.target.value)}
                             placeholder="VOLTA10"
-                            className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary"
                           />
                         </div>
                         <div>
                           <label className="mb-1 block text-xs font-medium text-text-secondary">
                             Valor do Cupom (%)
                           </label>
-                          <input
+                          <Input
                             type="number"
                             min={0}
                             max={100}
                             value={form.couponDiscount ?? 0}
                             onChange={(e) => update('couponDiscount', Number(e.target.value))}
-                            className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2 text-sm text-text-primary"
                           />
                         </div>
                       </div>
@@ -454,14 +435,10 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-accent px-6 py-2.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
-        >
-          <Save className="h-4 w-4" />
+        <Button loading={saving} onClick={handleSave}>
+          {!saving && <Save className="h-4 w-4" />}
           {saving ? 'Salvando...' : 'Salvar Base de Conhecimento'}
-        </button>
+        </Button>
       </div>
     </div>
   )
