@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processRecoveryJobs } from '@/lib/recovery/scheduler'
 import { calculateDailyMetrics } from '@/lib/recovery/metrics'
+import { autoSyncStores } from '@/lib/recovery/auto-sync'
 
 export const maxDuration = 60 // Allow up to 60s for processing
 export const dynamic = 'force-dynamic'
@@ -35,28 +36,34 @@ export async function GET(request: NextRequest) {
     console.log('[Cron Recovery] Starting recovery job processing...')
     const startTime = Date.now()
 
-    // 1. Process recovery jobs (send messages)
+    // 1. Auto-sync abandoned carts from Shopify API (catch-up for missed webhooks)
+    const syncStats = await autoSyncStores()
+
+    // 2. Process recovery jobs (send messages)
     // Protected by testMode flag — only sends to whitelisted phones when testMode=true
     const recoveryStats = await processRecoveryJobs()
 
-    // 2. Calculate daily metrics
+    // 3. Calculate daily metrics
     const metricsStats = await calculateDailyMetrics()
 
     const duration = Date.now() - startTime
 
     console.log(
       `[Cron Recovery] Completed in ${duration}ms:`,
-      `processed=${recoveryStats.processed}`,
-      `sent=${recoveryStats.sent}`,
-      `skipped=${recoveryStats.skipped}`,
-      `lost=${recoveryStats.lost}`,
-      `errors=${recoveryStats.errors}`,
+      `sync: stores=${syncStats.storesSynced}, imported=${syncStats.totalImported}`,
+      `| recovery: processed=${recoveryStats.processed}, sent=${recoveryStats.sent}, skipped=${recoveryStats.skipped}, lost=${recoveryStats.lost}, errors=${recoveryStats.errors}`,
       `| metrics: stores=${metricsStats.storesProcessed}, upserted=${metricsStats.metricsUpserted}`
     )
 
     return NextResponse.json({
       ok: true,
       duration: `${duration}ms`,
+      sync: {
+        storesSynced: syncStats.storesSynced,
+        imported: syncStats.totalImported,
+        updated: syncStats.totalUpdated,
+        errors: syncStats.errors.length,
+      },
       recovery: {
         processed: recoveryStats.processed,
         sent: recoveryStats.sent,

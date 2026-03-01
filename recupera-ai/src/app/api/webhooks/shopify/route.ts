@@ -11,6 +11,8 @@ import { prisma } from '@/lib/prisma'
 import {
   parseAbandonedCheckout,
   parseOrderPaid,
+  parseOrderCreated,
+  detectPaymentType,
   type ShopifyCheckoutPayload,
   type ShopifyOrderPayload,
 } from '@/lib/webhooks/shopify-parser'
@@ -115,6 +117,11 @@ export async function POST(request: NextRequest) {
 
       case 'orders/paid': {
         await handleOrderPaid(store.id, payload as unknown as ShopifyOrderPayload)
+        break
+      }
+
+      case 'orders/create': {
+        await handleOrderCreated(store.id, payload as unknown as ShopifyOrderPayload)
         break
       }
 
@@ -303,4 +310,79 @@ async function handleOrderPaid(
   } else {
     console.log(`[Shopify Webhook] No matching cart found for order ${parsed.platformOrderId}`)
   }
+}
+
+async function handleOrderCreated(
+  storeId: string,
+  payload: ShopifyOrderPayload
+): Promise<void> {
+  const paymentType = detectPaymentType(payload)
+
+  if (!paymentType) {
+    console.log(`[Shopify Webhook] orders/create ignored: financial_status=${payload.financial_status}`)
+    return
+  }
+
+  // If already paid, delegate to handleOrderPaid
+  if (paymentType === 'PAID') {
+    await handleOrderPaid(storeId, payload)
+    return
+  }
+
+  const parsed = parseOrderCreated(payload)
+
+  console.log(
+    `[Shopify Webhook] Order created (${paymentType}) for store ${storeId}:`,
+    {
+      orderId: parsed.platformOrderId,
+      cartId: parsed.platformCartId,
+      total: parsed.cartTotal,
+      gateway: payload.gateway,
+    }
+  )
+
+  // Check if a cart already exists for this checkout (might have been created by checkouts/create)
+  if (parsed.platformCartId) {
+    const existing = await prisma.abandonedCart.findFirst({
+      where: { storeId, platformCartId: parsed.platformCartId },
+    })
+
+    if (existing) {
+      // Update the existing cart type to PIX_PENDING or CARD_DECLINED
+      await prisma.abandonedCart.update({
+        where: { id: existing.id },
+        data: {
+          type: paymentType,
+          platformOrderId: parsed.platformOrderId,
+          customerName: parsed.customerName ?? existing.customerName,
+          customerEmail: parsed.customerEmail ?? existing.customerEmail,
+          customerPhone: parsed.customerPhone ?? existing.customerPhone,
+        },
+      })
+      console.log(`[Shopify Webhook] Updated cart ${existing.id} to ${paymentType}`)
+      return
+    }
+  }
+
+  // Create new cart with the detected type
+  const newCart = await prisma.abandonedCart.create({
+    data: {
+      storeId,
+      customerName: parsed.customerName,
+      customerEmail: parsed.customerEmail,
+      customerPhone: parsed.customerPhone,
+      cartTotal: parsed.cartTotal,
+      currency: parsed.currency,
+      cartItems: JSON.parse(JSON.stringify(parsed.cartItems)),
+      itemCount: parsed.itemCount,
+      checkoutUrl: parsed.checkoutUrl,
+      platformCartId: parsed.platformCartId,
+      platformOrderId: parsed.platformOrderId,
+      type: paymentType,
+      status: 'PENDING',
+      abandonedAt: new Date(),
+    },
+  })
+
+  console.log(`[Shopify Webhook] Created ${paymentType} cart ${newCart.id} for store ${storeId}`)
 }

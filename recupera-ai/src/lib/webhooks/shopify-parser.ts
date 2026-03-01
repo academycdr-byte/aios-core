@@ -69,6 +69,8 @@ export interface ShopifyOrderPayload {
   financial_status?: string
   checkout_id?: number | string
   checkout_token?: string
+  gateway?: string
+  payment_gateway_names?: string[]
   customer?: {
     id?: number
     email?: string
@@ -170,6 +172,74 @@ export function parseOrderPaid(
     customerPhone: payload.phone ?? payload.customer?.phone ?? null,
     paidValue: parseFloat(payload.total_price ?? '0'),
     currency: payload.currency ?? 'BRL',
+  }
+}
+
+/**
+ * Detect payment type from Shopify order payload.
+ * Returns 'PIX_PENDING', 'CARD_DECLINED', 'PAID', or null (ignore).
+ */
+export function detectPaymentType(
+  payload: ShopifyOrderPayload
+): 'PIX_PENDING' | 'CARD_DECLINED' | 'PAID' | null {
+  const status = payload.financial_status?.toLowerCase() ?? ''
+  const gateways = (payload.payment_gateway_names ?? []).map(g => g.toLowerCase())
+  const gateway = payload.gateway?.toLowerCase() ?? ''
+  const allGateways = [...gateways, gateway].filter(Boolean)
+
+  const pixKeywords = ['pix', 'mercadopago_pix', 'pagarme_pix', 'appmax_pix', 'yampi_pix']
+  const isPix = allGateways.some(g => pixKeywords.some(k => g.includes(k)))
+
+  if (status === 'paid') return 'PAID'
+  if (status === 'pending' && isPix) return 'PIX_PENDING'
+  if (status === 'voided' || status === 'refunded') return null // ignore
+  // Card declined: pending but NOT pix, or explicitly failed
+  if ((status === 'pending' || status === 'failure') && !isPix && allGateways.length > 0) {
+    return 'CARD_DECLINED'
+  }
+
+  return null
+}
+
+/**
+ * Parse Shopify order/create payload into data for PIX_PENDING or CARD_DECLINED cart creation.
+ */
+export function parseOrderCreated(payload: ShopifyOrderPayload): {
+  platformOrderId: string
+  platformCartId: string | null
+  customerName: string | null
+  customerEmail: string | null
+  customerPhone: string | null
+  cartTotal: number
+  currency: string
+  cartItems: CartItemData[]
+  itemCount: number
+  checkoutUrl: string | null
+} {
+  const customerName = payload.customer
+    ? `${payload.customer.first_name ?? ''} ${payload.customer.last_name ?? ''}`.trim() || null
+    : null
+
+  const cartItems: CartItemData[] = (payload.line_items ?? []).map((item) => ({
+    id: (item.product_id ?? item.id ?? '').toString(),
+    name: item.title ?? 'Unknown Product',
+    variant: item.variant_title || null,
+    quantity: item.quantity ?? 1,
+    price: parseFloat(item.price ?? '0'),
+    imageUrl: item.image ?? null,
+  }))
+
+  return {
+    platformOrderId: (payload.id ?? payload.order_number ?? '').toString(),
+    platformCartId: payload.checkout_id?.toString() ?? payload.checkout_token ?? null,
+    customerName,
+    customerEmail: payload.email ?? payload.customer?.email ?? null,
+    customerPhone: payload.phone ?? payload.customer?.phone ?? null,
+    cartTotal: parseFloat(payload.total_price ?? '0'),
+    currency: payload.currency ?? 'BRL',
+    cartItems,
+    itemCount: cartItems.length,
+    checkoutUrl: null,
   }
 }
 

@@ -188,6 +188,7 @@ model RecoveryConfig {
   pixFirstDelay         Int      @default(15) @map("pix_first_delay")
   pixFollowUpDelay      Int      @default(120) @map("pix_follow_up_delay")
   pixMaxAttempts        Int      @default(2) @map("pix_max_attempts")
+  pixExpirationMinutes  Int      @default(1440) @map("pix_expiration_minutes")
 
   // === CARD DECLINED RECOVERY ===
   cardRecoveryEnabled   Boolean  @default(true) @map("card_recovery_enabled")

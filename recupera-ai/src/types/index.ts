@@ -142,6 +142,7 @@ export interface RecoveryConfig {
   cardMaxAttempts: number
   stopOnOptOut: boolean
   expirationHours: number
+  pixExpirationMinutes: number
   createdAt: string
   updatedAt: string
 }

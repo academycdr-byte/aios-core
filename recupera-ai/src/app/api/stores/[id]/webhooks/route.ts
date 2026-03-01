@@ -219,6 +219,7 @@ interface WebhookRegistrationResult {
 const SHOPIFY_WEBHOOK_TOPICS = [
   'checkouts/create',
   'checkouts/update',
+  'orders/create',
   'orders/paid',
 ]
 

@@ -90,7 +90,7 @@ export async function registerAbandonedCartWebhook(
   accessToken: string,
   webhookUrl: string,
 ): Promise<{ id: string } | null> {
-  const topics = ['checkouts/create', 'orders/paid']
+  const topics = ['checkouts/create', 'checkouts/update', 'orders/create', 'orders/paid']
   const ids: string[] = []
 
   for (const topic of topics) {

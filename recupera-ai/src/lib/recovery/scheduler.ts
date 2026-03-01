@@ -417,6 +417,65 @@ export async function processSingleCart(
 }
 
 // ============================================================
+// PIX EXPIRATION
+// ============================================================
+
+/**
+ * Expire PIX_PENDING carts that exceeded their store's pixExpirationMinutes.
+ * Runs before processing to avoid sending messages for expired Pix.
+ */
+async function expirePixPendingCarts(): Promise<number> {
+  try {
+    const pixCarts = await prisma.abandonedCart.findMany({
+      where: {
+        type: 'PIX_PENDING',
+        status: { in: ['PENDING', 'CONTACTING'] },
+        store: {
+          isActive: true,
+          recoveryConfig: { isActive: true },
+        },
+      },
+      select: {
+        id: true,
+        abandonedAt: true,
+        store: {
+          select: {
+            recoveryConfig: {
+              select: { pixExpirationMinutes: true },
+            },
+          },
+        },
+      },
+    })
+
+    let expired = 0
+    const now = new Date()
+
+    for (const cart of pixCarts) {
+      const expirationMinutes = cart.store.recoveryConfig?.pixExpirationMinutes ?? 1440
+      const expiresAt = new Date(cart.abandonedAt.getTime() + expirationMinutes * 60 * 1000)
+
+      if (now > expiresAt) {
+        await prisma.abandonedCart.update({
+          where: { id: cart.id },
+          data: { status: 'EXPIRED' },
+        })
+        expired++
+      }
+    }
+
+    if (expired > 0) {
+      console.log(`[Scheduler] Expired ${expired} PIX_PENDING carts`)
+    }
+
+    return expired
+  } catch (error) {
+    console.error('[Scheduler] Error expiring PIX carts:', error)
+    return 0
+  }
+}
+
+// ============================================================
 // BATCH PROCESSOR
 // ============================================================
 
@@ -435,6 +494,9 @@ export async function processRecoveryJobs(): Promise<SchedulerStats> {
   }
 
   try {
+    // 0. Expire PIX_PENDING carts that exceeded their expiration window
+    await expirePixPendingCarts()
+
     // Find all carts that need processing:
     // - Status is PENDING (waiting for first message)
     // - Status is CONTACTING (waiting for follow-up)
