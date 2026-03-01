@@ -22,27 +22,46 @@ const MIME_TO_EXT: Record<string, string> = {
   'video/webm': 'webm',
 }
 
+export type TranscriptionFailure = 'no_api_key' | 'file_too_large' | 'api_error' | 'empty_result' | 'error'
+
+export interface TranscriptionResult {
+  text: string | null
+  failure?: TranscriptionFailure
+  fileSizeMB?: number
+}
+
 /**
  * Transcribe audio or video to text using Groq Whisper API.
- * Returns the transcription or null if transcription fails/unavailable.
+ * Returns the transcription result with failure reason if applicable.
  */
 export async function transcribeAudio(
   base64Data: string,
   mimeType: string
-): Promise<string | null> {
+): Promise<string | null>
+export async function transcribeAudio(
+  base64Data: string,
+  mimeType: string,
+  detailed: true
+): Promise<TranscriptionResult>
+export async function transcribeAudio(
+  base64Data: string,
+  mimeType: string,
+  detailed?: boolean
+): Promise<string | null | TranscriptionResult> {
   const apiKey = process.env.GROQ_API_KEY
   if (!apiKey) {
     console.warn('[Transcription] GROQ_API_KEY not configured — skipping transcription')
-    return null
+    return detailed ? { text: null, failure: 'no_api_key' } : null
   }
 
   try {
     const buffer = Buffer.from(base64Data, 'base64')
+    const fileSizeMB = Math.round(buffer.length / 1024 / 1024 * 10) / 10
 
     // Groq Whisper has a 25MB limit
     if (buffer.length > 25 * 1024 * 1024) {
-      console.warn(`[Transcription] File too large (${Math.round(buffer.length / 1024 / 1024)}MB) — skipping`)
-      return null
+      console.warn(`[Transcription] File too large (${fileSizeMB}MB) — skipping`)
+      return detailed ? { text: null, failure: 'file_too_large', fileSizeMB } : null
     }
 
     const ext = MIME_TO_EXT[mimeType] || 'ogg'
@@ -67,7 +86,7 @@ export async function transcribeAudio(
     if (!response.ok) {
       const errorText = await response.text()
       console.error(`[Transcription] Groq API error ${response.status}:`, errorText)
-      return null
+      return detailed ? { text: null, failure: 'api_error' } : null
     }
 
     const text = await response.text()
@@ -75,13 +94,13 @@ export async function transcribeAudio(
 
     if (!trimmed) {
       console.log('[Transcription] Empty transcription result')
-      return null
+      return detailed ? { text: null, failure: 'empty_result' } : null
     }
 
     console.log(`[Transcription] Success: "${trimmed.substring(0, 100)}${trimmed.length > 100 ? '...' : ''}"`)
-    return trimmed
+    return detailed ? { text: trimmed } : trimmed
   } catch (error) {
     console.error('[Transcription] Error:', error)
-    return null
+    return detailed ? { text: null, failure: 'error' } : null
   }
 }

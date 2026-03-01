@@ -97,6 +97,7 @@ export interface ParsedOrderPaid {
   platformOrderId: string
   platformCartId: string | null
   customerEmail: string | null
+  customerPhone: string | null
   paidValue: number
   currency: string
 }
@@ -166,6 +167,7 @@ export function parseOrderPaid(
     platformOrderId: (payload.id ?? payload.order_number ?? '').toString(),
     platformCartId: payload.checkout_id?.toString() ?? payload.checkout_token ?? null,
     customerEmail: payload.email ?? payload.customer?.email ?? null,
+    customerPhone: payload.phone ?? payload.customer?.phone ?? null,
     paidValue: parseFloat(payload.total_price ?? '0'),
     currency: payload.currency ?? 'BRL',
   }

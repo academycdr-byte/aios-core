@@ -24,10 +24,17 @@ import {
   Download,
   Send,
   Eye,
+  Link2,
+  AlertTriangle,
+  ShieldAlert,
+  Plus,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { StoreSettingsForm } from '@/components/store-settings-form'
 import { RecoveryConfigForm } from '@/components/recovery-config-form'
+import { StageConfigPanel } from '@/components/stage-config-panel'
+import { FollowUpConfigPanel } from '@/components/follow-up-config-panel'
 import { KnowledgeBaseForm } from '@/components/knowledge-base-form'
 import { WhatsappConnectModal } from '@/components/whatsapp-connect-modal'
 import { Button, Badge, Input, Spinner, PageSpinner } from '@/components/ui'
@@ -65,6 +72,8 @@ interface StoreData {
   whatsappPhone: string | null
   whatsappConnected: boolean
   isActive: boolean
+  testMode: boolean
+  testPhones: string[]
   _count?: {
     abandonedCarts: number
     conversations: number
@@ -147,6 +156,7 @@ function OverviewTab({ store }: { store: StoreData }) {
     totalFetched: number; imported: number; updated: number; skipped: number
   } | null>(null)
   const [syncError, setSyncError] = useState<string | null>(null)
+  const [domainStatus, setDomainStatus] = useState<'checking' | 'valid' | 'invalid' | 'unknown'>('checking')
   const cartCount = store._count?.abandonedCarts ?? 0
   const convCount = store._count?.conversations ?? 0
 
@@ -195,6 +205,22 @@ function OverviewTab({ store }: { store: StoreData }) {
     fetchMetrics()
   }, [store.id])
 
+  // Checkout URL domain validation (AC4)
+  useEffect(() => {
+    if (!store.domain) {
+      setDomainStatus('unknown')
+      return
+    }
+    // Validate domain format
+    try {
+      const url = store.domain.startsWith('http') ? store.domain : `https://${store.domain}`
+      new URL(url)
+      setDomainStatus('valid')
+    } catch {
+      setDomainStatus('invalid')
+    }
+  }, [store.domain])
+
   return (
     <div className="animate-fade-in space-y-6">
       {/* Stats Grid */}
@@ -203,6 +229,50 @@ function OverviewTab({ store }: { store: StoreData }) {
         <OverviewStatCard icon={RefreshCcw} label="Conversas Total" value={convCount} color="success" />
         <OverviewStatCard icon={TrendingUp} label="Plataforma" value={store.platform === 'SHOPIFY' ? 'Shopify' : 'Nuvemshop'} color="accent" />
         <OverviewStatCard icon={DollarSign} label="Status" value={store.isActive ? 'Ativa' : 'Inativa'} color="info" />
+      </div>
+
+      {/* Checkout URL Validation — AC4 */}
+      <div className={cn(
+        'rounded-[var(--radius-lg)] border p-4',
+        domainStatus === 'valid' ? 'border-success/30 bg-success/5' : domainStatus === 'invalid' ? 'border-error/30 bg-error/5' : 'border-warning/30 bg-warning/5'
+      )}>
+        <div className="flex items-center gap-3">
+          <div className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)]',
+            domainStatus === 'valid' ? 'bg-success/10' : domainStatus === 'invalid' ? 'bg-error/10' : 'bg-warning/10'
+          )}>
+            {domainStatus === 'valid' ? (
+              <Link2 className="h-4 w-4 text-success" />
+            ) : domainStatus === 'invalid' ? (
+              <AlertTriangle className="h-4 w-4 text-error" />
+            ) : domainStatus === 'checking' ? (
+              <Spinner size="sm" className="text-text-tertiary" />
+            ) : (
+              <AlertTriangle className="h-4 w-4 text-warning" />
+            )}
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-text-primary">Link de Checkout</h3>
+            {domainStatus === 'valid' && (
+              <p className="text-xs text-success">
+                Dominio valido: {store.domain} — links de checkout funcionarao corretamente
+              </p>
+            )}
+            {domainStatus === 'invalid' && (
+              <p className="text-xs text-error">
+                Dominio invalido: &quot;{store.domain}&quot; — verifique nas configuracoes da plataforma
+              </p>
+            )}
+            {domainStatus === 'unknown' && (
+              <p className="text-xs text-warning">
+                Dominio nao configurado — os links de checkout virao da plataforma automaticamente
+              </p>
+            )}
+            {domainStatus === 'checking' && (
+              <p className="text-xs text-text-tertiary">Verificando dominio...</p>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Sync (Shopify only) */}
@@ -616,6 +686,139 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
   )
 }
 
+function TestModePanel({ store, onUpdate }: { store: StoreData; onUpdate: (s: StoreData) => void }) {
+  const [newPhone, setNewPhone] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  async function toggleTestMode() {
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/stores/${store.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ testMode: !store.testMode }),
+      })
+      const json = await res.json()
+      if (json.data) onUpdate({ ...store, testMode: json.data.testMode })
+    } catch { /* noop */ }
+    finally { setSaving(false) }
+  }
+
+  async function addPhone() {
+    const clean = newPhone.replace(/\D/g, '')
+    if (!clean || clean.length < 10) return
+    const phones = [...(store.testPhones ?? []), clean]
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/stores/${store.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ testPhones: phones }),
+      })
+      const json = await res.json()
+      if (json.data) {
+        onUpdate({ ...store, testPhones: json.data.testPhones })
+        setNewPhone('')
+      }
+    } catch { /* noop */ }
+    finally { setSaving(false) }
+  }
+
+  async function removePhone(phone: string) {
+    const phones = (store.testPhones ?? []).filter((p: string) => p !== phone)
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/stores/${store.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ testPhones: phones }),
+      })
+      const json = await res.json()
+      if (json.data) onUpdate({ ...store, testPhones: json.data.testPhones })
+    } catch { /* noop */ }
+    finally { setSaving(false) }
+  }
+
+  return (
+    <section className={cn(
+      'rounded-[var(--radius-lg)] border p-5',
+      store.testMode
+        ? 'border-warning/40 bg-warning/5'
+        : 'border-border bg-surface'
+    )}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)]',
+            store.testMode ? 'bg-warning/10' : 'bg-bg-tertiary'
+          )}>
+            <ShieldAlert className={cn('h-5 w-5', store.testMode ? 'text-warning' : 'text-text-tertiary')} />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-text-primary">Modo de Teste</h3>
+            <p className="text-xs text-text-tertiary">
+              {store.testMode
+                ? 'Ativo — mensagens so sao enviadas para numeros da whitelist'
+                : 'Desativado — mensagens podem ser enviadas para qualquer numero'
+              }
+            </p>
+          </div>
+        </div>
+        <Button
+          variant={store.testMode ? 'danger' : 'secondary'}
+          size="sm"
+          loading={saving}
+          onClick={toggleTestMode}
+        >
+          {store.testMode ? 'Desativar' : 'Ativar'}
+        </Button>
+      </div>
+
+      {store.testMode && (
+        <div className="space-y-3 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <Input
+              type="text"
+              placeholder="5535998717592"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+              className="max-w-xs"
+            />
+            <Button size="sm" variant="secondary" onClick={addPhone} disabled={saving}>
+              <Plus className="h-4 w-4" />
+              Adicionar
+            </Button>
+          </div>
+
+          {(store.testPhones ?? []).length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {(store.testPhones ?? []).map((phone: string) => (
+                <div
+                  key={phone}
+                  className="flex items-center gap-1.5 rounded-[var(--radius-md)] border border-border bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary"
+                >
+                  {phone}
+                  <button
+                    type="button"
+                    onClick={() => removePhone(phone)}
+                    className="text-text-tertiary hover:text-error transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-warning">
+              Nenhum numero adicionado. Adicione pelo menos um numero para testar.
+            </p>
+          )}
+        </div>
+      )}
+    </section>
+  )
+}
+
 export default function StoreDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -758,10 +961,19 @@ export default function StoreDetailPage() {
           <KnowledgeBaseForm settings={settings} onSave={handleSaveSettings} />
         )}
         {activeTab === 'settings' && settings && (
-          <StoreSettingsForm settings={settings} onSave={handleSaveSettings} />
+          <div className="space-y-6">
+            <TestModePanel store={store} onUpdate={setStore} />
+            <StoreSettingsForm settings={settings} onSave={handleSaveSettings} />
+          </div>
         )}
-        {activeTab === 'recovery' && recoveryConfig && (
-          <RecoveryConfigForm config={recoveryConfig} onSave={handleSaveRecovery} />
+        {activeTab === 'recovery' && (
+          <div className="space-y-6">
+            <StageConfigPanel storeId={store.id} />
+            <FollowUpConfigPanel storeId={store.id} />
+            {recoveryConfig && (
+              <RecoveryConfigForm config={recoveryConfig} onSave={handleSaveRecovery} />
+            )}
+          </div>
         )}
         {activeTab === 'whatsapp' && <WhatsAppTab store={store} onStatusChange={handleWhatsappStatusChange} />}
       </div>

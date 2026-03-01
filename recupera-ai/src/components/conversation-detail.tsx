@@ -10,6 +10,7 @@ import {
   Check,
   CheckCheck,
   X,
+  BadgeCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/format'
@@ -230,6 +231,27 @@ export function ConversationDetail({ conversation, onClose }: ConversationDetail
           </>
         )}
       </div>
+
+      {/* Sale Confirmed Banner */}
+      {cart?.paidAt && (
+        <div className="border-t border-success/30 bg-success/5 px-4 py-2.5">
+          <div className="flex items-center gap-2">
+            <BadgeCheck className="h-4 w-4 text-success" />
+            <span className="text-xs font-semibold text-success">Venda Confirmada</span>
+            <span className="text-xs text-text-secondary">
+              {formatCurrency(cart.paidValue ?? cart.cartTotal)}
+            </span>
+            <span className="text-[10px] text-text-tertiary">
+              {new Date(cart.paidAt).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Cart Info Panel */}
       {cart && (

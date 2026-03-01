@@ -14,6 +14,7 @@ import {
   type ShopifyCheckoutPayload,
   type ShopifyOrderPayload,
 } from '@/lib/webhooks/shopify-parser'
+import { normalizeBrazilPhone } from '@/lib/evolution-api'
 
 export const maxDuration = 30
 
@@ -139,8 +140,8 @@ async function handleAbandonedCheckout(
   storeId: string,
   payload: ShopifyCheckoutPayload
 ): Promise<void> {
-  // Only process if it's actually abandoned (has abandoned_checkout_url or no completed_at)
-  if (!payload.abandoned_checkout_url && payload.completed_at) {
+  // Skip completed checkouts — they are paid, not abandoned
+  if (payload.completed_at) {
     console.log('[Shopify Webhook] Checkout completed, not abandoned - skipping')
     return
   }
@@ -245,6 +246,23 @@ async function handleOrderPaid(
       where: {
         storeId,
         customerEmail: parsed.customerEmail,
+        status: { in: ['PENDING', 'CONTACTING', 'RECOVERED'] },
+        abandonedAt: { gte: sevenDaysAgo },
+      },
+      orderBy: { abandonedAt: 'desc' },
+    })
+  }
+
+  if (!cart && parsed.customerPhone) {
+    // Fallback: find by phone within the last 7 days
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const normalizedPhone = normalizeBrazilPhone(parsed.customerPhone)
+
+    cart = await prisma.abandonedCart.findFirst({
+      where: {
+        storeId,
+        customerPhone: normalizedPhone,
         status: { in: ['PENDING', 'CONTACTING', 'RECOVERED'] },
         abandonedAt: { gte: sevenDaysAgo },
       },

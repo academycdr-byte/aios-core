@@ -225,6 +225,45 @@ function isSectionComplete(form: MockStoreSettings, section: KnowledgeSection): 
 }
 
 // ============================================================
+// Message Preview Generator
+// ============================================================
+
+function generatePreviewMessage(form: MockStoreSettings): string {
+  const name = form.storeName || 'Sua Loja'
+  const customerName = 'Maria'
+  const product = form.mainProducts?.split(',')[0]?.trim() || 'um produto incrivel'
+  const shipping = form.shippingPolicy ? '📦 ' + form.shippingPolicy.split('.')[0] + '.' : ''
+  const offer = form.currentOffers ? '🏷️ ' + form.currentOffers.split('.')[0] + '!' : ''
+  const payment = form.paymentMethods ? 'Aceitamos ' + form.paymentMethods.split(',').slice(0, 2).join(' e ').trim() + '.' : ''
+
+  const lines = [
+    `Oi ${customerName}! 😊 Aqui e da ${name}.`,
+    '',
+    `Vi que voce estava de olho em ${product} e o carrinho ficou esperando!`,
+  ]
+
+  if (offer) {
+    lines.push('', offer)
+  }
+
+  if (shipping) {
+    lines.push('', shipping)
+  }
+
+  if (form.canOfferDiscount && form.couponCode) {
+    lines.push('', `🎁 Use o cupom ${form.couponCode} e ganhe ${form.couponDiscount ?? 10}% de desconto!`)
+  }
+
+  if (payment) {
+    lines.push('', `💳 ${payment}`)
+  }
+
+  lines.push('', 'Quer que eu te ajude a finalizar? 😉')
+
+  return lines.join('\n')
+}
+
+// ============================================================
 // Component
 // ============================================================
 
@@ -261,6 +300,32 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
 
   return (
     <div className="space-y-6">
+      {/* How AI Uses Your Data — Visual Guide */}
+      <div className="rounded-[var(--radius-lg)] border border-dashed border-accent/30 bg-accent/5 p-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-accent">
+          Como a IA usa seus dados
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+          <div className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-surface px-3 py-2 border border-border">
+            <BookOpen className="h-3.5 w-3.5 text-accent" />
+            <span className="text-text-secondary">Seus dados</span>
+          </div>
+          <span className="text-text-tertiary">→</span>
+          <div className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-surface px-3 py-2 border border-border">
+            <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+            <span className="text-text-secondary">IA personaliza</span>
+          </div>
+          <span className="text-text-tertiary">→</span>
+          <div className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-surface px-3 py-2 border border-border">
+            <Store className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="text-text-secondary">Mensagem natural</span>
+          </div>
+        </div>
+        <p className="mt-3 text-center text-[11px] text-text-tertiary">
+          A IA combina as informacoes abaixo com o contexto do carrinho abandonado para criar mensagens personalizadas e naturais via WhatsApp.
+        </p>
+      </div>
+
       {/* Score Header */}
       <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
         <div className="flex items-center gap-3 mb-3">
@@ -432,6 +497,37 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
           </div>
         )
       })}
+
+      {/* Message Preview — AC5 */}
+      <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] bg-accent-light">
+            <Sparkles className="h-4 w-4 text-accent" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-text-primary">Preview da Mensagem</h3>
+            <p className="text-xs text-text-tertiary">
+              Exemplo de como a IA usaria seus dados para recuperar um carrinho
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-[var(--radius-md)] bg-bg-tertiary p-4">
+          <div className="flex items-start gap-2 mb-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/20">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+            </div>
+            <div className="flex-1 rounded-[var(--radius-md)] bg-surface border border-border p-3">
+              <p className="text-sm text-text-primary whitespace-pre-wrap">
+                {generatePreviewMessage(form)}
+              </p>
+            </div>
+          </div>
+          <p className="text-[10px] text-text-tertiary ml-9">
+            Esta e uma simulacao. A mensagem real sera personalizada pela IA com base no carrinho do cliente.
+          </p>
+        </div>
+      </div>
 
       {/* Save Button */}
       <div className="flex justify-end">

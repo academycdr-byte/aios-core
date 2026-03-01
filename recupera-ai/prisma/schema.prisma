@@ -55,6 +55,7 @@ model Store {
   // Config
   settings        StoreSettings?
   recoveryConfig  RecoveryConfig?
+  recoveryStages  RecoveryStage[]
 
   // Data
   abandonedCarts  AbandonedCart[]
@@ -62,6 +63,8 @@ model Store {
   dailyMetrics    DailyMetrics[]
 
   isActive        Boolean   @default(true) @map("is_active")
+  testMode        Boolean   @default(false) @map("test_mode")
+  testPhones      String[]  @default([]) @map("test_phones")
   webhookSecret   String?   @map("webhook_secret")
   lastSyncAt      DateTime? @map("last_sync_at")
   createdAt       DateTime  @default(now()) @map("created_at")
@@ -122,6 +125,37 @@ model StoreSettings {
 }
 
 // ============================================================
+// RECOVERY STAGES (per-store AI strategy stages)
+// ============================================================
+
+model RecoveryStage {
+  id              String   @id @default(cuid())
+  storeId         String   @map("store_id")
+  store           Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  name            String
+  order           Int
+  objective       String   @db.Text
+  aiInstructions  String   @map("ai_instructions") @db.Text
+
+  // Discount rules for this stage
+  discountEnabled Boolean  @default(false) @map("discount_enabled")
+  discountPercent Float?   @map("discount_percent")
+
+  // First message config (only for stage order=1)
+  firstMessageTone    String?  @map("first_message_tone")
+  firstMessageElements String? @map("first_message_elements") @db.Text
+
+  isDefault       Boolean  @default(false) @map("is_default")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@unique([storeId, order])
+  @@index([storeId])
+  @@map("recovery_stages")
+}
+
+// ============================================================
 // RECOVERY CONFIG (per-store recovery flow settings)
 // ============================================================
 
@@ -160,10 +194,40 @@ model RecoveryConfig {
   cardFirstDelay        Int      @default(10) @map("card_first_delay")
   cardMaxAttempts       Int      @default(2) @map("card_max_attempts")
 
+  // === ADVANCED FOLLOW-UP (Story 1.3) ===
+  stopOnOptOut          Boolean  @default(true) @map("stop_on_opt_out")
+  expirationHours       Int      @default(72) @map("expiration_hours")
+
+  // Flexible follow-up steps
+  followUpSteps         FollowUpStep[]
+
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
 
   @@map("recovery_configs")
+}
+
+// ============================================================
+// FOLLOW-UP STEPS (flexible per-step configuration)
+// ============================================================
+
+model FollowUpStep {
+  id           String       @id @default(cuid())
+  configId     String       @map("config_id")
+  config       RecoveryConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  cartType     CartType     @default(ABANDONED_CART) @map("cart_type")
+  stepNumber   Int          @map("step_number") // 0 = first message, 1-7 = follow-ups
+  delayMinutes Int          @map("delay_minutes")
+  strategy     String       @default("") @db.Text // Instructions for AI at this step
+  isActive     Boolean      @default(true) @map("is_active")
+
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@unique([configId, cartType, stepNumber])
+  @@index([configId])
+  @@map("follow_up_steps")
 }
 
 // ============================================================
@@ -202,6 +266,8 @@ model AbandonedCart {
   recoveredValue  Float?        @map("recovered_value")
   paidAt          DateTime?     @map("paid_at")
   paidValue       Float?        @map("paid_value")
+  recoveredAtStage Int?         @map("recovered_at_stage")
+  discountUsed     Float?       @map("discount_used")
 
   // Conversation
   conversation    Conversation?
@@ -258,6 +324,10 @@ model Conversation {
   totalTokens     Int               @default(0) @map("total_tokens")
   estimatedCost   Float             @default(0) @map("estimated_cost")
 
+  // Stage tracking
+  currentStageOrder Int?             @map("current_stage_order")
+  discountOffered   Float?           @map("discount_offered")
+
   // Abandonment tracking
   abandonmentReason AbandonmentReason? @map("abandonment_reason")
   closingReason     String?            @map("closing_reason")
@@ -300,6 +370,9 @@ model Message {
 
   // Intent classification (set when role=CUSTOMER)
   intent          String?
+
+  // Follow-up tracking
+  followUpStep    Int?         @map("follow_up_step")
 
   // AI metadata
   tokensUsed      Int?         @map("tokens_used")
@@ -371,9 +444,42 @@ model DailyMetrics {
   avgMessagesPerConv Float    @default(0) @map("avg_messages_per_conv")
   aiCost             Float    @default(0) @map("ai_cost")
 
+  // Message delivery metrics (Story 1.6)
+  messagesSent       Int      @default(0) @map("messages_sent")
+  messagesDelivered  Int      @default(0) @map("messages_delivered")
+  messagesRead       Int      @default(0) @map("messages_read")
+  messagesReplied    Int      @default(0) @map("messages_replied")
+
+  // Link tracking (Story 1.6)
+  linkClicks         Int      @default(0) @map("link_clicks")
+
+  // Stage & discount metrics (Story 1.6)
+  discountRecoveries Int      @default(0) @map("discount_recoveries")
+  avgDiscountPercent Float    @default(0) @map("avg_discount_percent")
+
   createdAt          DateTime @default(now()) @map("created_at")
 
   @@unique([storeId, date])
   @@index([storeId, date])
   @@map("daily_metrics")
+}
+
+// ============================================================
+// LINK TRACKING (redirect + click tracking)
+// ============================================================
+
+model TrackedLink {
+  id           String   @id @default(cuid())
+  storeId      String   @map("store_id")
+  code         String   @unique
+  targetUrl    String   @map("target_url") @db.Text
+  conversationId String? @map("conversation_id")
+  cartId       String?  @map("cart_id")
+  clicks       Int      @default(0)
+  lastClickAt  DateTime? @map("last_click_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([code])
+  @@index([storeId])
+  @@map("tracked_links")
 }

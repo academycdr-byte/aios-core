@@ -61,6 +61,8 @@ export interface MockRecoveryConfig {
   cardRecoveryEnabled: boolean
   cardFirstDelay: number
   cardMaxAttempts: number
+  stopOnOptOut: boolean
+  expirationHours: number
 }
 
 export const mockStores: MockStore[] = [
@@ -201,6 +203,8 @@ export const mockRecoveryConfigs: Record<string, MockRecoveryConfig> = {
     cardRecoveryEnabled: true,
     cardFirstDelay: 10,
     cardMaxAttempts: 2,
+    stopOnOptOut: true,
+    expirationHours: 72,
   },
   '2': {
     id: 'recovery-2',
@@ -223,6 +227,8 @@ export const mockRecoveryConfigs: Record<string, MockRecoveryConfig> = {
     cardRecoveryEnabled: false,
     cardFirstDelay: 15,
     cardMaxAttempts: 2,
+    stopOnOptOut: true,
+    expirationHours: 48,
   },
   '3': {
     id: 'recovery-3',
@@ -245,6 +251,8 @@ export const mockRecoveryConfigs: Record<string, MockRecoveryConfig> = {
     cardRecoveryEnabled: false,
     cardFirstDelay: 15,
     cardMaxAttempts: 2,
+    stopOnOptOut: true,
+    expirationHours: 72,
   },
 }
 

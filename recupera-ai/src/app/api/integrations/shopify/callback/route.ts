@@ -6,7 +6,12 @@ import {
   exchangeShopifyCode,
   validateShopifyHmac,
   registerAbandonedCartWebhook,
+  fetchAbandonedCheckouts,
 } from '@/lib/integrations/shopify'
+import {
+  parseAbandonedCheckout,
+  type ShopifyCheckoutPayload,
+} from '@/lib/webhooks/shopify-parser'
 
 /**
  * GET /api/integrations/shopify/callback
@@ -148,6 +153,12 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    // Auto-sync: pull abandoned checkouts on first connection (fire-and-forget)
+    autoSyncAbandonedCheckouts(savedStoreId, shop, tokenData.access_token)
+      .catch((err) => {
+        console.error('[Shopify OAuth] Auto-sync failed (non-blocking):', err)
+      })
+
     // Redirect to the store detail page
     return NextResponse.redirect(
       new URL(`/lojas/${savedStoreId}?connected=true`, request.url)
@@ -158,4 +169,54 @@ export async function GET(request: NextRequest) {
       new URL('/lojas?error=oauth_failed', request.url)
     )
   }
+}
+
+/**
+ * Auto-sync abandoned checkouts on first integration connection.
+ * Runs in the background (fire-and-forget) so it doesn't block the OAuth redirect.
+ */
+async function autoSyncAbandonedCheckouts(
+  storeId: string,
+  shopDomain: string,
+  accessToken: string
+): Promise<void> {
+  const checkouts = await fetchAbandonedCheckouts(shopDomain, accessToken)
+
+  let imported = 0
+  for (const checkout of checkouts) {
+    const parsed = parseAbandonedCheckout(checkout as unknown as ShopifyCheckoutPayload)
+    if (!parsed.platformCartId) continue
+
+    const existing = await prisma.abandonedCart.findFirst({
+      where: { storeId, platformCartId: parsed.platformCartId },
+    })
+
+    if (!existing) {
+      await prisma.abandonedCart.create({
+        data: {
+          storeId,
+          customerName: parsed.customerName,
+          customerEmail: parsed.customerEmail,
+          customerPhone: parsed.customerPhone,
+          cartTotal: parsed.cartTotal,
+          currency: parsed.currency,
+          cartItems: JSON.parse(JSON.stringify(parsed.cartItems)),
+          itemCount: parsed.itemCount,
+          checkoutUrl: parsed.checkoutUrl,
+          platformCartId: parsed.platformCartId,
+          type: 'ABANDONED_CART',
+          status: 'PENDING',
+          abandonedAt: parsed.abandonedAt,
+        },
+      })
+      imported++
+    }
+  }
+
+  await prisma.store.update({
+    where: { id: storeId },
+    data: { lastSyncAt: new Date() },
+  })
+
+  console.log(`[Shopify OAuth] Auto-sync complete: ${imported} carts imported from ${checkouts.length} fetched`)
 }

@@ -7,7 +7,7 @@
 import { prisma } from '@/lib/prisma'
 import { evolutionApi } from '@/lib/evolution-api'
 import { recoveryEngine } from '@/lib/ai/recovery-engine'
-import type { StoreSettings, RecoveryConfig, AbandonedCart } from '@/types'
+import type { StoreSettings, RecoveryConfig, AbandonedCart, FollowUpStep } from '@/types'
 
 // ============================================================
 // TYPES
@@ -75,12 +75,35 @@ export function shouldSendNow(settings: {
 // ============================================================
 
 /**
- * Get the delay in minutes for a given attempt number based on recovery config.
+ * Get the delay in minutes for a given attempt number.
+ * Uses FollowUpSteps if available, falls back to hardcoded config fields.
  */
 function getDelayForAttempt(
   attemptNumber: number,
-  config: RecoveryConfig
+  config: RecoveryConfig,
+  followUpSteps?: FollowUpStep[],
+  cartType: string = 'ABANDONED_CART'
 ): number | null {
+  // Use flexible FollowUpSteps if available
+  if (followUpSteps && followUpSteps.length > 0) {
+    const stepsForType = followUpSteps
+      .filter((s) => s.cartType === cartType && s.isActive)
+      .sort((a, b) => a.stepNumber - b.stepNumber)
+    const step = stepsForType[attemptNumber]
+    return step ? step.delayMinutes : null
+  }
+
+  // Fall back to hardcoded config fields
+  if (cartType === 'PIX_PENDING') {
+    return attemptNumber === 0 ? config.pixFirstDelay
+      : attemptNumber === 1 ? config.pixFollowUpDelay
+      : null
+  }
+  if (cartType === 'CARD_DECLINED') {
+    return attemptNumber === 0 ? config.cardFirstDelay : null
+  }
+
+  // ABANDONED_CART
   switch (attemptNumber) {
     case 0: return config.firstMessageDelay
     case 1: return config.followUp1Delay
@@ -88,6 +111,36 @@ function getDelayForAttempt(
     case 3: return config.followUp3Delay
     default: return null
   }
+}
+
+/**
+ * Get the strategy text for a given attempt from FollowUpSteps.
+ */
+function getStepStrategy(
+  attemptNumber: number,
+  followUpSteps: FollowUpStep[],
+  cartType: string = 'ABANDONED_CART'
+): string | null {
+  const stepsForType = followUpSteps
+    .filter((s) => s.cartType === cartType && s.isActive)
+    .sort((a, b) => a.stepNumber - b.stepNumber)
+  return stepsForType[attemptNumber]?.strategy || null
+}
+
+/**
+ * Get max attempts from follow-up steps or config.
+ */
+function getMaxAttempts(
+  config: RecoveryConfig,
+  followUpSteps?: FollowUpStep[],
+  cartType: string = 'ABANDONED_CART'
+): number {
+  if (followUpSteps && followUpSteps.length > 0) {
+    return followUpSteps.filter((s) => s.cartType === cartType && s.isActive).length
+  }
+  if (cartType === 'PIX_PENDING') return config.pixMaxAttempts
+  if (cartType === 'CARD_DECLINED') return config.cardMaxAttempts
+  return config.maxAttempts
 }
 
 /**
@@ -110,14 +163,19 @@ export async function processSingleCart(
   cartId: string
 ): Promise<{ action: string; error?: string }> {
   try {
-    // Load cart with store, settings, config, and existing conversation
+    // Load cart with store, settings, config, follow-up steps, and existing conversation
     const cart = await prisma.abandonedCart.findUnique({
       where: { id: cartId },
       include: {
         store: {
           include: {
             settings: true,
-            recoveryConfig: true,
+            recoveryConfig: {
+              include: {
+                followUpSteps: { orderBy: [{ cartType: 'asc' }, { stepNumber: 'asc' }] },
+              },
+            },
+            recoveryStages: { orderBy: { order: 'asc' } },
           },
         },
         conversation: {
@@ -169,13 +227,62 @@ export async function processSingleCart(
       return { action: 'skipped', error: 'WhatsApp not connected' }
     }
 
+    // testMode guard: only send to whitelisted phone numbers
+    if (store.testMode) {
+      const whitelisted = (store.testPhones ?? []) as string[]
+      if (!whitelisted.includes(cart.customerPhone)) {
+        return { action: 'skipped', error: `testMode: phone ${cart.customerPhone} not in whitelist` }
+      }
+    }
+
     // Check business hours
     if (!shouldSendNow(settings)) {
       return { action: 'skipped', error: 'Outside business hours' }
     }
 
-    // Check max attempts
-    if (cart.recoveryAttempts >= config.maxAttempts) {
+    const followUpSteps = (store.recoveryConfig?.followUpSteps ?? []) as unknown as FollowUpStep[]
+    const cartType = cart.type as string
+
+    // Check cart expiration
+    const expirationHours = config.expirationHours ?? 72
+    if (expirationHours > 0) {
+      const expiresAt = new Date(cart.abandonedAt.getTime() + expirationHours * 60 * 60 * 1000)
+      if (new Date() > expiresAt) {
+        await prisma.abandonedCart.update({
+          where: { id: cartId },
+          data: { status: 'EXPIRED' },
+        })
+        return { action: 'skipped', error: 'Cart expired' }
+      }
+    }
+
+    // Check opt-out: if last customer message was opt-out intent
+    if (config.stopOnOptOut && cart.conversation) {
+      const lastCustomerMsg = cart.conversation.messages
+        .filter((m) => m.role === 'CUSTOMER')
+        .pop()
+      if (lastCustomerMsg?.intent === 'OPT_OUT') {
+        await prisma.abandonedCart.update({
+          where: { id: cartId },
+          data: { status: 'LOST' },
+        })
+        if (cart.conversation) {
+          await prisma.conversation.update({
+            where: { id: cart.conversation.id },
+            data: {
+              status: 'LOST',
+              closedAt: new Date(),
+              closingReason: 'Cliente pediu para parar (opt-out)',
+            },
+          })
+        }
+        return { action: 'lost' }
+      }
+    }
+
+    // Check max attempts (using follow-up steps or config)
+    const maxAttempts = getMaxAttempts(config, followUpSteps, cartType)
+    if (cart.recoveryAttempts >= maxAttempts) {
       await prisma.abandonedCart.update({
         where: { id: cartId },
         data: { status: 'LOST' },
@@ -184,7 +291,7 @@ export async function processSingleCart(
     }
 
     // Determine delay for current attempt
-    const delayMinutes = getDelayForAttempt(cart.recoveryAttempts, config)
+    const delayMinutes = getDelayForAttempt(cart.recoveryAttempts, config, followUpSteps, cartType)
     if (delayMinutes === null) {
       // No more follow-ups configured
       await prisma.abandonedCart.update({
@@ -200,24 +307,34 @@ export async function processSingleCart(
       return { action: 'skipped', error: 'Delay not passed yet' }
     }
 
-    // Generate message
+    // Get step-specific strategy (if using follow-up steps)
+    const stepStrategy = getStepStrategy(cart.recoveryAttempts, followUpSteps, cartType)
+
+    // Generate message with stage context + step strategy
     const cartTyped = cart as unknown as AbandonedCart
+    const stages = (store.recoveryStages ?? []) as unknown as import('@/types').RecoveryStage[]
+    const firstStage = stages[0] ?? null
     let generationResult
 
     if (cart.recoveryAttempts === 0) {
-      // First message
+      // First message — use stage 1
       generationResult = await recoveryEngine.generateFirstMessage(
         cartTyped,
         settings,
-        config
+        config,
+        firstStage,
+        stepStrategy
       )
     } else {
-      // Follow-up message
+      // Follow-up message — use corresponding stage
+      const stageForAttempt = stages[cart.recoveryAttempts] ?? stages[stages.length - 1] ?? null
       generationResult = await recoveryEngine.generateFollowUp(
         cartTyped,
         settings,
         config,
-        cart.recoveryAttempts + 1
+        cart.recoveryAttempts + 1,
+        stageForAttempt,
+        stepStrategy
       )
     }
 
@@ -265,7 +382,7 @@ export async function processSingleCart(
       })
     }
 
-    // Save AI message
+    // Save AI message with follow-up step number
     await prisma.message.create({
       data: {
         conversationId: conversation.id,
@@ -274,6 +391,7 @@ export async function processSingleCart(
         messageStatus: 'SENT',
         tokensUsed: generationResult.tokensUsed,
         modelUsed: generationResult.model,
+        followUpStep: cart.recoveryAttempts,
       },
     })
 

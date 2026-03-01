@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { processIncomingMessage } from '@/lib/ai/message-processor'
 import { normalizeBrazilPhone, evolutionApi } from '@/lib/evolution-api'
-import { transcribeAudio } from '@/lib/audio-transcription'
+import { transcribeAudio, type TranscriptionResult } from '@/lib/audio-transcription'
 import type { MediaAttachment } from '@/lib/ai/recovery-engine'
 
 export const maxDuration = 60
@@ -66,6 +66,47 @@ export async function POST(request: NextRequest) {
 
       console.log(`[WhatsApp Webhook] Connection update for store ${storeId}: ${state}`)
       return NextResponse.json({ received: true, event: 'connection.update', state })
+    }
+
+    // ============================================================
+    // HANDLE: MESSAGE STATUS UPDATE (DELIVERED / READ)
+    // ============================================================
+    if (event === 'messages.update') {
+      try {
+        const updates = Array.isArray(data) ? data : [data]
+        for (const update of updates) {
+          const u = update as Record<string, unknown>
+          const msgId = (u.key as Record<string, unknown>)?.id as string | undefined
+          const status = (u.update as Record<string, unknown>)?.status as number | undefined
+
+          if (!msgId || !status) continue
+
+          // Evolution API status codes: 2=SENT, 3=DELIVERED, 4=READ
+          const statusMap: Record<number, string> = { 3: 'DELIVERED', 4: 'READ' }
+          const newStatus = statusMap[status]
+          if (!newStatus) continue
+
+          const msg = await prisma.message.findFirst({
+            where: { whatsappMsgId: msgId },
+          })
+
+          if (msg) {
+            const updateData: Record<string, unknown> = { messageStatus: newStatus }
+            if (newStatus === 'DELIVERED') updateData.deliveredAt = new Date()
+            if (newStatus === 'READ') {
+              updateData.readAt = new Date()
+              if (!msg.deliveredAt) updateData.deliveredAt = new Date()
+            }
+            await prisma.message.update({
+              where: { id: msg.id },
+              data: updateData,
+            })
+          }
+        }
+      } catch (err) {
+        console.error('[WhatsApp Webhook] Error processing message status update:', err)
+      }
+      return NextResponse.json({ received: true, event: 'messages.update' })
     }
 
     // ============================================================
@@ -140,16 +181,29 @@ export async function POST(request: NextRequest) {
       }
 
       // ============================================================
-      // FETCH & PROCESS MEDIA (image, audio, video)
+      // FETCH & PROCESS MEDIA (image, audio, video, document)
       // - Image: sent to Claude vision for visual analysis
       // - Audio: transcribed via Groq Whisper → text replaces messageContent
       // - Video: audio track transcribed via Whisper → text replaces messageContent
+      // - Document: friendly reply informing limitation
+      // - Files > 25MB: friendly reply asking customer to send shorter version
       // ============================================================
       let media: MediaAttachment | null = null
       let messageContentFinal = messageContent
+      let sendFileSizeWarning = false
+      let sendDocumentNotice = false
       const msg = messageData.message
       const msgKey = { remoteJid, fromMe: false, id: key.id ?? '' }
       const hasMedia = msg?.imageMessage || msg?.audioMessage || msg?.videoMessage
+      const hasDocument = msg?.documentMessage
+
+      // --- DOCUMENT: inform customer about limitation ---
+      if (hasDocument && !hasMedia) {
+        sendDocumentNotice = true
+        const fileName = msg.documentMessage?.fileName ?? 'arquivo'
+        messageContentFinal = `[Documento recebido: ${fileName}]`
+        console.log(`[WhatsApp Webhook] Document received: ${fileName} — will send friendly notice`)
+      }
 
       if (hasMedia && instance) {
         try {
@@ -171,28 +225,36 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            // --- AUDIO: transcribe via Whisper ---
+            // --- AUDIO: transcribe via Whisper (with size check) ---
             if (msg?.audioMessage) {
               console.log(`[WhatsApp Webhook] Audio received (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB) — transcribing...`)
-              const transcription = await transcribeAudio(mediaResult.base64, mediaResult.mimeType)
-              if (transcription) {
-                messageContentFinal = `[Audio transcrito] ${transcription}`
-                console.log(`[WhatsApp Webhook] Audio transcribed: "${transcription.substring(0, 80)}..."`)
+              const result = await transcribeAudio(mediaResult.base64, mediaResult.mimeType, true) as TranscriptionResult
+              if (result.text) {
+                messageContentFinal = `[Audio transcrito] ${result.text}`
+                console.log(`[WhatsApp Webhook] Audio transcribed: "${result.text.substring(0, 80)}..."`)
+              } else if (result.failure === 'file_too_large') {
+                messageContentFinal = `[Audio recebido - arquivo muito grande (${result.fileSizeMB}MB)]`
+                sendFileSizeWarning = true
               } else {
                 messageContentFinal = '[Audio recebido - nao foi possivel transcrever]'
               }
             }
 
-            // --- VIDEO: transcribe audio track via Whisper ---
+            // --- VIDEO: transcribe audio track via Whisper (with size check) ---
             if (msg?.videoMessage) {
               console.log(`[WhatsApp Webhook] Video received (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB) — transcribing audio...`)
-              const transcription = await transcribeAudio(mediaResult.base64, mediaResult.mimeType)
+              const result = await transcribeAudio(mediaResult.base64, mediaResult.mimeType, true) as TranscriptionResult
               const caption = msg.videoMessage.caption
-              if (transcription) {
+              if (result.text) {
                 messageContentFinal = caption
-                  ? `[Video] ${caption}\n[Audio do video transcrito] ${transcription}`
-                  : `[Video - audio transcrito] ${transcription}`
-                console.log(`[WhatsApp Webhook] Video audio transcribed: "${transcription.substring(0, 80)}..."`)
+                  ? `[Video] ${caption}\n[Audio do video transcrito] ${result.text}`
+                  : `[Video - audio transcrito] ${result.text}`
+                console.log(`[WhatsApp Webhook] Video audio transcribed: "${result.text.substring(0, 80)}..."`)
+              } else if (result.failure === 'file_too_large') {
+                messageContentFinal = caption
+                  ? `[Video] ${caption} [arquivo muito grande (${result.fileSizeMB}MB)]`
+                  : `[Video recebido - arquivo muito grande (${result.fileSizeMB}MB)]`
+                sendFileSizeWarning = true
               } else if (caption) {
                 messageContentFinal = `[Video] ${caption}`
               } else {
@@ -223,6 +285,63 @@ export async function POST(request: NextRequest) {
       })
 
       console.log(`[WhatsApp Webhook] Saved message in conversation ${conversation.id}`)
+
+      // ============================================================
+      // MEDIA LIMITATION NOTICES — send friendly WhatsApp messages
+      // ============================================================
+      if (sendDocumentNotice && instance) {
+        try {
+          await evolutionApi.sendText(
+            instance,
+            phone,
+            'Recebi seu documento! No momento consigo processar apenas textos, audios, imagens e videos. Se puder me enviar a informacao como mensagem de texto ou foto, consigo te ajudar melhor! 😊'
+          )
+          await prisma.message.create({
+            data: {
+              conversationId: conversation.id,
+              role: 'AI',
+              content: 'Recebi seu documento! No momento consigo processar apenas textos, audios, imagens e videos. Se puder me enviar a informacao como mensagem de texto ou foto, consigo te ajudar melhor!',
+              messageStatus: 'SENT',
+            },
+          })
+          console.log(`[WhatsApp Webhook] Sent document limitation notice to ${phone}`)
+        } catch (err) {
+          console.error('[WhatsApp Webhook] Failed to send document notice:', err)
+        }
+        return NextResponse.json({
+          received: true,
+          event: 'messages.upsert',
+          conversationId: conversation.id,
+          mediaNotice: 'document_unsupported',
+        })
+      }
+
+      if (sendFileSizeWarning && instance) {
+        try {
+          await evolutionApi.sendText(
+            instance,
+            phone,
+            'Opa! O arquivo que voce enviou e muito grande pra eu conseguir processar (limite de 25MB). Pode tentar enviar um audio mais curto ou uma foto? Assim consigo te ajudar! 😊'
+          )
+          await prisma.message.create({
+            data: {
+              conversationId: conversation.id,
+              role: 'AI',
+              content: 'O arquivo enviado excedeu o limite de 25MB. Solicitado versao menor.',
+              messageStatus: 'SENT',
+            },
+          })
+          console.log(`[WhatsApp Webhook] Sent file size warning to ${phone}`)
+        } catch (err) {
+          console.error('[WhatsApp Webhook] Failed to send file size warning:', err)
+        }
+        return NextResponse.json({
+          received: true,
+          event: 'messages.upsert',
+          conversationId: conversation.id,
+          mediaNotice: 'file_too_large',
+        })
+      }
 
       // ============================================================
       // ANTI-SPAM: Only respond if AI isn't already "waiting" for a reply.

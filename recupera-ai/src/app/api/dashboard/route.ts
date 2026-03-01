@@ -23,17 +23,31 @@ export async function GET(request: NextRequest) {
     const period = searchParams.get('period') ?? '30d'
     const storeId = searchParams.get('storeId')
 
-    // Validate period
-    if (!['7d', '30d', '90d'].includes(period)) {
-      return NextResponse.json(
-        { error: 'invalid_period', message: 'Period must be 7d, 30d, or 90d' },
-        { status: 400 }
-      )
-    }
+    // Support custom date range or predefined period
+    const startDate = searchParams.get('startDate')
+    const endDate = searchParams.get('endDate')
 
-    const days = period === '7d' ? 7 : period === '90d' ? 90 : 30
-    const sinceDate = new Date()
-    sinceDate.setDate(sinceDate.getDate() - days)
+    let sinceDate: Date
+    let untilDate: Date | undefined
+
+    if (startDate && endDate) {
+      sinceDate = new Date(startDate)
+      untilDate = new Date(endDate)
+      // Set untilDate to end of day
+      untilDate.setHours(23, 59, 59, 999)
+    } else {
+      // Validate period
+      if (!['7d', '30d', '90d'].includes(period)) {
+        return NextResponse.json(
+          { error: 'invalid_period', message: 'Period must be 7d, 30d, or 90d' },
+          { status: 400 }
+        )
+      }
+
+      const days = period === '7d' ? 7 : period === '90d' ? 90 : 30
+      sinceDate = new Date()
+      sinceDate.setDate(sinceDate.getDate() - days)
+    }
 
     // Get all store IDs for this user (scoping)
     const userStores = await prisma.store.findMany({
@@ -68,10 +82,14 @@ export async function GET(request: NextRequest) {
       : { storeId: { in: userStoreIds } }
 
     // Get daily metrics for the period
+    const dateFilter = untilDate
+      ? { gte: sinceDate, lte: untilDate }
+      : { gte: sinceDate }
+
     const dailyMetrics = await prisma.dailyMetrics.findMany({
       where: {
         ...storeFilter,
-        date: { gte: sinceDate },
+        date: dateFilter,
       },
       orderBy: { date: 'asc' },
     })
@@ -101,6 +119,29 @@ export async function GET(request: NextRequest) {
       ? totalRecoveredValue / totalRecovered
       : 0
 
+    // New metrics (Story 1.6)
+    const totalMessagesSent = dailyMetrics.reduce((sum, m) => sum + m.messagesSent, 0)
+    const totalMessagesDelivered = dailyMetrics.reduce((sum, m) => sum + m.messagesDelivered, 0)
+    const totalMessagesRead = dailyMetrics.reduce((sum, m) => sum + m.messagesRead, 0)
+    const totalMessagesReplied = dailyMetrics.reduce((sum, m) => sum + m.messagesReplied, 0)
+    const totalLinkClicks = dailyMetrics.reduce((sum, m) => sum + m.linkClicks, 0)
+
+    const responseRate = totalMessagesSent > 0
+      ? (totalMessagesReplied / totalMessagesSent) * 100
+      : 0
+
+    const openRate = totalMessagesDelivered > 0
+      ? (totalMessagesRead / totalMessagesDelivered) * 100
+      : 0
+
+    const clickRate = totalMessagesSent > 0
+      ? (totalLinkClicks / totalMessagesSent) * 100
+      : 0
+
+    const costPerRecovery = totalRecovered > 0
+      ? totalAiCost / totalRecovered
+      : 0
+
     return NextResponse.json({
       data: {
         totalAbandoned,
@@ -115,6 +156,15 @@ export async function GET(request: NextRequest) {
         totalConversations,
         avgMessagesPerConv,
         totalAiCost,
+        responseRate,
+        openRate,
+        clickRate,
+        costPerRecovery,
+        totalMessagesSent,
+        totalMessagesDelivered,
+        totalMessagesRead,
+        totalMessagesReplied,
+        totalLinkClicks,
         dailyMetrics,
       },
     })

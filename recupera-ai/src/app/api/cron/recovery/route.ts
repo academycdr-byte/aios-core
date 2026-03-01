@@ -36,9 +36,8 @@ export async function GET(request: NextRequest) {
     const startTime = Date.now()
 
     // 1. Process recovery jobs (send messages)
-    // DISABLED: Owner requested no automatic messages until manual approval
-    const recoveryStats = { processed: 0, sent: 0, skipped: 0, lost: 0, errors: 0, details: [] as string[] }
-    // const recoveryStats = await processRecoveryJobs()
+    // Protected by testMode flag — only sends to whitelisted phones when testMode=true
+    const recoveryStats = await processRecoveryJobs()
 
     // 2. Calculate daily metrics
     const metricsStats = await calculateDailyMetrics()

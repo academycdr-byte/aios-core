@@ -73,7 +73,7 @@ export async function GET() {
   } catch (error) {
     console.error('[API] Failed to fetch abandonment reasons:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch abandonment reasons' },
+      { error: 'internal_error', message: 'Failed to fetch abandonment reasons' },
       { status: 500 }
     )
   }

@@ -4,7 +4,7 @@
  * The prompt shapes the AI's identity, tone, knowledge, and behavioral rules.
  */
 
-import type { StoreSettings, RecoveryConfig, AbandonedCart, CartItem } from '@/types'
+import type { StoreSettings, RecoveryConfig, AbandonedCart, CartItem, RecoveryStage } from '@/types'
 
 // ============================================================
 // TONE DESCRIPTIONS
@@ -94,11 +94,13 @@ function buildBusinessHoursText(settings: StoreSettings): string {
  * @param settings - Store settings (name, policies, AI config)
  * @param config  - Recovery config (timing, templates)
  * @param cart    - The abandoned cart being recovered (optional for generic conversations)
+ * @param stage   - Current recovery stage (optional, adds stage-specific instructions)
  */
 export function buildSystemPrompt(
   settings: StoreSettings,
   config: RecoveryConfig | null,
-  cart: AbandonedCart | null
+  cart: AbandonedCart | null,
+  stage?: RecoveryStage | null
 ): string {
   const aiName = settings.aiName || 'Assistente'
   const storeName = settings.storeName || 'a loja'
@@ -127,6 +129,25 @@ ${buildCartItemsText(items)}${cart.checkoutUrl ? `\n- Link para finalizar: ${car
   // --- Business hours ---
   const businessHours = buildBusinessHoursText(settings)
 
+  // --- Stage section ---
+  let stageSection = ''
+  if (stage) {
+    stageSection = `\n## ETAPA ATUAL DA CONVERSA: ${stage.name} (Etapa ${stage.order})
+- Objetivo desta etapa: ${stage.objective}
+- Instrucoes especificas: ${stage.aiInstructions}`
+    if (stage.discountEnabled && stage.discountPercent) {
+      stageSection += `\n- DESCONTO LIBERADO: Voce PODE oferecer ate ${stage.discountPercent}% de desconto nesta etapa.`
+    } else {
+      stageSection += `\n- DESCONTO: NAO ofereca desconto nesta etapa.`
+    }
+    if (stage.firstMessageTone) {
+      stageSection += `\n- Tom da primeira mensagem: ${stage.firstMessageTone}`
+    }
+    if (stage.firstMessageElements) {
+      stageSection += `\n- Elementos obrigatorios: ${stage.firstMessageElements}`
+    }
+  }
+
   // --- Custom instructions ---
   const customInstructionsSection = settings.customInstructions
     ? `\n## Instrucoes adicionais da loja\n${settings.customInstructions}`
@@ -152,7 +173,7 @@ ${settings.faqContent ? `\n## Perguntas frequentes\n${settings.faqContent}` : ''
 
 ## Ofertas especiais
 ${buildOffersSection(settings)}
-${cartSection}
+${cartSection}${stageSection}
 
 ## Regras OBRIGATORIAS:
 1. NUNCA minta ou invente informacoes

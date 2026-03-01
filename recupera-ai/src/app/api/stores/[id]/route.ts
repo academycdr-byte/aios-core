@@ -103,6 +103,8 @@ export async function PUT(
         whatsappPhone: body.whatsappPhone !== undefined ? body.whatsappPhone : existing.whatsappPhone,
         whatsappConnected: body.whatsappConnected !== undefined ? body.whatsappConnected : existing.whatsappConnected,
         isActive: body.isActive !== undefined ? body.isActive : existing.isActive,
+        testMode: body.testMode !== undefined ? body.testMode : existing.testMode,
+        testPhones: body.testPhones !== undefined ? body.testPhones : existing.testPhones,
       },
     })
 

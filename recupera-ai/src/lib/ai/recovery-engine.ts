@@ -6,7 +6,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk'
-import type { StoreSettings, RecoveryConfig, AbandonedCart, Message } from '@/types'
+import type { StoreSettings, RecoveryConfig, AbandonedCart, Message, RecoveryStage } from '@/types'
 import { buildSystemPrompt } from '@/lib/ai/system-prompt-builder'
 
 // ============================================================
@@ -22,6 +22,7 @@ export type CustomerIntent =
   | 'NOT_INTERESTED'
   | 'QUESTION'
   | 'ANGRY'
+  | 'OPT_OUT'
 
 export interface GenerationResult {
   message: string
@@ -109,6 +110,10 @@ const MOCK_REPLY_MESSAGES: Record<CustomerIntent, string[]> = {
     'Peco desculpas pelo incomodo! Vou encaminhar voce para nosso atendimento humano agora mesmo.',
     'Sinto muito pela experiencia. Vou transferir voce para um atendente que pode resolver isso.',
   ],
+  OPT_OUT: [
+    'Tudo bem! Nao vou mais enviar mensagens. Se precisar de algo, e so chamar. Obrigado!',
+    'Entendido! Vou parar por aqui. Se mudar de ideia, estamos disponiveis. Ate mais!',
+  ],
 }
 
 function pickRandom<T>(arr: T[]): T {
@@ -151,7 +156,9 @@ export class RecoveryEngine {
   async generateFirstMessage(
     cart: AbandonedCart,
     settings: StoreSettings,
-    config: RecoveryConfig | null
+    config: RecoveryConfig | null,
+    stage?: RecoveryStage | null,
+    stepStrategy?: string | null
   ): Promise<GenerationResult> {
     // If store has a template configured, use it directly
     if (config?.firstMessageTemplate) {
@@ -168,10 +175,16 @@ export class RecoveryEngine {
       return this.mockFirstMessage(cart)
     }
 
-    const systemPrompt = buildSystemPrompt(settings, config, cart)
+    const systemPrompt = buildSystemPrompt(settings, config, cart, stage)
+    const stageContext = stage
+      ? `\nSiga as instrucoes da Etapa ${stage.order} (${stage.name}).`
+      : ''
+    const strategyContext = stepStrategy
+      ? `\nEstrategia para esta mensagem: ${stepStrategy}`
+      : ''
     const userPrompt = `Gere a PRIMEIRA mensagem de recuperacao para este cliente.
 O cliente abandonou o carrinho com valor ${formatCurrencySimple(cart.cartTotal, cart.currency)}.
-Nome do cliente: ${cart.customerName || 'nao informado'}.
+Nome do cliente: ${cart.customerName || 'nao informado'}.${stageContext}${strategyContext}
 Seja natural, breve (2-3 frases) e gere curiosidade ou urgencia sutil.
 Responda SOMENTE com a mensagem, sem explicacoes.`
 
@@ -185,7 +198,9 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
     cart: AbandonedCart,
     settings: StoreSettings,
     config: RecoveryConfig | null,
-    messageNumber: number
+    messageNumber: number,
+    stage?: RecoveryStage | null,
+    stepStrategy?: string | null
   ): Promise<GenerationResult> {
     // Check for configured templates
     const templateMap: Record<number, string | null | undefined> = {
@@ -209,13 +224,19 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
       return this.mockFollowUp(cart)
     }
 
-    const systemPrompt = buildSystemPrompt(settings, config, cart)
+    const systemPrompt = buildSystemPrompt(settings, config, cart, stage)
     const urgencyLevel =
       messageNumber >= 3 ? 'alta (ultima tentativa)' : 'media'
 
+    const stageContext = stage
+      ? `\nSiga as instrucoes da Etapa ${stage.order} (${stage.name}).`
+      : ''
+    const strategyContext = stepStrategy
+      ? `\nEstrategia para este follow-up: ${stepStrategy}`
+      : ''
     const userPrompt = `Gere a mensagem de FOLLOW-UP #${messageNumber} para este cliente.
 O cliente NAO respondeu as mensagens anteriores.
-Nivel de urgencia: ${urgencyLevel}.
+Nivel de urgencia: ${urgencyLevel}.${stageContext}${strategyContext}
 ${messageNumber >= 3 ? 'Esta e a ULTIMA tentativa. Use escassez ou beneficio exclusivo se possivel.' : 'Tente um angulo diferente da mensagem anterior.'}
 Nome do cliente: ${cart.customerName || 'nao informado'}.
 Responda SOMENTE com a mensagem, sem explicacoes.`
@@ -232,7 +253,8 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
     settings: StoreSettings,
     conversationHistory: Message[],
     customerMessage: string,
-    media?: MediaAttachment | null
+    media?: MediaAttachment | null,
+    stage?: RecoveryStage | null
   ): Promise<GenerationResult> {
     const client = getAnthropic()
     if (!client) {
@@ -240,7 +262,7 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
       return this.mockReply(cart, intent.intent)
     }
 
-    const systemPrompt = buildSystemPrompt(settings, null, cart)
+    const systemPrompt = buildSystemPrompt(settings, null, cart, stage)
 
     // Build conversation messages for context
     const messages: Anthropic.MessageParam[] = []
@@ -303,6 +325,7 @@ Classifique a mensagem do cliente em UMA das seguintes categorias:
 - NOT_INTERESTED: cliente nao quer comprar
 - QUESTION: pergunta generica (inclui prints/imagens com duvidas)
 - ANGRY: cliente irritado, reclamando ou xingando
+- OPT_OUT: cliente pediu explicitamente para parar de receber mensagens
 
 Se o cliente enviou uma imagem, analise o conteudo visual para classificar a intencao.
 Responda SOMENTE em JSON: {"intent": "CATEGORY", "confidence": 0.0-1.0, "reasoning": "breve explicacao"}`
@@ -475,7 +498,10 @@ Responda SOMENTE em JSON: {"intent": "CATEGORY", "confidence": 0.0-1.0, "reasoni
     if (/tamanho|cor|material|funciona|como usa|medida|especifica/i.test(lower)) {
       return { intent: 'OBJECTION_PRODUCT', confidence: 0.8, reasoning: 'Keywords: produto' }
     }
-    if (/nao quero|nao preciso|para|cancela|spam|some|nao me mande/i.test(lower)) {
+    if (/pare|para de mandar|nao mande mais|saia|me tire|bloque|stop|remov|descadast/i.test(lower)) {
+      return { intent: 'OPT_OUT', confidence: 0.95, reasoning: 'Keywords: opt-out explicito' }
+    }
+    if (/nao quero|nao preciso|cancela|spam|some|nao me mande/i.test(lower)) {
       return { intent: 'NOT_INTERESTED', confidence: 0.9, reasoning: 'Keywords: desinteresse' }
     }
     if (/absurdo|palha[cç]ada|merda|porra|lixo|droga|raiva|irritad/i.test(lower)) {

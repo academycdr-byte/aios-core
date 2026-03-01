@@ -14,6 +14,7 @@ import {
   type NuvemshopAbandonedCartPayload,
   type NuvemshopOrderPayload,
 } from '@/lib/webhooks/nuvemshop-parser'
+import { normalizeBrazilPhone } from '@/lib/evolution-api'
 
 export const maxDuration = 30
 
@@ -77,7 +78,11 @@ export async function POST(request: NextRequest) {
         )
       }
     } else {
-      console.warn(`[Nuvemshop Webhook] No webhook secret configured for store ${nuvemshopStoreId} - skipping HMAC`)
+      console.warn(`[Nuvemshop Webhook] No webhook secret configured for store ${nuvemshopStoreId} - rejecting`)
+      return NextResponse.json(
+        { error: 'configuration_error', message: 'Webhook secret not configured' },
+        { status: 500 }
+      )
     }
 
     // 5. Parse body
@@ -245,6 +250,23 @@ async function handleOrderPaid(
       where: {
         storeId,
         customerEmail: parsed.customerEmail,
+        status: { in: ['PENDING', 'CONTACTING', 'RECOVERED'] },
+        abandonedAt: { gte: sevenDaysAgo },
+      },
+      orderBy: { abandonedAt: 'desc' },
+    })
+  }
+
+  if (!cart && parsed.customerPhone) {
+    // Fallback: find by phone within the last 7 days
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+    const normalizedPhone = normalizeBrazilPhone(parsed.customerPhone)
+
+    cart = await prisma.abandonedCart.findFirst({
+      where: {
+        storeId,
+        customerPhone: normalizedPhone,
         status: { in: ['PENDING', 'CONTACTING', 'RECOVERED'] },
         abandonedAt: { gte: sevenDaysAgo },
       },

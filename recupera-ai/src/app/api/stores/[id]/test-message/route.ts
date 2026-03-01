@@ -57,6 +57,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const cleanPhone = normalizeBrazilPhone(phone)
 
+    // testMode guard: only allow whitelisted phone numbers
+    if (store.testMode) {
+      const whitelisted = (store.testPhones ?? []) as string[]
+      if (!whitelisted.includes(cleanPhone)) {
+        return NextResponse.json(
+          {
+            error: 'test_mode_restricted',
+            message: `Modo de teste ativo. Adicione ${cleanPhone} na lista de telefones permitidos nas configuracoes da loja.`,
+          },
+          { status: 403 }
+        )
+      }
+    }
+
     // Build cart context
     let cart: AbandonedCart
 
@@ -107,6 +121,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
         recoveredValue: null,
         paidAt: null,
         paidValue: null,
+        recoveredAtStage: null,
+        discountUsed: null,
         abandonedAt: new Date().toISOString(),
         expiresAt: null,
         createdAt: new Date().toISOString(),

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   ShoppingCart,
   TrendingUp,
@@ -8,6 +8,10 @@ import {
   CheckCircle,
   DollarSign,
   MessageSquare,
+  Reply,
+  Eye,
+  MousePointerClick,
+  Calendar,
 } from 'lucide-react'
 import { KpiCard } from '@/components/kpi-card'
 import { RecoveryTrendChart } from '@/components/charts/recovery-trend-chart'
@@ -23,6 +27,7 @@ import {
   formatCurrency,
   formatDateChart,
 } from '@/lib/format'
+import { cn } from '@/lib/utils'
 
 interface DashboardData {
   totalAbandoned: number
@@ -37,6 +42,10 @@ interface DashboardData {
   totalConversations: number
   avgMessagesPerConv: number
   totalAiCost: number
+  responseRate: number
+  openRate: number
+  clickRate: number
+  costPerRecovery: number
   dailyMetrics: DailyMetricRow[]
 }
 
@@ -73,51 +82,74 @@ interface RecentCartData {
   recoveryAttempts: number
 }
 
+type PeriodTab = '7d' | '30d' | '90d' | 'custom'
+
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [reasons, setReasons] = useState<ReasonData[]>([])
   const [recentCarts, setRecentCarts] = useState<RecentCartData[]>([])
   const [loading, setLoading] = useState(true)
+  const [period, setPeriod] = useState<PeriodTab>('30d')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      let dashUrl = '/api/dashboard'
+      if (period === 'custom' && startDate && endDate) {
+        dashUrl += `?startDate=${startDate}&endDate=${endDate}`
+      } else if (period !== 'custom') {
+        dashUrl += `?period=${period}`
+      }
+
+      const [dashRes, reasonsRes, cartsRes] = await Promise.all([
+        fetch(dashUrl),
+        fetch('/api/dashboard/reasons'),
+        fetch('/api/carts?limit=10&period=7d'),
+      ])
+
+      if (dashRes.ok) {
+        const dashJson = await dashRes.json()
+        setData(dashJson.data)
+      }
+
+      if (reasonsRes.ok) {
+        const reasonsJson = await reasonsRes.json()
+        setReasons(reasonsJson.data ?? [])
+      }
+
+      if (cartsRes.ok) {
+        const cartsJson = await cartsRes.json()
+        setRecentCarts(
+          (cartsJson.data ?? []).map((c: RecentCartData & { abandonedAt: string }) => ({
+            ...c,
+            abandonedAt: new Date(c.abandonedAt),
+          }))
+        )
+      }
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [period, startDate, endDate])
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [dashRes, reasonsRes, cartsRes] = await Promise.all([
-          fetch('/api/dashboard?period=30d'),
-          fetch('/api/dashboard/reasons'),
-          fetch('/api/carts?limit=10&period=7d'),
-        ])
-
-        if (dashRes.ok) {
-          const dashJson = await dashRes.json()
-          setData(dashJson.data)
-        }
-
-        if (reasonsRes.ok) {
-          const reasonsJson = await reasonsRes.json()
-          setReasons(reasonsJson.data ?? [])
-        }
-
-        if (cartsRes.ok) {
-          const cartsJson = await cartsRes.json()
-          setRecentCarts(
-            (cartsJson.data ?? []).map((c: RecentCartData & { abandonedAt: string }) => ({
-              ...c,
-              abandonedAt: new Date(c.abandonedAt),
-            }))
-          )
-        }
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchData()
-  }, [])
+  }, [fetchData])
 
-  if (loading) {
+  const periodLabel = period === '7d'
+    ? 'ultimos 7 dias'
+    : period === '30d'
+      ? 'ultimos 30 dias'
+      : period === '90d'
+        ? 'ultimos 90 dias'
+        : startDate && endDate
+          ? `${startDate} a ${endDate}`
+          : 'periodo customizado'
+
+  if (loading && !data) {
     return <PageSpinner message="Carregando dashboard..." />
   }
 
@@ -127,41 +159,92 @@ export default function DashboardPage() {
     dateLabel: formatDateChart(new Date(m.date)),
   }))
 
-  // Build type distribution from cart data (aggregate from daily metrics)
+  // Build type distribution from cart data
   const typeDistribution = [
     { name: 'Carrinho Abandonado', value: data?.totalAbandonedValue ?? 0, count: data?.totalAbandoned ?? 0, color: '#F59E0B' },
     { name: 'Recuperado', value: data?.totalRecoveredValue ?? 0, count: data?.totalRecovered ?? 0, color: '#10B981' },
     { name: 'Pago', value: data?.totalPaidValue ?? 0, count: data?.totalPaid ?? 0, color: '#3B82F6' },
   ]
 
-  // Active conversations (from current totals)
   const activeConversations = data?.totalConversations ?? 0
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
-      {/* Page Header */}
-      <div>
-        <h2 className="text-2xl font-semibold text-text-primary">
-          Dashboard
-        </h2>
-        <p className="mt-1 text-text-secondary">
-          Visao geral da recuperacao de carrinhos nos ultimos 30 dias
-        </p>
+      {/* Page Header + Date Picker */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-text-primary">
+            Dashboard
+          </h2>
+          <p className="mt-1 text-text-secondary">
+            Visao geral da recuperacao — {periodLabel}
+          </p>
+        </div>
+
+        {/* Period Selector */}
+        <div className="flex flex-wrap items-center gap-2">
+          {(['7d', '30d', '90d'] as PeriodTab[]).map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setPeriod(p)}
+              className={cn(
+                'rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors',
+                period === p
+                  ? 'border-accent bg-accent/10 text-accent'
+                  : 'border-border bg-surface text-text-secondary hover:bg-surface-hover'
+              )}
+            >
+              {p === '7d' ? '7 dias' : p === '30d' ? '30 dias' : '90 dias'}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setPeriod('custom')}
+            className={cn(
+              'flex items-center gap-1 rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors',
+              period === 'custom'
+                ? 'border-accent bg-accent/10 text-accent'
+                : 'border-border bg-surface text-text-secondary hover:bg-surface-hover'
+            )}
+          >
+            <Calendar className="h-3 w-3" />
+            Custom
+          </button>
+
+          {period === 'custom' && (
+            <div className="flex items-center gap-1.5">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="rounded-[var(--radius-md)] border border-border bg-surface px-2 py-1.5 text-xs text-text-primary"
+              />
+              <span className="text-xs text-text-tertiary">ate</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="rounded-[var(--radius-md)] border border-border bg-surface px-2 py-1.5 text-xs text-text-primary"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* KPI Cards Grid — Row 1: Core Metrics */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <KpiCard
           title="Valor Abandonado"
           value={formatCurrencyShort(data?.totalAbandonedValue ?? 0)}
-          subtitle="ultimos 30 dias"
+          subtitle={periodLabel}
           icon={ShoppingCart}
           color="yellow"
         />
         <KpiCard
           title="Valor Recuperado"
           value={formatCurrencyShort(data?.totalRecoveredValue ?? 0)}
-          subtitle="ultimos 30 dias"
+          subtitle={periodLabel}
           icon={TrendingUp}
           color="green"
         />
@@ -187,11 +270,36 @@ export default function DashboardPage() {
           color="emerald"
         />
         <KpiCard
-          title="Conversas Ativas"
+          title="Conversas"
           value={String(activeConversations)}
-          subtitle="no periodo"
+          subtitle={`custo/rec: ${formatCurrency(data?.costPerRecovery ?? 0)}`}
           icon={MessageSquare}
           color="blue"
+        />
+      </div>
+
+      {/* KPI Cards Grid — Row 2: Engagement Metrics */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <KpiCard
+          title="Taxa de Resposta"
+          value={formatPercent(data?.responseRate ?? 0)}
+          subtitle="mensagens respondidas"
+          icon={Reply}
+          color="purple"
+        />
+        <KpiCard
+          title="Taxa de Abertura"
+          value={formatPercent(data?.openRate ?? 0)}
+          subtitle="mensagens lidas"
+          icon={Eye}
+          color="blue"
+        />
+        <KpiCard
+          title="Taxa de Cliques"
+          value={formatPercent(data?.clickRate ?? 0)}
+          subtitle="cliques em links"
+          icon={MousePointerClick}
+          color="emerald"
         />
       </div>
 

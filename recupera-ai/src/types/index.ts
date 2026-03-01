@@ -140,6 +140,44 @@ export interface RecoveryConfig {
   cardRecoveryEnabled: boolean
   cardFirstDelay: number
   cardMaxAttempts: number
+  stopOnOptOut: boolean
+  expirationHours: number
+  createdAt: string
+  updatedAt: string
+}
+
+// ============================================================
+// FOLLOW-UP STEPS
+// ============================================================
+
+export interface FollowUpStep {
+  id: string
+  configId: string
+  cartType: CartType
+  stepNumber: number
+  delayMinutes: number
+  strategy: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// ============================================================
+// RECOVERY STAGES
+// ============================================================
+
+export interface RecoveryStage {
+  id: string
+  storeId: string
+  name: string
+  order: number
+  objective: string
+  aiInstructions: string
+  discountEnabled: boolean
+  discountPercent: number | null
+  firstMessageTone: string | null
+  firstMessageElements: string | null
+  isDefault: boolean
   createdAt: string
   updatedAt: string
 }
@@ -179,6 +217,8 @@ export interface AbandonedCart {
   recoveredValue: number | null
   paidAt: string | null
   paidValue: number | null
+  recoveredAtStage: number | null
+  discountUsed: number | null
   abandonedAt: string
   expiresAt: string | null
   createdAt: string
@@ -196,6 +236,7 @@ export interface Message {
   role: MessageRole
   content: string
   intent: string | null
+  followUpStep: number | null
   whatsappMsgId: string | null
   messageStatus: MessageStatus
   tokensUsed: number | null
@@ -216,6 +257,8 @@ export interface Conversation {
   aiModel: string | null
   totalTokens: number
   estimatedCost: number
+  currentStageOrder: number | null
+  discountOffered: number | null
   abandonmentReason: AbandonmentReason | null
   closingReason: string | null
   startedAt: string
@@ -249,6 +292,13 @@ export interface DailyMetrics {
   totalConversations: number
   avgMessagesPerConv: number
   aiCost: number
+  messagesSent: number
+  messagesDelivered: number
+  messagesRead: number
+  messagesReplied: number
+  linkClicks: number
+  discountRecoveries: number
+  avgDiscountPercent: number
   createdAt: string
 }
 
@@ -265,6 +315,10 @@ export interface DashboardData {
   totalConversations: number
   avgMessagesPerConv: number
   totalAiCost: number
+  responseRate: number
+  openRate: number
+  clickRate: number
+  costPerRecovery: number
   dailyMetrics: DailyMetrics[]
 }
 

@@ -8,7 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { evolutionApi } from '@/lib/evolution-api'
 import { recoveryEngine } from '@/lib/ai/recovery-engine'
 import type { MediaAttachment } from '@/lib/ai/recovery-engine'
-import type { Message, StoreSettings, AbandonedCart, AbandonmentReason } from '@/types'
+import type { Message, StoreSettings, AbandonedCart, AbandonmentReason, RecoveryStage } from '@/types'
 
 // ============================================================
 // INTENT -> ABANDONMENT REASON MAPPING
@@ -68,6 +68,7 @@ export async function processIncomingMessage(
           include: {
             settings: true,
             recoveryConfig: true,
+            recoveryStages: { orderBy: { order: 'asc' } },
           },
         },
         abandonedCart: true,
@@ -94,6 +95,11 @@ export async function processIncomingMessage(
     const settings = store.settings as unknown as StoreSettings | null
     const cart = conversation.abandonedCart as unknown as AbandonedCart | null
     const messages = conversation.messages as unknown as Message[]
+    const stages = (store.recoveryStages ?? []) as unknown as RecoveryStage[]
+
+    // Resolve current stage
+    const currentStageOrder = conversation.currentStageOrder ?? 1
+    const currentStage = stages.find((s) => s.order === currentStageOrder) ?? stages[0] ?? null
 
     // If no settings, we cannot build a proper system prompt
     if (!settings) {
@@ -140,7 +146,7 @@ export async function processIncomingMessage(
     // 3a. COMPLETED: Customer says they bought / will buy
     if (intent === 'COMPLETED') {
       // Generate a thank-you message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
 
       // Send via WhatsApp
       await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
@@ -148,7 +154,7 @@ export async function processIncomingMessage(
       // Save AI message to DB
       await saveAIMessage(conversationId, result)
 
-      // Update cart to RECOVERED
+      // Update cart to RECOVERED with stage tracking
       if (cart) {
         await prisma.abandonedCart.update({
           where: { id: cart.id },
@@ -156,6 +162,8 @@ export async function processIncomingMessage(
             status: 'RECOVERED',
             recoveredAt: new Date(),
             recoveredValue: cart.cartTotal,
+            recoveredAtStage: currentStageOrder,
+            discountUsed: conversation.discountOffered,
           },
         })
       }
@@ -183,7 +191,45 @@ export async function processIncomingMessage(
       }
     }
 
-    // 3b. ANGRY: Escalate to human
+    // 3b. OPT_OUT: Customer explicitly asked to stop
+    if (intent === 'OPT_OUT') {
+      // Send farewell message
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
+      await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
+      await saveAIMessage(conversationId, result)
+
+      // Mark cart as lost
+      if (cart) {
+        await prisma.abandonedCart.update({
+          where: { id: cart.id },
+          data: { status: 'LOST' },
+        })
+      }
+
+      // Close conversation
+      await prisma.conversation.update({
+        where: { id: conversationId },
+        data: {
+          status: 'LOST',
+          closedAt: new Date(),
+          closingReason: 'Cliente pediu para parar (opt-out)',
+          totalTokens: { increment: result.tokensUsed },
+          estimatedCost: { increment: result.estimatedCost },
+          aiModel: result.model,
+          lastMessageAt: new Date(),
+        },
+      })
+
+      return {
+        action: 'lost',
+        intent,
+        aiMessage: result.message,
+        tokensUsed: result.tokensUsed,
+        estimatedCost: result.estimatedCost,
+      }
+    }
+
+    // 3c. ANGRY: Escalate to human
     if (intent === 'ANGRY') {
       // Mark as escalated without sending AI reply
       await prisma.conversation.update({
@@ -215,10 +261,10 @@ export async function processIncomingMessage(
       }
     }
 
-    // 3c. NOT_INTERESTED after 3+ messages: Mark as lost
+    // 3d. NOT_INTERESTED after 3+ messages: Mark as lost
     if (intent === 'NOT_INTERESTED' && messageCount >= 3) {
       // Generate a polite goodbye message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
 
       // Send via WhatsApp
       await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
@@ -258,7 +304,7 @@ export async function processIncomingMessage(
       }
     }
 
-    // 3d. Check if should escalate based on message count + intent
+    // 3e. Check if should escalate based on message count + intent
     if (recoveryEngine.shouldEscalate(intent, messageCount)) {
       await prisma.conversation.update({
         where: { id: conversationId },
@@ -288,8 +334,8 @@ export async function processIncomingMessage(
       }
     }
 
-    // 3e. Default: Generate AI reply and send
-    const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media)
+    // 3f. Default: Generate AI reply and send
+    const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
 
     // Send via WhatsApp
     await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
@@ -297,7 +343,17 @@ export async function processIncomingMessage(
     // Save AI message to DB
     await saveAIMessage(conversationId, result)
 
-    // Update conversation metrics
+    // Advance to next stage (each customer interaction moves to next stage)
+    const nextStageOrder = stages.length > 0
+      ? Math.min(currentStageOrder + 1, Math.max(...stages.map((s) => s.order)))
+      : currentStageOrder
+
+    // Track discount if current stage has discount enabled
+    const discountUpdate = currentStage?.discountEnabled && currentStage?.discountPercent
+      ? { discountOffered: currentStage.discountPercent }
+      : {}
+
+    // Update conversation metrics + advance stage
     await prisma.conversation.update({
       where: { id: conversationId },
       data: {
@@ -305,6 +361,8 @@ export async function processIncomingMessage(
         estimatedCost: { increment: result.estimatedCost },
         aiModel: result.model,
         lastMessageAt: new Date(),
+        currentStageOrder: nextStageOrder,
+        ...discountUpdate,
       },
     })
 
@@ -345,6 +403,19 @@ async function sendWhatsAppMessage(
     if (!evolutionApi.isConfigured()) {
       console.warn('[MessageProcessor] Evolution API not configured, skipping WhatsApp send')
       return
+    }
+
+    // testMode guard: only send to whitelisted phone numbers
+    const store = await prisma.store.findUnique({
+      where: { id: storeId },
+      select: { testMode: true, testPhones: true },
+    })
+    if (store?.testMode) {
+      const whitelisted = (store.testPhones ?? []) as string[]
+      if (!whitelisted.includes(phone)) {
+        console.warn(`[MessageProcessor] testMode: blocked send to non-whitelisted phone ${phone}`)
+        return
+      }
     }
 
     const instanceName = `recupera-${storeId}`
