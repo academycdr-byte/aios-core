@@ -46,16 +46,11 @@ const TABS: Tab[] = [
   { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
 ]
 
-// Mock recovery chart data (will be replaced by real data later)
-const MOCK_CHART_DATA = [
-  { day: 'Seg', abandoned: 8, recovered: 2 },
-  { day: 'Ter', abandoned: 12, recovered: 4 },
-  { day: 'Qua', abandoned: 10, recovered: 3 },
-  { day: 'Qui', abandoned: 15, recovered: 5 },
-  { day: 'Sex', abandoned: 18, recovered: 6 },
-  { day: 'Sab', abandoned: 7, recovered: 2 },
-  { day: 'Dom', abandoned: 5, recovered: 1 },
-]
+interface ChartDataPoint {
+  day: string
+  abandoned: number
+  recovered: number
+}
 
 interface StoreData {
   id: string
@@ -101,7 +96,7 @@ function StatCard({ icon: Icon, label, value, color }: {
   )
 }
 
-function SimpleBarChart({ data }: { data: typeof MOCK_CHART_DATA }) {
+function SimpleBarChart({ data }: { data: ChartDataPoint[] }) {
   const maxValue = Math.max(...data.map((d) => d.abandoned))
 
   return (
@@ -142,8 +137,36 @@ function SimpleBarChart({ data }: { data: typeof MOCK_CHART_DATA }) {
 }
 
 function OverviewTab({ store }: { store: StoreData }) {
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([])
+  const [chartLoading, setChartLoading] = useState(true)
   const cartCount = store._count?.abandonedCarts ?? 0
   const convCount = store._count?.conversations ?? 0
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const res = await fetch(`/api/dashboard?period=7d&storeId=${store.id}`)
+        if (!res.ok) return
+        const json = await res.json()
+        const metrics = json.data?.dailyMetrics ?? []
+        if (metrics.length > 0) {
+          const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
+          setChartData(
+            metrics.map((m: { date: string; abandonedCount: number; recoveredCount: number }) => ({
+              day: dayNames[new Date(m.date).getUTCDay()],
+              abandoned: m.abandonedCount,
+              recovered: m.recoveredCount,
+            }))
+          )
+        }
+      } catch {
+        // No data available
+      } finally {
+        setChartLoading(false)
+      }
+    }
+    fetchMetrics()
+  }, [store.id])
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -180,7 +203,15 @@ function OverviewTab({ store }: { store: StoreData }) {
         <h3 className="mb-4 text-sm font-semibold text-text-primary">
           Recuperacao dos Ultimos 7 Dias
         </h3>
-        <SimpleBarChart data={MOCK_CHART_DATA} />
+        {chartLoading ? (
+          <div className="flex h-40 items-center justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-text-tertiary" />
+          </div>
+        ) : chartData.length > 0 ? (
+          <SimpleBarChart data={chartData} />
+        ) : (
+          <p className="py-8 text-center text-sm text-text-tertiary">Sem dados no periodo</p>
+        )}
       </div>
 
       {/* Store Info */}

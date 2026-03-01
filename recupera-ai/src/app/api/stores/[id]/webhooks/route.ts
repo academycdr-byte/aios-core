@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { getAuthenticatedUser } from '@/lib/auth-utils'
+import { decrypt } from '@/lib/encryption'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -56,6 +57,17 @@ export async function POST(
       )
     }
 
+    // Decrypt the access token (stored encrypted in DB)
+    let plainAccessToken: string
+    try {
+      plainAccessToken = decrypt(store.accessToken)
+    } catch {
+      return NextResponse.json(
+        { error: 'configuration_error', message: 'Failed to decrypt access token' },
+        { status: 500 }
+      )
+    }
+
     // Generate a unique webhook secret for HMAC validation
     const webhookSecret = crypto.randomBytes(32).toString('hex')
 
@@ -71,7 +83,7 @@ export async function POST(
       }
       result = await registerShopifyWebhooks(
         store.shopifyDomain,
-        store.accessToken,
+        plainAccessToken,
         webhookSecret
       )
     } else if (store.platform === 'NUVEMSHOP') {
@@ -83,7 +95,7 @@ export async function POST(
       }
       result = await registerNuvemshopWebhooks(
         store.nuvemshopStoreId,
-        store.accessToken
+        plainAccessToken
       )
     } else {
       return NextResponse.json(

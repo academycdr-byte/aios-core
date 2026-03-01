@@ -3,8 +3,6 @@ import { prisma } from '@/lib/prisma'
 import { getAuthenticatedUser } from '@/lib/auth-utils'
 import { processIncomingMessage } from '@/lib/ai/message-processor'
 import { evolutionApi } from '@/lib/evolution-api'
-import { recoveryEngine } from '@/lib/ai/recovery-engine'
-import type { StoreSettings, AbandonedCart, Message } from '@/types'
 
 interface RouteContext {
   params: Promise<{ id: string }>

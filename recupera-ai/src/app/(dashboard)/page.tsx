@@ -60,17 +60,32 @@ interface ReasonData {
   color: string
 }
 
+interface RecentCartData {
+  id: string
+  customerName: string
+  customerPhone: string
+  cartTotal: number
+  cartItems: { name: string; quantity: number; price: number }[]
+  itemCount: number
+  type: 'ABANDONED_CART' | 'PIX_PENDING' | 'CARD_DECLINED'
+  status: 'PENDING' | 'CONTACTING' | 'RECOVERED' | 'PAID' | 'LOST' | 'EXPIRED'
+  abandonedAt: Date
+  recoveryAttempts: number
+}
+
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [reasons, setReasons] = useState<ReasonData[]>([])
+  const [recentCarts, setRecentCarts] = useState<RecentCartData[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [dashRes, reasonsRes] = await Promise.all([
+        const [dashRes, reasonsRes, cartsRes] = await Promise.all([
           fetch('/api/dashboard?period=30d'),
           fetch('/api/dashboard/reasons'),
+          fetch('/api/carts?limit=10&period=7d'),
         ])
 
         if (dashRes.ok) {
@@ -81,6 +96,16 @@ export default function DashboardPage() {
         if (reasonsRes.ok) {
           const reasonsJson = await reasonsRes.json()
           setReasons(reasonsJson.data ?? [])
+        }
+
+        if (cartsRes.ok) {
+          const cartsJson = await cartsRes.json()
+          setRecentCarts(
+            (cartsJson.data ?? []).map((c: RecentCartData & { abandonedAt: string }) => ({
+              ...c,
+              abandonedAt: new Date(c.abandonedAt),
+            }))
+          )
         }
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error)
@@ -187,7 +212,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Carts Table */}
-      <RecentCartsTable carts={[]} limit={10} />
+      <RecentCartsTable carts={recentCarts} limit={10} />
     </div>
   )
 }

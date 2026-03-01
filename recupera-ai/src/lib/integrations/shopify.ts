@@ -78,39 +78,52 @@ export function validateShopifyHmac(
 }
 
 /**
- * Register a webhook for abandoned checkouts on a Shopify store.
+ * Register webhooks for abandoned checkouts and order payments on a Shopify store.
+ * Topics: checkouts/create, orders/paid
  */
 export async function registerAbandonedCartWebhook(
   shop: string,
   accessToken: string,
   webhookUrl: string,
 ): Promise<{ id: string } | null> {
-  const response = await fetch(
-    `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/webhooks.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': accessToken,
-      },
-      body: JSON.stringify({
-        webhook: {
-          topic: 'checkouts/create',
-          address: webhookUrl,
-          format: 'json',
-        },
-      }),
-    },
-  )
+  const topics = ['checkouts/create', 'orders/paid']
+  const ids: string[] = []
 
-  if (!response.ok) {
-    const text = await response.text()
-    console.error(`[Shopify] Failed to register webhook: ${text}`)
-    return null
+  for (const topic of topics) {
+    try {
+      const response = await fetch(
+        `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/webhooks.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': accessToken,
+          },
+          body: JSON.stringify({
+            webhook: {
+              topic,
+              address: webhookUrl,
+              format: 'json',
+            },
+          }),
+        },
+      )
+
+      if (!response.ok) {
+        const text = await response.text()
+        console.error(`[Shopify] Failed to register webhook ${topic}: ${text}`)
+        continue
+      }
+
+      const data = await response.json()
+      ids.push(String(data.webhook.id))
+    } catch (error) {
+      console.error(`[Shopify] Error registering webhook ${topic}:`, error)
+    }
   }
 
-  const data = await response.json()
-  return { id: String(data.webhook.id) }
+  if (ids.length === 0) return null
+  return { id: ids.join(',') }
 }
 
 /**
