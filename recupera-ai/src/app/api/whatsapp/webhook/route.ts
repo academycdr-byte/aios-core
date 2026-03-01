@@ -82,9 +82,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true, skipped: 'outgoing message' })
       }
 
-      // Extract phone and normalize to consistent format (55DDNNNNNNNNN)
+      // IGNORE group messages entirely — only process private chats
       const remoteJid = key.remoteJid ?? ''
-      const rawPhone = remoteJid.replace('@s.whatsapp.net', '').replace('@g.us', '')
+      if (remoteJid.endsWith('@g.us') || remoteJid.includes('@broadcast')) {
+        return NextResponse.json({ received: true, skipped: 'group or broadcast message' })
+      }
+
+      // Extract phone and normalize to consistent format (55DDNNNNNNNNN)
+      const rawPhone = remoteJid.replace('@s.whatsapp.net', '')
       const phone = normalizeBrazilPhone(rawPhone)
       const messageContent = extractMessageContent(messageData)
       const whatsappMsgId = key.id ?? null
@@ -95,14 +100,10 @@ export async function POST(request: NextRequest) {
 
       console.log(`[WhatsApp Webhook] Incoming from ${phone}: ${messageContent.substring(0, 100)}`)
 
-      // Update store phone if not set
-      if (!store.whatsappPhone) {
-        // The phone that sent the message could be the customer, not the store
-        // We only update whatsappConnected status via connection.update
-      }
-
-      // Find or create conversation for this customer + store
-      let conversation = await prisma.conversation.findFirst({
+      // ONLY respond if there's an existing ACTIVE conversation for this customer.
+      // Conversations are created by: test-message endpoint, recovery cron, or sync.
+      // This prevents the AI from responding to random contacts/unknown numbers.
+      const conversation = await prisma.conversation.findFirst({
         where: {
           storeId,
           customerPhone: phone,
@@ -112,15 +113,8 @@ export async function POST(request: NextRequest) {
       })
 
       if (!conversation) {
-        conversation = await prisma.conversation.create({
-          data: {
-            storeId,
-            customerPhone: phone,
-            customerName: messageData.pushName ?? null,
-            status: 'ACTIVE',
-          },
-        })
-        console.log(`[WhatsApp Webhook] Created new conversation: ${conversation.id}`)
+        console.log(`[WhatsApp Webhook] No active conversation for ${phone} — ignoring (not a recovery target)`)
+        return NextResponse.json({ received: true, skipped: 'no active conversation' })
       }
 
       // Save the incoming message
