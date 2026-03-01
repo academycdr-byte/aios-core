@@ -101,6 +101,19 @@ export async function POST(request: NextRequest) {
 
       console.log(`[WhatsApp Webhook] Incoming from ${phone}: ${messageContent.substring(0, 100)}`)
 
+      // ============================================================
+      // DEDUP: Skip if this exact message was already processed
+      // ============================================================
+      if (whatsappMsgId) {
+        const existingMsg = await prisma.message.findFirst({
+          where: { whatsappMsgId },
+        })
+        if (existingMsg) {
+          console.log(`[WhatsApp Webhook] Duplicate message ${whatsappMsgId} — skipping`)
+          return NextResponse.json({ received: true, skipped: 'duplicate message' })
+        }
+      }
+
       // ONLY respond if there's an existing ACTIVE conversation for this customer.
       // Conversations are created by: test-message endpoint, recovery cron, or sync.
       // This prevents the AI from responding to random contacts/unknown numbers.
@@ -164,6 +177,29 @@ export async function POST(request: NextRequest) {
       })
 
       console.log(`[WhatsApp Webhook] Saved message in conversation ${conversation.id}`)
+
+      // ============================================================
+      // ANTI-SPAM: Only respond if AI isn't already "waiting" for a reply.
+      // Check the 2 most recent messages: if the one BEFORE our new message
+      // is also from CUSTOMER, it means the AI hasn't responded yet —
+      // skip to avoid sending multiple AI messages without customer reply.
+      // ============================================================
+      const recentMsgs = await prisma.message.findMany({
+        where: { conversationId: conversation.id },
+        orderBy: { sentAt: 'desc' },
+        take: 2,
+        select: { role: true },
+      })
+      const previousMsg = recentMsgs[1] // [0] = message we just saved, [1] = previous
+      if (previousMsg && previousMsg.role === 'CUSTOMER') {
+        console.log(`[WhatsApp Webhook] Previous message was also from customer — AI still processing, skipping to avoid spam`)
+        return NextResponse.json({
+          received: true,
+          event: 'messages.upsert',
+          conversationId: conversation.id,
+          skipped: 'ai response pending',
+        })
+      }
 
       // Process AI response with optional media for vision
       try {
