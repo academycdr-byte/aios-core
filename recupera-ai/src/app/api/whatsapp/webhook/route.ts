@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { processIncomingMessage } from '@/lib/ai/message-processor'
-import { normalizeBrazilPhone } from '@/lib/evolution-api'
+import { normalizeBrazilPhone, evolutionApi } from '@/lib/evolution-api'
+import type { MediaAttachment } from '@/lib/ai/recovery-engine'
 
 export const maxDuration = 60
 
@@ -117,6 +118,34 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true, skipped: 'no active conversation' })
       }
 
+      // ============================================================
+      // FETCH MEDIA (image) if present — for AI vision analysis
+      // ============================================================
+      let media: MediaAttachment | null = null
+      const msg = messageData.message
+      if (msg?.imageMessage && instance) {
+        try {
+          console.log(`[WhatsApp Webhook] Fetching image media for AI vision...`)
+          const mediaResult = await evolutionApi.getMediaBase64(
+            instance,
+            { remoteJid, fromMe: false, id: key.id ?? '' },
+            msg as unknown as Record<string, unknown>
+          )
+          if (mediaResult) {
+            media = {
+              type: 'image',
+              base64: mediaResult.base64,
+              mimeType: mediaResult.mimeType,
+              caption: msg.imageMessage.caption ?? undefined,
+            }
+            console.log(`[WhatsApp Webhook] Image fetched (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB base64)`)
+          }
+        } catch (err) {
+          console.error('[WhatsApp Webhook] Failed to fetch media:', err)
+          // Continue without media — AI will see "[Imagem recebida]" text instead
+        }
+      }
+
       // Save the incoming message
       await prisma.message.create({
         data: {
@@ -136,11 +165,11 @@ export async function POST(request: NextRequest) {
 
       console.log(`[WhatsApp Webhook] Saved message in conversation ${conversation.id}`)
 
-      // Process AI response (awaited to prevent Vercel from killing the function)
+      // Process AI response with optional media for vision
       try {
-        const result = await processIncomingMessage(conversation.id, messageContent)
+        const result = await processIncomingMessage(conversation.id, messageContent, media)
         console.log(
-          `[WhatsApp Webhook] AI response for ${conversation.id}: action=${result.action}, intent=${result.intent}, tokens=${result.tokensUsed}`
+          `[WhatsApp Webhook] AI response for ${conversation.id}: action=${result.action}, intent=${result.intent}, tokens=${result.tokensUsed}${media ? ' (with vision)' : ''}`
         )
       } catch (err) {
         console.error(`[WhatsApp Webhook] AI processing error for ${conversation.id}:`, err)
@@ -150,6 +179,7 @@ export async function POST(request: NextRequest) {
         received: true,
         event: 'messages.upsert',
         conversationId: conversation.id,
+        hasMedia: !!media,
       })
     }
 

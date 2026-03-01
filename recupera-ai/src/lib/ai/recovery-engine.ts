@@ -36,6 +36,17 @@ export interface IntentResult {
   reasoning: string
 }
 
+/**
+ * Media attachment from a WhatsApp message (image, video, audio).
+ * Used to send visual content to Claude for multimodal analysis.
+ */
+export interface MediaAttachment {
+  type: 'image' | 'video' | 'audio' | 'document'
+  base64: string
+  mimeType: string
+  caption?: string
+}
+
 // ============================================================
 // COST CALCULATION
 // ============================================================
@@ -214,12 +225,14 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
 
   /**
    * Generate a reply to a customer message within a conversation.
+   * Supports multimodal: if `media` is provided (image), it's sent to Claude for visual analysis.
    */
   async generateReply(
     cart: AbandonedCart | null,
     settings: StoreSettings,
     conversationHistory: Message[],
-    customerMessage: string
+    customerMessage: string,
+    media?: MediaAttachment | null
   ): Promise<GenerationResult> {
     const client = getAnthropic()
     if (!client) {
@@ -242,8 +255,26 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
       }
     }
 
-    // Add the new customer message
-    messages.push({ role: 'user', content: customerMessage })
+    // Add the new customer message (with image if present)
+    if (media && media.type === 'image') {
+      const contentBlocks: Anthropic.ContentBlockParam[] = [
+        {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: media.mimeType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+            data: media.base64,
+          },
+        },
+        {
+          type: 'text',
+          text: customerMessage || '[Cliente enviou uma imagem]',
+        },
+      ]
+      messages.push({ role: 'user', content: contentBlocks })
+    } else {
+      messages.push({ role: 'user', content: customerMessage })
+    }
 
     // Ensure messages alternate correctly (Claude requires user/assistant alternation)
     const sanitizedMessages = sanitizeMessages(messages)
@@ -253,8 +284,9 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
 
   /**
    * Classify the intent of a customer message.
+   * Supports multimodal: if `media` is provided, the image is analyzed for intent context.
    */
-  async classifyIntent(customerMessage: string): Promise<IntentResult> {
+  async classifyIntent(customerMessage: string, media?: MediaAttachment | null): Promise<IntentResult> {
     const client = getAnthropic()
     if (!client) {
       return this.mockClassifyIntent(customerMessage)
@@ -264,23 +296,45 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
 
 Classifique a mensagem do cliente em UMA das seguintes categorias:
 - INTERESTED: cliente quer comprar ou demonstra interesse
-- OBJECTION_PRICE: cliente acha caro ou reclama do preco
+- OBJECTION_PRICE: cliente acha caro ou reclama do preco (inclui screenshots de precos de concorrentes)
 - OBJECTION_SHIPPING: cliente reclama do frete ou prazo de entrega
-- OBJECTION_PRODUCT: cliente tem duvida sobre o produto
-- COMPLETED: cliente diz que ja comprou ou vai comprar agora
+- OBJECTION_PRODUCT: cliente tem duvida sobre o produto (inclui fotos do produto, screenshots de especificacoes)
+- COMPLETED: cliente diz que ja comprou ou vai comprar agora (inclui screenshots de comprovante de pagamento)
 - NOT_INTERESTED: cliente nao quer comprar
-- QUESTION: pergunta generica
+- QUESTION: pergunta generica (inclui prints/imagens com duvidas)
 - ANGRY: cliente irritado, reclamando ou xingando
 
+Se o cliente enviou uma imagem, analise o conteudo visual para classificar a intencao.
 Responda SOMENTE em JSON: {"intent": "CATEGORY", "confidence": 0.0-1.0, "reasoning": "breve explicacao"}`
 
     try {
+      // Build user content - multimodal if image attached
+      let userContent: Anthropic.ContentBlockParam[] | string
+      if (media && media.type === 'image') {
+        userContent = [
+          {
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: media.mimeType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+              data: media.base64,
+            },
+          },
+          {
+            type: 'text',
+            text: customerMessage || '[Cliente enviou uma imagem sem texto]',
+          },
+        ]
+      } else {
+        userContent = customerMessage
+      }
+
       const response = await client.messages.create({
         model: MODEL,
         max_tokens: 150,
         system: classificationPrompt,
         messages: [
-          { role: 'user', content: customerMessage },
+          { role: 'user', content: userContent },
         ],
       })
 
@@ -440,8 +494,23 @@ Responda SOMENTE em JSON: {"intent": "CATEGORY", "confidence": 0.0-1.0, "reasoni
 // ============================================================
 
 /**
+ * Extract text from a message's content (handles both string and content block arrays).
+ */
+function extractText(content: Anthropic.MessageParam['content']): string {
+  if (typeof content === 'string') return content
+  if (Array.isArray(content)) {
+    return content
+      .filter((b): b is Anthropic.TextBlockParam => b.type === 'text')
+      .map(b => b.text)
+      .join('\n')
+  }
+  return ''
+}
+
+/**
  * Ensure messages alternate between user and assistant roles.
  * Claude requires strict alternation - merge consecutive same-role messages.
+ * Supports multimodal content (image + text blocks).
  */
 function sanitizeMessages(messages: Anthropic.MessageParam[]): Anthropic.MessageParam[] {
   if (messages.length === 0) return [{ role: 'user', content: '...' }]
@@ -452,9 +521,19 @@ function sanitizeMessages(messages: Anthropic.MessageParam[]): Anthropic.Message
     const last = result[result.length - 1]
     if (last && last.role === msg.role) {
       // Merge consecutive same-role messages
-      const lastContent = typeof last.content === 'string' ? last.content : ''
-      const msgContent = typeof msg.content === 'string' ? msg.content : ''
-      last.content = `${lastContent}\n${msgContent}`
+      // If either has multimodal content (arrays), merge as text to avoid complexity
+      const lastText = extractText(last.content)
+      const msgText = extractText(msg.content)
+
+      // If the NEW message has image blocks, keep them and append previous text
+      if (Array.isArray(msg.content) && msg.content.some(b => b.type === 'image')) {
+        const blocks: Anthropic.ContentBlockParam[] = []
+        if (lastText) blocks.push({ type: 'text', text: lastText })
+        blocks.push(...(msg.content as Anthropic.ContentBlockParam[]))
+        last.content = blocks
+      } else {
+        last.content = `${lastText}\n${msgText}`
+      }
     } else {
       result.push({ ...msg })
     }

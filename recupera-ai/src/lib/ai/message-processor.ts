@@ -7,6 +7,7 @@
 import { prisma } from '@/lib/prisma'
 import { evolutionApi } from '@/lib/evolution-api'
 import { recoveryEngine } from '@/lib/ai/recovery-engine'
+import type { MediaAttachment } from '@/lib/ai/recovery-engine'
 import type { Message, StoreSettings, AbandonedCart, AbandonmentReason } from '@/types'
 
 // ============================================================
@@ -53,7 +54,8 @@ export interface ProcessResult {
  */
 export async function processIncomingMessage(
   conversationId: string,
-  customerMessage: string
+  customerMessage: string,
+  media?: MediaAttachment | null
 ): Promise<ProcessResult> {
   try {
     // ----------------------------------------------------------
@@ -109,7 +111,7 @@ export async function processIncomingMessage(
     // ----------------------------------------------------------
     // 2. Classify customer intent
     // ----------------------------------------------------------
-    const intentResult = await recoveryEngine.classifyIntent(customerMessage)
+    const intentResult = await recoveryEngine.classifyIntent(customerMessage, media)
     const { intent } = intentResult
 
     console.log(
@@ -138,7 +140,7 @@ export async function processIncomingMessage(
     // 3a. COMPLETED: Customer says they bought / will buy
     if (intent === 'COMPLETED') {
       // Generate a thank-you message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media)
 
       // Send via WhatsApp
       await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
@@ -216,7 +218,7 @@ export async function processIncomingMessage(
     // 3c. NOT_INTERESTED after 3+ messages: Mark as lost
     if (intent === 'NOT_INTERESTED' && messageCount >= 3) {
       // Generate a polite goodbye message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media)
 
       // Send via WhatsApp
       await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
@@ -287,7 +289,7 @@ export async function processIncomingMessage(
     }
 
     // 3e. Default: Generate AI reply and send
-    const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage)
+    const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media)
 
     // Send via WhatsApp
     await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
