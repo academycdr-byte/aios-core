@@ -146,6 +146,49 @@ export function validateWebhookSignature(
 }
 
 /**
+ * Fetch all abandoned checkouts from Shopify REST API with pagination.
+ * Returns only checkouts where completed_at is null (abandoned).
+ */
+export async function fetchAbandonedCheckouts(
+  shop: string,
+  accessToken: string,
+): Promise<Record<string, unknown>[]> {
+  const allCheckouts: Record<string, unknown>[] = []
+  let url: string | null =
+    `https://${shop}/admin/api/${SHOPIFY_API_VERSION}/checkouts.json?limit=250`
+
+  while (url) {
+    const response: Response = await fetch(url, {
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error(`Shopify API error (${response.status}): ${text}`)
+    }
+
+    const data = await response.json()
+    const checkouts = (data.checkouts ?? []) as Record<string, unknown>[]
+
+    const abandoned = checkouts.filter((c) => !c.completed_at)
+    allCheckouts.push(...abandoned)
+
+    // Parse Link header for next page
+    const linkHeader = response.headers.get('link')
+    url = null
+    if (linkHeader) {
+      const match = linkHeader.match(/<([^>]+)>;\s*rel="next"/)
+      if (match) url = match[1]
+    }
+  }
+
+  return allCheckouts
+}
+
+/**
  * Normalize a Shopify domain (ensure it ends with .myshopify.com).
  */
 export function normalizeShopDomain(input: string): string {
