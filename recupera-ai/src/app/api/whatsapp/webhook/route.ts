@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { processIncomingMessage } from '@/lib/ai/message-processor'
 import { normalizeBrazilPhone, evolutionApi } from '@/lib/evolution-api'
+import { transcribeAudio } from '@/lib/audio-transcription'
 import type { MediaAttachment } from '@/lib/ai/recovery-engine'
 
 export const maxDuration = 60
@@ -132,39 +133,77 @@ export async function POST(request: NextRequest) {
       }
 
       // ============================================================
-      // FETCH MEDIA (image) if present — for AI vision analysis
+      // FETCH & PROCESS MEDIA (image, audio, video)
+      // - Image: sent to Claude vision for visual analysis
+      // - Audio: transcribed via Groq Whisper → text replaces messageContent
+      // - Video: audio track transcribed via Whisper → text replaces messageContent
       // ============================================================
       let media: MediaAttachment | null = null
+      let messageContentFinal = messageContent
       const msg = messageData.message
-      if (msg?.imageMessage && instance) {
+      const msgKey = { remoteJid, fromMe: false, id: key.id ?? '' }
+      const hasMedia = msg?.imageMessage || msg?.audioMessage || msg?.videoMessage
+
+      if (hasMedia && instance) {
         try {
-          console.log(`[WhatsApp Webhook] Fetching image media for AI vision...`)
           const mediaResult = await evolutionApi.getMediaBase64(
             instance,
-            { remoteJid, fromMe: false, id: key.id ?? '' },
+            msgKey,
             msg as unknown as Record<string, unknown>
           )
+
           if (mediaResult) {
-            media = {
-              type: 'image',
-              base64: mediaResult.base64,
-              mimeType: mediaResult.mimeType,
-              caption: msg.imageMessage.caption ?? undefined,
+            // --- IMAGE: send to Claude vision ---
+            if (msg?.imageMessage) {
+              console.log(`[WhatsApp Webhook] Image fetched (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB)`)
+              media = {
+                type: 'image',
+                base64: mediaResult.base64,
+                mimeType: mediaResult.mimeType,
+                caption: msg.imageMessage.caption ?? undefined,
+              }
             }
-            console.log(`[WhatsApp Webhook] Image fetched (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB base64)`)
+
+            // --- AUDIO: transcribe via Whisper ---
+            if (msg?.audioMessage) {
+              console.log(`[WhatsApp Webhook] Audio received (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB) — transcribing...`)
+              const transcription = await transcribeAudio(mediaResult.base64, mediaResult.mimeType)
+              if (transcription) {
+                messageContentFinal = `[Audio transcrito] ${transcription}`
+                console.log(`[WhatsApp Webhook] Audio transcribed: "${transcription.substring(0, 80)}..."`)
+              } else {
+                messageContentFinal = '[Audio recebido - nao foi possivel transcrever]'
+              }
+            }
+
+            // --- VIDEO: transcribe audio track via Whisper ---
+            if (msg?.videoMessage) {
+              console.log(`[WhatsApp Webhook] Video received (${mediaResult.mimeType}, ${Math.round(mediaResult.base64.length / 1024)}KB) — transcribing audio...`)
+              const transcription = await transcribeAudio(mediaResult.base64, mediaResult.mimeType)
+              const caption = msg.videoMessage.caption
+              if (transcription) {
+                messageContentFinal = caption
+                  ? `[Video] ${caption}\n[Audio do video transcrito] ${transcription}`
+                  : `[Video - audio transcrito] ${transcription}`
+                console.log(`[WhatsApp Webhook] Video audio transcribed: "${transcription.substring(0, 80)}..."`)
+              } else if (caption) {
+                messageContentFinal = `[Video] ${caption}`
+              } else {
+                messageContentFinal = '[Video recebido - sem audio identificavel]'
+              }
+            }
           }
         } catch (err) {
-          console.error('[WhatsApp Webhook] Failed to fetch media:', err)
-          // Continue without media — AI will see "[Imagem recebida]" text instead
+          console.error('[WhatsApp Webhook] Failed to fetch/process media:', err)
         }
       }
 
-      // Save the incoming message
+      // Save the incoming message (with transcription if audio/video)
       await prisma.message.create({
         data: {
           conversationId: conversation.id,
           role: 'CUSTOMER',
-          content: messageContent,
+          content: messageContentFinal,
           whatsappMsgId,
           messageStatus: 'DELIVERED',
         },
@@ -203,7 +242,7 @@ export async function POST(request: NextRequest) {
 
       // Process AI response with optional media for vision
       try {
-        const result = await processIncomingMessage(conversation.id, messageContent, media)
+        const result = await processIncomingMessage(conversation.id, messageContentFinal, media)
         console.log(
           `[WhatsApp Webhook] AI response for ${conversation.id}: action=${result.action}, intent=${result.intent}, tokens=${result.tokensUsed}${media ? ' (with vision)' : ''}`
         )
