@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public routes that don't require authentication
-  const publicPaths = ['/login', '/api/auth', '/api/webhooks', '/api/whatsapp/webhook']
+  const publicPaths = ['/login', '/api/auth', '/api/webhooks', '/api/whatsapp/webhook', '/api/cron', '/api/r/']
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path))
 
   // Static files and Next.js internals
