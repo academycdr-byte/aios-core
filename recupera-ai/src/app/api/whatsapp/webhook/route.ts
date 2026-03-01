@@ -84,8 +84,15 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true, skipped: 'outgoing message' })
       }
 
+      // WhatsApp LID (Linked ID) format: some contacts use @lid instead of @s.whatsapp.net
+      // When this happens, the actual phone is in key.remoteJidAlt
+      let remoteJid = key.remoteJid ?? ''
+      if (remoteJid.endsWith('@lid') && key.remoteJidAlt) {
+        console.log(`[WhatsApp Webhook] LID format detected, using remoteJidAlt: ${key.remoteJidAlt}`)
+        remoteJid = key.remoteJidAlt
+      }
+
       // IGNORE group messages entirely — only process private chats
-      const remoteJid = key.remoteJid ?? ''
       if (remoteJid.endsWith('@g.us') || remoteJid.includes('@broadcast')) {
         return NextResponse.json({ received: true, skipped: 'group or broadcast message' })
       }
@@ -277,6 +284,7 @@ export async function POST(request: NextRequest) {
 interface EvolutionWebhookMessage {
   key: {
     remoteJid?: string
+    remoteJidAlt?: string
     fromMe?: boolean
     id?: string
   }
