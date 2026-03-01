@@ -215,6 +215,58 @@ export class EvolutionAPI {
   }
 
   // ============================================================
+  // MEDIA
+  // ============================================================
+
+  /**
+   * Fetch media (image/video/audio/document) as base64 from a received message.
+   * POST /chat/getBase64FromMediaMessage/{instanceName}
+   *
+   * The WhatsApp CDN URLs are encrypted; this endpoint decodes the media
+   * using the keys from the original message payload.
+   */
+  async getMediaBase64(
+    instanceName: string,
+    messageKey: { remoteJid: string; fromMe: boolean; id: string },
+    message: Record<string, unknown>
+  ): Promise<{ base64: string; mimeType: string } | null> {
+    try {
+      const result = await this.request<{ base64: string }>(
+        'POST',
+        `/chat/getBase64FromMediaMessage/${encodeURIComponent(instanceName)}`,
+        {
+          message: {
+            key: messageKey,
+            message,
+          },
+        }
+      )
+
+      if (!result.base64) return null
+
+      // base64 may come as "data:image/jpeg;base64,/9j/..." or raw base64
+      let base64Data = result.base64
+      let mimeType = 'image/jpeg'
+
+      const dataUriMatch = base64Data.match(/^data:([^;]+);base64,(.+)$/)
+      if (dataUriMatch) {
+        mimeType = dataUriMatch[1]
+        base64Data = dataUriMatch[2]
+      } else {
+        // Infer mime type from the message object
+        if (message.videoMessage) mimeType = 'video/mp4'
+        else if (message.audioMessage) mimeType = 'audio/ogg'
+        else if (message.documentMessage) mimeType = 'application/octet-stream'
+      }
+
+      return { base64: base64Data, mimeType }
+    } catch (error) {
+      console.error('[EvolutionAPI] Failed to fetch media base64:', error)
+      return null
+    }
+  }
+
+  // ============================================================
   // LIFECYCLE
   // ============================================================
 
