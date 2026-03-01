@@ -21,22 +21,9 @@ export async function getCurrentUser() {
 }
 
 /**
- * Temporary fallback: get the first user in the database.
- * Used when auth is not yet fully integrated on the frontend.
- */
-export async function getFirstUser() {
-  const user = await prisma.user.findFirst({
-    select: { id: true, email: true, name: true },
-  })
-  return user
-}
-
-/**
- * Get the authenticated user, falling back to the first user in DB.
- * This allows the API to work before the frontend is fully wired to NextAuth.
+ * Get the authenticated user from session.
+ * Returns null if not authenticated.
  */
 export async function getAuthenticatedUser() {
-  const sessionUser = await getCurrentUser()
-  if (sessionUser) return sessionUser
-  return getFirstUser()
+  return getCurrentUser()
 }

@@ -55,18 +55,17 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Verify HMAC signature (Nuvemshop uses hex digest)
-    if (hmacHeader) {
-      const webhookSecret = store.webhookSecret
-      if (!webhookSecret) {
-        console.warn(`[Nuvemshop Webhook] No webhook secret for store ${store.id}`)
+    if (store.webhookSecret) {
+      if (!hmacHeader) {
+        console.warn(`[Nuvemshop Webhook] Missing HMAC header for store ${nuvemshopStoreId} (secret configured)`)
         return NextResponse.json(
-          { error: 'configuration_error', message: 'Webhook secret not configured' },
-          { status: 500 }
+          { error: 'unauthorized', message: 'Missing HMAC signature' },
+          { status: 401 }
         )
       }
 
       const computedHmac = crypto
-        .createHmac('sha256', webhookSecret)
+        .createHmac('sha256', store.webhookSecret)
         .update(rawBody, 'utf8')
         .digest('hex')
 
@@ -78,7 +77,7 @@ export async function POST(request: NextRequest) {
         )
       }
     } else {
-      console.warn(`[Nuvemshop Webhook] No HMAC header for store ${nuvemshopStoreId} - proceeding without verification`)
+      console.warn(`[Nuvemshop Webhook] No webhook secret configured for store ${nuvemshopStoreId} - skipping HMAC`)
     }
 
     // 5. Parse body

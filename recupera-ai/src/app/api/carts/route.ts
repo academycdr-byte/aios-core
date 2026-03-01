@@ -109,17 +109,22 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         store: { select: { name: true } },
+        conversation: {
+          select: { id: true },
+        },
       },
       orderBy: { abandonedAt: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
     })
 
-    // Map to include storeName for frontend compatibility
+    // Map to include storeName and conversationId for frontend
     const data = carts.map((cart) => ({
       ...cart,
       storeName: cart.store.name,
+      conversationId: cart.conversation?.id ?? null,
       store: undefined,
+      conversation: undefined,
     }))
 
     const totalPages = Math.ceil(total / limit)
