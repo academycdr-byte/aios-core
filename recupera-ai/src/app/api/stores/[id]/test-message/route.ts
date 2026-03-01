@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthenticatedUser } from '@/lib/auth-utils'
 import { recoveryEngine } from '@/lib/ai/recovery-engine'
-import { evolutionApi } from '@/lib/evolution-api'
+import { evolutionApi, normalizeBrazilPhone } from '@/lib/evolution-api'
 import type { AbandonedCart, StoreSettings, RecoveryConfig } from '@/types'
 
 interface RouteContext {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       )
     }
 
-    const cleanPhone = phone.replace(/\D/g, '')
+    const cleanPhone = normalizeBrazilPhone(phone)
 
     // Build cart context
     let cart: AbandonedCart
@@ -128,6 +128,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     let whatsAppSent = false
     let whatsAppError: string | null = null
+    let conversationId: string | null = null
 
     if (sendWhatsApp) {
       if (!store.whatsappConnected) {
@@ -139,6 +140,48 @@ export async function POST(request: NextRequest, context: RouteContext) {
           const instanceName = `recupera-${id}`
           await evolutionApi.sendText(instanceName, cleanPhone, result.message)
           whatsAppSent = true
+
+          // Find existing active conversation or create new one
+          let conversation = await prisma.conversation.findFirst({
+            where: {
+              storeId: id,
+              customerPhone: cleanPhone,
+              status: 'ACTIVE',
+            },
+            orderBy: { createdAt: 'desc' },
+          })
+
+          if (conversation) {
+            // Reuse existing conversation
+            conversationId = conversation.id
+          } else {
+            // Create new conversation (without abandonedCartId to avoid unique constraint)
+            conversation = await prisma.conversation.create({
+              data: {
+                storeId: id,
+                abandonedCartId: cartId ?? null,
+                customerPhone: cleanPhone,
+                customerName: cart.customerName,
+                status: 'ACTIVE',
+                aiModel: result.model,
+                totalTokens: result.tokensUsed,
+                estimatedCost: result.estimatedCost,
+              },
+            })
+            conversationId = conversation.id
+          }
+
+          // Save the AI message in the conversation
+          await prisma.message.create({
+            data: {
+              conversationId: conversation.id,
+              role: 'AI',
+              content: result.message,
+              messageStatus: 'SENT',
+              tokensUsed: result.tokensUsed,
+              modelUsed: result.model,
+            },
+          })
         } catch (err) {
           whatsAppError = err instanceof Error ? err.message : 'Falha ao enviar'
         }
@@ -153,6 +196,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         estimatedCost: result.estimatedCost,
         whatsAppSent,
         whatsAppError,
+        conversationId,
         cartUsed: cartId ? 'real' : 'mock',
       },
     })
