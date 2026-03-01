@@ -22,6 +22,9 @@ import {
   XCircle,
   Loader2,
   Unplug,
+  Download,
+  Send,
+  Eye,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { StoreSettingsForm } from '@/components/store-settings-form'
@@ -139,8 +142,32 @@ function SimpleBarChart({ data }: { data: ChartDataPoint[] }) {
 function OverviewTab({ store }: { store: StoreData }) {
   const [chartData, setChartData] = useState<ChartDataPoint[]>([])
   const [chartLoading, setChartLoading] = useState(true)
+  const [syncing, setSyncing] = useState(false)
+  const [syncResult, setSyncResult] = useState<{
+    totalFetched: number; imported: number; updated: number; skipped: number
+  } | null>(null)
+  const [syncError, setSyncError] = useState<string | null>(null)
   const cartCount = store._count?.abandonedCarts ?? 0
   const convCount = store._count?.conversations ?? 0
+
+  async function handleSync() {
+    setSyncing(true)
+    setSyncError(null)
+    setSyncResult(null)
+    try {
+      const res = await fetch(`/api/stores/${store.id}/sync`, { method: 'POST' })
+      const json = await res.json()
+      if (!res.ok) {
+        setSyncError(json.message || 'Erro ao sincronizar')
+      } else {
+        setSyncResult(json.data)
+      }
+    } catch {
+      setSyncError('Erro de conexao')
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchMetrics() {
@@ -197,6 +224,39 @@ function OverviewTab({ store }: { store: StoreData }) {
           color="info"
         />
       </div>
+
+      {/* Sync (Shopify only) */}
+      {store.platform === 'SHOPIFY' && (
+        <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-text-primary">Sincronizar Carrinhos</h3>
+              <p className="text-xs text-text-tertiary">Importar carrinhos abandonados do Shopify</p>
+            </div>
+            <button
+              onClick={handleSync}
+              disabled={syncing}
+              className="inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 py-2 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
+            >
+              {syncing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {syncing ? 'Sincronizando...' : 'Sincronizar'}
+            </button>
+          </div>
+          {syncResult && (
+            <div className="mt-3 rounded-[var(--radius-md)] bg-success/10 p-3">
+              <p className="text-sm font-medium text-success">Sincronizacao concluida!</p>
+              <p className="mt-1 text-xs text-text-secondary">
+                {syncResult.totalFetched} encontrados · {syncResult.imported} importados · {syncResult.updated} atualizados · {syncResult.skipped} ignorados
+              </p>
+            </div>
+          )}
+          {syncError && (
+            <div className="mt-3 rounded-[var(--radius-md)] bg-error/10 p-3">
+              <p className="text-sm font-medium text-error">{syncError}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Chart */}
       <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
@@ -293,6 +353,17 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
   const [liveConnected, setLiveConnected] = useState(store.whatsappConnected)
   const [liveState, setLiveState] = useState<string | null>(null)
 
+  // Test message state
+  const [testPhone, setTestPhone] = useState('')
+  const [testCartId, setTestCartId] = useState('')
+  const [testCarts, setTestCarts] = useState<Array<{ id: string; customerName: string | null; cartTotal: number; platformCartId: string | null }>>([])
+  const [generatedMessage, setGeneratedMessage] = useState<string | null>(null)
+  const [testLoading, setTestLoading] = useState(false)
+  const [testSent, setTestSent] = useState(false)
+  const [testError, setTestError] = useState<string | null>(null)
+  const [testTokens, setTestTokens] = useState(0)
+  const [testCost, setTestCost] = useState(0)
+
   // Check real status from Evolution API on mount
   useEffect(() => {
     let cancelled = false
@@ -317,6 +388,73 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
     checkStatus()
     return () => { cancelled = true }
   }, [store.id, onStatusChange])
+
+  // Fetch carts for test message dropdown
+  useEffect(() => {
+    async function fetchCarts() {
+      try {
+        const res = await fetch(`/api/carts?storeId=${store.id}&limit=50`)
+        const json = await res.json()
+        if (json.data) setTestCarts(json.data)
+      } catch { /* noop */ }
+    }
+    fetchCarts()
+  }, [store.id])
+
+  async function handleTestPreview() {
+    setTestLoading(true)
+    setTestError(null)
+    setGeneratedMessage(null)
+    setTestSent(false)
+    try {
+      const res = await fetch(`/api/stores/${store.id}/test-message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: testPhone, cartId: testCartId || undefined, sendWhatsApp: false }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setTestError(json.message || 'Erro ao gerar mensagem')
+      } else {
+        setGeneratedMessage(json.data.message)
+        setTestTokens(json.data.tokensUsed)
+        setTestCost(json.data.estimatedCost)
+      }
+    } catch {
+      setTestError('Erro de conexao')
+    } finally {
+      setTestLoading(false)
+    }
+  }
+
+  async function handleTestSend() {
+    setTestLoading(true)
+    setTestError(null)
+    setTestSent(false)
+    try {
+      const res = await fetch(`/api/stores/${store.id}/test-message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: testPhone, cartId: testCartId || undefined, sendWhatsApp: true }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setTestError(json.message || 'Erro ao enviar')
+      } else {
+        setGeneratedMessage(json.data.message)
+        setTestSent(json.data.whatsAppSent)
+        setTestTokens(json.data.tokensUsed)
+        setTestCost(json.data.estimatedCost)
+        if (json.data.whatsAppError) {
+          setTestError(`WhatsApp: ${json.data.whatsAppError}`)
+        }
+      }
+    } catch {
+      setTestError('Erro de conexao')
+    } finally {
+      setTestLoading(false)
+    }
+  }
 
   const handleModalStatusChange = useCallback((connected: boolean) => {
     setLiveConnected(connected)
@@ -445,6 +583,85 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
               Desconectar WhatsApp
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Test Recovery */}
+      {liveConnected && (
+        <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
+          <h3 className="mb-2 text-sm font-semibold text-text-primary">Testar Recuperacao</h3>
+          <p className="mb-4 text-xs text-text-tertiary">
+            Gere uma mensagem de recuperacao via IA e envie por WhatsApp para testar o fluxo completo.
+          </p>
+
+          <div className="mb-3">
+            <label className="mb-1 block text-xs font-medium text-text-secondary">Numero do WhatsApp *</label>
+            <input
+              type="text"
+              placeholder="5511999999999"
+              value={testPhone}
+              onChange={(e) => setTestPhone(e.target.value)}
+              className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:outline-none"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="mb-1 block text-xs font-medium text-text-secondary">Carrinho (opcional)</label>
+            <select
+              value={testCartId}
+              onChange={(e) => setTestCartId(e.target.value)}
+              className="w-full rounded-[var(--radius-md)] border border-border bg-bg-primary px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none"
+            >
+              <option value="">Usar carrinho de teste (R$ 299,90)</option>
+              {testCarts.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.customerName || c.platformCartId || c.id} — R$ {c.cartTotal.toFixed(2)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={handleTestPreview}
+              disabled={testLoading || !testPhone.trim()}
+              className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-border px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-hover disabled:opacity-50"
+            >
+              {testLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+              Visualizar
+            </button>
+            <button
+              onClick={handleTestSend}
+              disabled={testLoading || !testPhone.trim()}
+              className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] bg-accent px-4 py-2 text-sm font-semibold text-text-inverse hover:bg-accent-hover disabled:opacity-50"
+            >
+              {testLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Enviar Teste
+            </button>
+          </div>
+
+          {generatedMessage && (
+            <div className="mt-4 rounded-[var(--radius-md)] border border-border bg-bg-tertiary p-3">
+              <p className="mb-1 text-xs font-medium text-text-secondary">Mensagem gerada:</p>
+              <p className="whitespace-pre-wrap text-sm text-text-primary">{generatedMessage}</p>
+              <div className="mt-2 flex items-center gap-3 text-xs text-text-tertiary">
+                {testTokens > 0 && <span>Tokens: {testTokens}</span>}
+                {testCost > 0 && <span>Custo: ${testCost.toFixed(6)}</span>}
+              </div>
+            </div>
+          )}
+
+          {testSent && (
+            <div className="mt-3 rounded-[var(--radius-md)] bg-success/10 p-3">
+              <p className="text-sm font-medium text-success">Mensagem enviada com sucesso!</p>
+            </div>
+          )}
+
+          {testError && (
+            <div className="mt-3 rounded-[var(--radius-md)] bg-error/10 p-3">
+              <p className="text-sm font-medium text-error">{testError}</p>
+            </div>
+          )}
         </div>
       )}
 
