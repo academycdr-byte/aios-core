@@ -296,11 +296,18 @@ export class EvolutionAPI {
  * Handles: 11999999999 → 5511999999999, 5511999999999 → 5511999999999
  */
 export function normalizeBrazilPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '')
-  // Already has country code (55 + DDD 2 digits + number 8-9 digits = 12-13 digits)
-  if (digits.startsWith('55') && digits.length >= 12) return digits
-  // Has DDD + number (10-11 digits) — add 55
-  if (digits.length === 10 || digits.length === 11) return `55${digits}`
+  let digits = phone.replace(/\D/g, '')
+  // Add country code if missing (DDD + number = 10-11 digits)
+  if (digits.length === 10 || digits.length === 11) {
+    digits = `55${digits}`
+  }
+  // Normalize to 13 digits: 55 + DD + 9XXXXXXXX
+  // Some systems (including WhatsApp) send without the mobile 9 (12 digits) — add it
+  if (digits.startsWith('55') && digits.length === 12) {
+    const ddd = digits.substring(2, 4)
+    const local = digits.substring(4) // 8 digits without the leading 9
+    digits = `55${ddd}9${local}`
+  }
   return digits
 }
 
