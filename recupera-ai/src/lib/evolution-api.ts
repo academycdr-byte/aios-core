@@ -111,12 +111,16 @@ export class EvolutionAPI {
       let message = `HTTP ${response.status}`
       if (typeof errorBody === 'string') {
         message = errorBody
-      } else if (typeof errorBody === 'object') {
+      } else if (typeof errorBody === 'object' && errorBody !== null) {
         // Try top-level message (v2) then nested response.message (v1)
         const raw = errorBody.message
-          ?? (errorBody as { response?: { message?: string | string[] } }).response?.message
+          ?? (errorBody as { response?: { message?: unknown } }).response?.message
         if (raw) {
-          message = Array.isArray(raw) ? raw.join(', ') : String(raw)
+          message = typeof raw === 'string'
+            ? raw
+            : Array.isArray(raw)
+              ? raw.map(r => typeof r === 'object' ? JSON.stringify(r) : String(r)).join(', ')
+              : JSON.stringify(raw)
         }
       }
 
@@ -186,7 +190,7 @@ export class EvolutionAPI {
     message: string
   ): Promise<EvolutionMessageResponse> {
     return this.request('POST', `/message/sendText/${encodeURIComponent(instanceName)}`, {
-      number: phone,
+      number: normalizeBrazilPhone(phone),
       text: message,
     })
   }
@@ -203,7 +207,7 @@ export class EvolutionAPI {
     mediatype: 'image' | 'video' | 'audio' | 'document' = 'image'
   ): Promise<EvolutionMessageResponse> {
     return this.request('POST', `/message/sendMedia/${encodeURIComponent(instanceName)}`, {
-      number: phone,
+      number: normalizeBrazilPhone(phone),
       mediatype,
       media: mediaUrl,
       caption: caption ?? '',
@@ -229,6 +233,23 @@ export class EvolutionAPI {
   async deleteInstance(instanceName: string): Promise<void> {
     await this.request('DELETE', `/instance/delete/${encodeURIComponent(instanceName)}`)
   }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+/**
+ * Normalize a Brazilian phone number to include country code 55.
+ * Handles: 11999999999 → 5511999999999, 5511999999999 → 5511999999999
+ */
+export function normalizeBrazilPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, '')
+  // Already has country code (55 + DDD 2 digits + number 8-9 digits = 12-13 digits)
+  if (digits.startsWith('55') && digits.length >= 12) return digits
+  // Has DDD + number (10-11 digits) — add 55
+  if (digits.length === 10 || digits.length === 11) return `55${digits}`
+  return digits
 }
 
 // ============================================================

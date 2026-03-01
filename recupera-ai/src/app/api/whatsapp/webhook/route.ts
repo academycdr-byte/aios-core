@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { processIncomingMessage } from '@/lib/ai/message-processor'
+import { normalizeBrazilPhone } from '@/lib/evolution-api'
 
 export const maxDuration = 60
 
@@ -81,9 +82,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true, skipped: 'outgoing message' })
       }
 
-      // Extract phone and content
+      // Extract phone and normalize to consistent format (55DDNNNNNNNNN)
       const remoteJid = key.remoteJid ?? ''
-      const phone = remoteJid.replace('@s.whatsapp.net', '').replace('@g.us', '')
+      const rawPhone = remoteJid.replace('@s.whatsapp.net', '').replace('@g.us', '')
+      const phone = normalizeBrazilPhone(rawPhone)
       const messageContent = extractMessageContent(messageData)
       const whatsappMsgId = key.id ?? null
 
