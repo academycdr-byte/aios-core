@@ -47,7 +47,7 @@ async function main() {
     console.log('\n=== MESSAGES ===')
     for (const msg of cart.conversation.messages) {
       console.log(`\n[${msg.role}] (${msg.sentAt?.toISOString()})`)
-      console.log(`Intent: ${msg.intent || 'N/A'} | Stage: ${msg.recoveryStage ?? 'N/A'}`)
+      console.log(`Intent: ${msg.intent || 'N/A'}`)
       console.log(`Text: ${msg.content?.substring(0, 200)}${(msg.content?.length ?? 0) > 200 ? '...' : ''}`)
     }
   } else {
