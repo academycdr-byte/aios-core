@@ -233,7 +233,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards Grid — Row 1: Core Metrics */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <KpiCard
           title="Valor Abandonado"
           value={formatCurrencyShort(data?.totalAbandonedValue ?? 0)}

@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import type { AbandonmentReasonData } from '@/types/charts'
 import { formatNumber } from '@/lib/format'
+import { useTheme } from '@/lib/theme-context'
 
 interface AbandonmentReasonsChartProps {
   data: AbandonmentReasonData[]
@@ -55,6 +56,13 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 }
 
 export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
+  const xTickColor = isDark ? '#5A5A5A' : '#9CA3AF'
+  const yTickColor = isDark ? '#8B8B8B' : '#6B7280'
+  const cursorFill = isDark ? '#1A1A1A' : '#F3F4F6'
+
   const total = data.reduce((sum, d) => sum + d.count, 0)
 
   return (
@@ -86,7 +94,7 @@ export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) 
           >
             <XAxis
               type="number"
-              tick={{ fill: 'var(--text-tertiary)', fontSize: 11 }}
+              tick={{ fill: xTickColor, fontSize: 11 }}
               axisLine={false}
               tickLine={false}
             />
@@ -94,13 +102,13 @@ export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) 
               type="category"
               dataKey="label"
               width={140}
-              tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+              tick={{ fill: yTickColor, fontSize: 12 }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
               content={<CustomTooltip />}
-              cursor={{ fill: 'var(--surface-hover)', opacity: 0.5 }}
+              cursor={{ fill: cursorFill, opacity: 0.5 }}
             />
             <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={24}>
               {data.map((entry) => (

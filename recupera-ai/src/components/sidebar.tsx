@@ -23,12 +23,27 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { label: 'Carrinhos Abandonados', href: '/carrinhos', icon: ShoppingCart },
-  { label: 'Conversas', href: '/conversas', icon: MessageSquare },
-  { label: 'Lojas', href: '/lojas', icon: Store },
-  { label: 'Configuracoes', href: '/configuracoes', icon: Settings },
+interface NavSection {
+  title: string
+  items: NavItem[]
+}
+
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: 'Menu',
+    items: [
+      { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+      { label: 'Carrinhos', href: '/carrinhos', icon: ShoppingCart },
+      { label: 'Conversas', href: '/conversas', icon: MessageSquare },
+    ],
+  },
+  {
+    title: 'Admin',
+    items: [
+      { label: 'Lojas', href: '/lojas', icon: Store },
+      { label: 'Configurações', href: '/configuracoes', icon: Settings },
+    ],
+  },
 ]
 
 interface SidebarProps {
@@ -54,37 +69,53 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <Zap className="h-5 w-5 text-text-inverse" />
         </div>
         {!collapsed && (
-          <span className="text-lg font-semibold text-text-primary animate-fade-in">
-            RecuperaAI
-          </span>
+          <div className="animate-fade-in">
+            <span className="text-base font-semibold text-text-primary">
+              RecuperaAI
+            </span>
+            <span className="block text-[11px] text-text-tertiary">
+              Recuperação Inteligente
+            </span>
+          </div>
         )}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {NAV_ITEMS.map((item) => {
-          const active = isActive(item.href)
-          const Icon = item.icon
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onMobileClose}
-              className={cn(
-                'flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-sm font-medium transition-colors',
-                active
-                  ? 'bg-accent-light text-accent'
-                  : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
-              )}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon className={cn('h-5 w-5 shrink-0', active && 'text-accent')} />
-              {!collapsed && (
-                <span className="animate-fade-in">{item.label}</span>
-              )}
-            </Link>
-          )
-        })}
+      {/* Navigation with Sections */}
+      <nav className="flex-1 overflow-y-auto px-3 py-4">
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.title} className="mb-4">
+            {!collapsed && (
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-accent">
+                {section.title}
+              </p>
+            )}
+            <div className="space-y-1">
+              {section.items.map((item) => {
+                const active = isActive(item.href)
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onMobileClose}
+                    className={cn(
+                      'flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-sm font-medium transition-colors',
+                      active
+                        ? 'bg-accent-light text-accent'
+                        : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
+                    )}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <Icon className={cn('h-5 w-5 shrink-0', active && 'text-accent')} />
+                    {!collapsed && (
+                      <span className="animate-fade-in">{item.label}</span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* User Info */}
@@ -96,7 +127,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           {!collapsed && (
             <div className="min-w-0 animate-fade-in">
               <p className="truncate text-sm font-medium text-text-primary">
-                {user?.name ?? 'Usuario'}
+                {user?.name ?? 'Usuário'}
               </p>
               <p className="truncate text-xs text-text-tertiary">
                 {user?.email ?? ''}

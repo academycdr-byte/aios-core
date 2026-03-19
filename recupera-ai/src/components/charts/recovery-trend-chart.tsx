@@ -12,12 +12,21 @@ import {
 } from 'recharts'
 import type { DailyMetric } from '@/types/charts'
 import { ChartTooltip } from '@/components/patterns'
+import { useTheme } from '@/lib/theme-context'
 
 interface RecoveryTrendChartProps {
   data: DailyMetric[]
 }
 
 export function RecoveryTrendChart({ data }: RecoveryTrendChartProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
+  const tickColor = isDark ? '#8B8B8B' : '#6B7280'
+  const legendColor = isDark ? '#8B8B8B' : '#9CA3AF'
+  const dotStrokeColor = isDark ? '#0F0F0F' : '#FFFFFF'
+
   return (
     <div
       className="rounded-[var(--radius-lg)] border border-[var(--border)] p-5"
@@ -48,20 +57,20 @@ export function RecoveryTrendChart({ data }: RecoveryTrendChartProps) {
 
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.06)"
+              stroke={gridColor}
               vertical={false}
             />
 
             <XAxis
               dataKey="dateLabel"
-              tick={{ fill: '#6B7280', fontSize: 11 }}
+              tick={{ fill: tickColor, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               interval="preserveStartEnd"
             />
 
             <YAxis
-              tick={{ fill: '#6B7280', fontSize: 11 }}
+              tick={{ fill: tickColor, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
             />
@@ -73,7 +82,7 @@ export function RecoveryTrendChart({ data }: RecoveryTrendChartProps) {
               iconType="circle"
               iconSize={8}
               formatter={(value: string) => (
-                <span style={{ color: '#9CA3AF', fontSize: 12 }}>{value}</span>
+                <span style={{ color: legendColor, fontSize: 12 }}>{value}</span>
               )}
             />
 
@@ -85,7 +94,7 @@ export function RecoveryTrendChart({ data }: RecoveryTrendChartProps) {
               strokeWidth={2}
               fill="url(#gradientAbandoned)"
               dot={false}
-              activeDot={{ r: 4, fill: '#F59E0B', stroke: '#0B0F1A', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: '#F59E0B', stroke: dotStrokeColor, strokeWidth: 2 }}
             />
 
             <Area
@@ -96,7 +105,7 @@ export function RecoveryTrendChart({ data }: RecoveryTrendChartProps) {
               strokeWidth={2}
               fill="url(#gradientRecovered)"
               dot={false}
-              activeDot={{ r: 4, fill: '#10B981', stroke: '#0B0F1A', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: '#10B981', stroke: dotStrokeColor, strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

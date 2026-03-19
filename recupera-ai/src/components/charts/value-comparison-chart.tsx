@@ -13,6 +13,7 @@ import {
 import type { DailyMetric } from '@/types/charts'
 import { formatCurrencyShort } from '@/lib/format'
 import { ChartTooltip } from '@/components/patterns'
+import { useTheme } from '@/lib/theme-context'
 
 interface ValueComparisonChartProps {
   data: DailyMetric[]
@@ -26,6 +27,13 @@ function formatYAxis(value: number): string {
 }
 
 export function ValueComparisonChart({ data }: ValueComparisonChartProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
+  const tickColor = isDark ? '#8B8B8B' : '#6B7280'
+  const legendColor = isDark ? '#8B8B8B' : '#9CA3AF'
+
   // Show last 14 days to keep bars readable
   const chartData = data.slice(-14)
 
@@ -49,19 +57,19 @@ export function ValueComparisonChart({ data }: ValueComparisonChartProps) {
           >
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.06)"
+              stroke={gridColor}
               vertical={false}
             />
 
             <XAxis
               dataKey="dateLabel"
-              tick={{ fill: '#6B7280', fontSize: 11 }}
+              tick={{ fill: tickColor, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
             />
 
             <YAxis
-              tick={{ fill: '#6B7280', fontSize: 11 }}
+              tick={{ fill: tickColor, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               tickFormatter={formatYAxis}
@@ -74,7 +82,7 @@ export function ValueComparisonChart({ data }: ValueComparisonChartProps) {
               iconType="circle"
               iconSize={8}
               formatter={(value: string) => (
-                <span style={{ color: '#9CA3AF', fontSize: 12 }}>{value}</span>
+                <span style={{ color: legendColor, fontSize: 12 }}>{value}</span>
               )}
             />
 

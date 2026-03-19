@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, Menu, Moon, Sun, LogOut } from 'lucide-react'
+import { Bell, Menu, Moon, Sun, LogOut, Search } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useTheme } from '@/lib/theme-context'
@@ -28,15 +28,24 @@ export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-20 flex h-[var(--header-height)] items-center justify-between border-b border-border bg-bg-secondary/80 px-4 backdrop-blur-xl lg:px-6">
-      {/* Left: Menu + Title */}
-      <div className="flex items-center gap-3">
+      {/* Left: Menu Toggle + Search */}
+      <div className="flex items-center gap-3 flex-1">
         <button
           onClick={onMenuClick}
           className="rounded-[var(--radius-md)] p-2 text-text-secondary hover:bg-surface-hover hover:text-text-primary lg:hidden"
         >
           <Menu className="h-5 w-5" />
         </button>
-        <h1 className="text-lg font-semibold text-text-primary">{title}</h1>
+
+        {/* Search Bar */}
+        <div className="relative hidden sm:flex items-center max-w-sm flex-1">
+          <Search className="absolute left-3 h-4 w-4 text-text-tertiary" />
+          <input
+            type="text"
+            placeholder="Buscar..."
+            className="w-full rounded-[var(--radius-md)] border border-border bg-surface pl-9 pr-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:ring-2 focus:ring-accent-light focus:outline-none"
+          />
+        </div>
       </div>
 
       {/* Right: Actions */}
@@ -45,7 +54,7 @@ export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
         <button
           onClick={toggleTheme}
           className="rounded-[var(--radius-md)] p-2 text-text-secondary hover:bg-surface-hover hover:text-text-primary"
-          title={theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
+          title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
         >
           {theme === 'dark' ? (
             <Sun className="h-5 w-5" />
@@ -70,7 +79,7 @@ export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
               {user?.name?.charAt(0) ?? 'U'}
             </div>
             <span className="hidden text-sm font-medium text-text-primary md:block">
-              {user?.name ?? 'Usuario'}
+              {user?.name ?? 'Usuário'}
             </span>
           </button>
 

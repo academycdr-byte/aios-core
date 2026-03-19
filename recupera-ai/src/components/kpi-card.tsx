@@ -53,19 +53,13 @@ export function KpiCard({ title, value, subtitle, icon: Icon, trend, color }: Kp
 
   return (
     <div
-      className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] p-5 transition-all hover:border-[var(--border-hover)]"
+      className="kpi-card-wrapper relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] p-5 transition-all hover:border-[var(--border-hover)]"
       style={{ background: 'var(--surface)' }}
     >
-      {/* Background accent glow */}
-      <div
-        className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full opacity-30 blur-2xl"
-        style={{ background: colors.text }}
-      />
-
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <p
-            className="text-xs font-medium uppercase tracking-wider"
+            className="text-[11px] font-semibold uppercase tracking-wider"
             style={{ color: 'var(--text-tertiary)' }}
           >
             {title}
@@ -109,9 +103,9 @@ export function KpiCard({ title, value, subtitle, icon: Icon, trend, color }: Kp
           </div>
         </div>
 
-        {/* Icon */}
+        {/* Icon — circular like reference */}
         <div
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-md)]"
+          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
           style={{ background: colors.iconBg }}
         >
           <Icon className="h-5 w-5" style={{ color: colors.text }} />

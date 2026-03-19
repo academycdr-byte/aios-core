@@ -6,25 +6,25 @@
    Primary accent: Emerald (#10B981)
    ============================================ */
 
-/* --- Dark Mode (Default) --- */
+/* --- Dark Mode (Default) — Performance Hub inspired --- */
 :root {
-  --bg-primary: #0B0F1A;
-  --bg-secondary: #111827;
-  --bg-tertiary: #1A2234;
-  --bg-elevated: #1F2A3E;
+  --bg-primary: #060606;
+  --bg-secondary: #0C0C0C;
+  --bg-tertiary: #141414;
+  --bg-elevated: #1A1A1A;
 
-  --surface: #111827;
-  --surface-hover: #1A2234;
-  --surface-active: #1F2A3E;
+  --surface: #0F0F0F;
+  --surface-hover: #1A1A1A;
+  --surface-active: #242424;
 
-  --border: #1F2937;
-  --border-hover: #374151;
+  --border: #1E1E1E;
+  --border-hover: #2E2E2E;
   --border-focus: #10B981;
 
-  --text-primary: #F9FAFB;
-  --text-secondary: #9CA3AF;
-  --text-tertiary: #6B7280;
-  --text-inverse: #0B0F1A;
+  --text-primary: #F5F5F5;
+  --text-secondary: #8B8B8B;
+  --text-tertiary: #5A5A5A;
+  --text-inverse: #060606;
 
   --accent: #10B981;
   --accent-hover: #059669;
@@ -40,10 +40,10 @@
   --info: #3B82F6;
   --info-light: rgba(59, 130, 246, 0.12);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -60,25 +60,25 @@
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Light Mode --- */
+/* --- Light Mode — Clean, warm white inspired by Performance Hub --- */
 [data-theme="light"] {
-  --bg-primary: #F9FAFB;
+  --bg-primary: #FAFAF8;
   --bg-secondary: #FFFFFF;
-  --bg-tertiary: #F3F4F6;
+  --bg-tertiary: #F5F5F3;
   --bg-elevated: #FFFFFF;
 
   --surface: #FFFFFF;
-  --surface-hover: #F3F4F6;
-  --surface-active: #E5E7EB;
+  --surface-hover: #F5F5F3;
+  --surface-active: #EBEBEA;
 
-  --border: #E5E7EB;
-  --border-hover: #D1D5DB;
+  --border: #E8E8E6;
+  --border-hover: #D4D4D2;
   --border-focus: #10B981;
 
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --text-tertiary: #9CA3AF;
-  --text-inverse: #F9FAFB;
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #9B9B9B;
+  --text-inverse: #FFFFFF;
 
   --accent: #10B981;
   --accent-hover: #059669;
@@ -94,10 +94,10 @@
   --info: #2563EB;
   --info-light: rgba(37, 99, 235, 0.08);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.10);
 }
 
 /* --- Tailwind v4 Theme Registration --- */
@@ -255,8 +255,8 @@ button:disabled {
   background: linear-gradient(
     135deg,
     var(--bg-primary) 0%,
-    #0D1425 40%,
-    #0F1A2E 70%,
+    #0A0A0A 40%,
+    #0E0E0E 70%,
     var(--bg-primary) 100%
   );
 }
@@ -267,6 +267,16 @@ button:disabled {
     #F0FDF4 0%,
     #ECFDF5 40%,
     #F0FDFA 70%,
-    #F9FAFB 100%
+    #FAFAF8 100%
   );
+}
+
+/* --- Light mode card shadows --- */
+[data-theme="light"] .kpi-card-wrapper {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+/* --- Theme transition on body --- */
+body {
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
