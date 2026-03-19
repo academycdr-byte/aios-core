@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processRecoveryJobs } from '@/lib/recovery/scheduler'
 import { calculateDailyMetrics } from '@/lib/recovery/metrics'
+import { calculateStepMetrics } from '@/lib/recovery/step-metrics'
 import { autoSyncStores } from '@/lib/recovery/auto-sync'
 
 export const maxDuration = 60 // Allow up to 60s for processing
@@ -46,13 +47,17 @@ export async function GET(request: NextRequest) {
     // 3. Calculate daily metrics
     const metricsStats = await calculateDailyMetrics()
 
+    // 4. Calculate step-level metrics
+    const stepMetricsStats = await calculateStepMetrics()
+
     const duration = Date.now() - startTime
 
     console.log(
       `[Cron Recovery] Completed in ${duration}ms:`,
       `sync: stores=${syncStats.storesSynced}, imported=${syncStats.totalImported}`,
       `| recovery: processed=${recoveryStats.processed}, sent=${recoveryStats.sent}, skipped=${recoveryStats.skipped}, lost=${recoveryStats.lost}, errors=${recoveryStats.errors}`,
-      `| metrics: stores=${metricsStats.storesProcessed}, upserted=${metricsStats.metricsUpserted}`
+      `| metrics: stores=${metricsStats.storesProcessed}, upserted=${metricsStats.metricsUpserted}`,
+      `| stepMetrics: stores=${stepMetricsStats.storesProcessed}, upserted=${stepMetricsStats.metricsUpserted}`
     )
 
     return NextResponse.json({
@@ -75,6 +80,11 @@ export async function GET(request: NextRequest) {
         storesProcessed: metricsStats.storesProcessed,
         metricsUpserted: metricsStats.metricsUpserted,
         errors: metricsStats.errors.length,
+      },
+      stepMetrics: {
+        storesProcessed: stepMetricsStats.storesProcessed,
+        metricsUpserted: stepMetricsStats.metricsUpserted,
+        errors: stepMetricsStats.errors.length,
       },
       details: recoveryStats.details,
     })

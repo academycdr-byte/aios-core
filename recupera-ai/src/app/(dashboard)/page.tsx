@@ -18,6 +18,8 @@ import { RecoveryTrendChart } from '@/components/charts/recovery-trend-chart'
 import { ValueComparisonChart } from '@/components/charts/value-comparison-chart'
 import { TypeDistributionChart } from '@/components/charts/type-distribution-chart'
 import { AbandonmentReasonsChart } from '@/components/charts/abandonment-reasons-chart'
+import { StepFunnelChart } from '@/components/charts/step-funnel-chart'
+import { StepMetricsCard } from '@/components/step-metrics-card'
 import { RecentCartsTable } from '@/components/recent-carts-table'
 import { PageSpinner } from '@/components/ui'
 import {
@@ -28,6 +30,7 @@ import {
   formatDateChart,
 } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import type { StepMetric } from '@/types/charts'
 
 interface DashboardData {
   totalAbandoned: number
@@ -88,6 +91,7 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [reasons, setReasons] = useState<ReasonData[]>([])
   const [recentCarts, setRecentCarts] = useState<RecentCartData[]>([])
+  const [stepMetrics, setStepMetrics] = useState<StepMetric[]>([])
   const [loading, setLoading] = useState(true)
   const [period, setPeriod] = useState<PeriodTab>('30d')
   const [startDate, setStartDate] = useState('')
@@ -103,10 +107,18 @@ export default function DashboardPage() {
         dashUrl += `?period=${period}`
       }
 
-      const [dashRes, reasonsRes, cartsRes] = await Promise.all([
+      let stepMetricsUrl = '/api/dashboard/step-metrics'
+      if (period === 'custom' && startDate && endDate) {
+        stepMetricsUrl += `?startDate=${startDate}&endDate=${endDate}`
+      } else if (period !== 'custom') {
+        stepMetricsUrl += `?period=${period}`
+      }
+
+      const [dashRes, reasonsRes, cartsRes, stepMetricsRes] = await Promise.all([
         fetch(dashUrl),
         fetch('/api/dashboard/reasons'),
         fetch('/api/carts?limit=10&period=7d'),
+        fetch(stepMetricsUrl),
       ])
 
       if (dashRes.ok) {
@@ -127,6 +139,11 @@ export default function DashboardPage() {
             abandonedAt: new Date(c.abandonedAt),
           }))
         )
+      }
+
+      if (stepMetricsRes.ok) {
+        const stepMetricsJson = await stepMetricsRes.json()
+        setStepMetrics(stepMetricsJson.data ?? [])
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error)
@@ -313,6 +330,12 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <TypeDistributionChart data={typeDistribution} />
         <AbandonmentReasonsChart data={reasons} />
+      </div>
+
+      {/* Step Metrics Section */}
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <StepMetricsCard data={stepMetrics} loading={loading} />
+        <StepFunnelChart data={stepMetrics} />
       </div>
 
       {/* Recent Carts Table */}

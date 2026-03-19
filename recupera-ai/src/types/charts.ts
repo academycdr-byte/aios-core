@@ -42,3 +42,20 @@ export interface RecentCart {
   abandonedAt: Date
   recoveryAttempts: number
 }
+
+export interface StepMetric {
+  stepNumber: number
+  stepLabel: string
+  messagesSent: number
+  messagesDelivered: number
+  messagesRead: number
+  linkClicks: number
+  messagesReplied: number
+  conversions: number
+  conversionValue: number
+  openRate: number
+  clickRate: number
+  responseRate: number
+  conversionRate: number
+  costPerConversion: number
+}

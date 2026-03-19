@@ -278,6 +278,40 @@ async function handleOrderPaid(
   }
 
   if (cart) {
+    // Step attribution: find which step led to conversion
+    // Priority: 1) Last clicked tracked link, 2) Last AI message sent
+    let convertedAtStep: number | null = null
+
+    // Check tracked link clicks for this cart
+    const lastClickedLink = await prisma.trackedLink.findFirst({
+      where: {
+        cartId: cart.id,
+        clicks: { gt: 0 },
+        stepNumber: { not: null },
+      },
+      orderBy: { lastClickAt: 'desc' },
+    })
+
+    if (lastClickedLink?.stepNumber != null) {
+      convertedAtStep = lastClickedLink.stepNumber
+    } else {
+      // Fallback: last AI message's followUpStep
+      const conversation = await prisma.conversation.findFirst({
+        where: { abandonedCartId: cart.id },
+        select: {
+          messages: {
+            where: { role: 'AI', followUpStep: { not: null } },
+            orderBy: { sentAt: 'desc' },
+            take: 1,
+            select: { followUpStep: true },
+          },
+        },
+      })
+      if (conversation?.messages[0]?.followUpStep != null) {
+        convertedAtStep = conversation.messages[0].followUpStep
+      }
+    }
+
     await prisma.abandonedCart.update({
       where: { id: cart.id },
       data: {
@@ -288,17 +322,19 @@ async function handleOrderPaid(
         // If not yet marked as recovered, also set recoveredAt
         recoveredAt: cart.recoveredAt ?? new Date(),
         recoveredValue: cart.recoveredValue ?? parsed.paidValue,
+        // Step attribution
+        recoveredAtStage: cart.recoveredAtStage ?? convertedAtStep,
       },
     })
 
     // Also close the conversation if active
-    const conversation = await prisma.conversation.findFirst({
+    const conversationToClose = await prisma.conversation.findFirst({
       where: { abandonedCartId: cart.id, status: 'ACTIVE' },
     })
 
-    if (conversation) {
+    if (conversationToClose) {
       await prisma.conversation.update({
-        where: { id: conversation.id },
+        where: { id: conversationToClose.id },
         data: {
           status: 'RECOVERED',
           closedAt: new Date(),
@@ -306,7 +342,7 @@ async function handleOrderPaid(
       })
     }
 
-    console.log(`[Shopify Webhook] Cart ${cart.id} marked as PAID (order ${parsed.platformOrderId})`)
+    console.log(`[Shopify Webhook] Cart ${cart.id} marked as PAID (order ${parsed.platformOrderId}, step=${convertedAtStep})`)
   } else {
     console.log(`[Shopify Webhook] No matching cart found for order ${parsed.platformOrderId}`)
   }

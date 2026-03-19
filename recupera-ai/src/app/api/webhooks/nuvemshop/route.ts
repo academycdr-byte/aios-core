@@ -275,6 +275,37 @@ async function handleOrderPaid(
   }
 
   if (cart) {
+    // Step attribution: find which step led to conversion
+    let convertedAtStep: number | null = null
+
+    const lastClickedLink = await prisma.trackedLink.findFirst({
+      where: {
+        cartId: cart.id,
+        clicks: { gt: 0 },
+        stepNumber: { not: null },
+      },
+      orderBy: { lastClickAt: 'desc' },
+    })
+
+    if (lastClickedLink?.stepNumber != null) {
+      convertedAtStep = lastClickedLink.stepNumber
+    } else {
+      const conv = await prisma.conversation.findFirst({
+        where: { abandonedCartId: cart.id },
+        select: {
+          messages: {
+            where: { role: 'AI', followUpStep: { not: null } },
+            orderBy: { sentAt: 'desc' },
+            take: 1,
+            select: { followUpStep: true },
+          },
+        },
+      })
+      if (conv?.messages[0]?.followUpStep != null) {
+        convertedAtStep = conv.messages[0].followUpStep
+      }
+    }
+
     await prisma.abandonedCart.update({
       where: { id: cart.id },
       data: {
@@ -284,17 +315,18 @@ async function handleOrderPaid(
         paidValue: parsed.paidValue,
         recoveredAt: cart.recoveredAt ?? new Date(),
         recoveredValue: cart.recoveredValue ?? parsed.paidValue,
+        recoveredAtStage: cart.recoveredAtStage ?? convertedAtStep,
       },
     })
 
     // Close active conversation
-    const conversation = await prisma.conversation.findFirst({
+    const conversationToClose = await prisma.conversation.findFirst({
       where: { abandonedCartId: cart.id, status: 'ACTIVE' },
     })
 
-    if (conversation) {
+    if (conversationToClose) {
       await prisma.conversation.update({
-        where: { id: conversation.id },
+        where: { id: conversationToClose.id },
         data: {
           status: 'RECOVERED',
           closedAt: new Date(),
@@ -302,7 +334,7 @@ async function handleOrderPaid(
       })
     }
 
-    console.log(`[Nuvemshop Webhook] Cart ${cart.id} marked as PAID (order ${parsed.platformOrderId})`)
+    console.log(`[Nuvemshop Webhook] Cart ${cart.id} marked as PAID (order ${parsed.platformOrderId}, step=${convertedAtStep})`)
   } else {
     console.log(`[Nuvemshop Webhook] No matching cart found for order ${parsed.platformOrderId}`)
   }

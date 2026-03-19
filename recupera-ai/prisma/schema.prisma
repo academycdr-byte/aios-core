@@ -476,6 +476,11 @@ model TrackedLink {
   targetUrl    String   @map("target_url") @db.Text
   conversationId String? @map("conversation_id")
   cartId       String?  @map("cart_id")
+  stepNumber   Int?     @map("step_number")
+  utmSource    String?  @map("utm_source")
+  utmMedium    String?  @map("utm_medium")
+  utmCampaign  String?  @map("utm_campaign")
+  utmContent   String?  @map("utm_content")
   clicks       Int      @default(0)
   lastClickAt  DateTime? @map("last_click_at")
   createdAt    DateTime @default(now()) @map("created_at")
@@ -483,4 +488,31 @@ model TrackedLink {
   @@index([code])
   @@index([storeId])
   @@map("tracked_links")
+}
+
+// ============================================================
+// STEP METRICS (per-step message performance tracking)
+// ============================================================
+
+model StepMetrics {
+  id                String   @id @default(cuid())
+  storeId           String   @map("store_id")
+  date              DateTime @db.Date
+  cartType          CartType @default(ABANDONED_CART) @map("cart_type")
+  stepNumber        Int      @map("step_number")
+
+  messagesSent      Int      @default(0) @map("messages_sent")
+  messagesDelivered Int      @default(0) @map("messages_delivered")
+  messagesRead      Int      @default(0) @map("messages_read")
+  linkClicks        Int      @default(0) @map("link_clicks")
+  messagesReplied   Int      @default(0) @map("messages_replied")
+  conversions       Int      @default(0)
+  conversionValue   Float    @default(0) @map("conversion_value")
+  aiCost            Float    @default(0) @map("ai_cost")
+
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@unique([storeId, date, cartType, stepNumber])
+  @@index([storeId, date])
+  @@map("step_metrics")
 }
