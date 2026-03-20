@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft,
   BarChart3,
-  Settings,
   GitBranch,
   MessageCircle,
   BookOpen,
@@ -52,7 +51,7 @@ import { WhatsappConnectModal } from '@/components/whatsapp-connect-modal'
 import { Button, Badge, Input, Spinner, PageSpinner } from '@/components/ui'
 import type { MockStoreSettings, MockRecoveryConfig } from '@/lib/mock-stores'
 
-type TabId = 'overview' | 'knowledge' | 'settings' | 'recovery' | 'whatsapp'
+type TabId = 'overview' | 'knowledge' | 'recovery' | 'whatsapp'
 
 interface Tab {
   id: TabId
@@ -63,8 +62,7 @@ interface Tab {
 const TABS: Tab[] = [
   { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
   { id: 'knowledge', label: 'Conhecimento', icon: BookOpen },
-  { id: 'recovery', label: 'Fluxo de Recuperação', icon: GitBranch },
-  { id: 'settings', label: 'Configurações', icon: Settings },
+  { id: 'recovery', label: 'Recuperação', icon: GitBranch },
   { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
 ]
 
@@ -840,8 +838,10 @@ function TestModePanel({ store, onUpdate }: { store: StoreData; onUpdate: (s: St
 export default function StoreDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const urlTab = searchParams.get('tab') as TabId | null
   const storeId = params.id as string
-  const [activeTab, setActiveTab] = useState<TabId>('overview')
+  const [activeTab, setActiveTab] = useState<TabId>(urlTab || 'overview')
   const [store, setStore] = useState<StoreData | null>(null)
   const [settings, setSettings] = useState<MockStoreSettings | null>(null)
   const [recoveryConfig, setRecoveryConfig] = useState<MockRecoveryConfig | null>(null)
@@ -910,6 +910,13 @@ export default function StoreDetailPage() {
     if (json.data) setRecoveryConfig(json.data)
   }
 
+  function handleTabChange(tabId: TabId) {
+    setActiveTab(tabId)
+    const url = new URL(window.location.href)
+    url.searchParams.set('tab', tabId)
+    window.history.replaceState({}, '', url.toString())
+  }
+
   return (
     <div className="animate-fade-in space-y-6">
       {/* Back Button + Store Header */}
@@ -956,7 +963,7 @@ export default function StoreDetailPage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={cn(
                   'flex shrink-0 items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
                   active
@@ -974,17 +981,17 @@ export default function StoreDetailPage() {
 
       {/* Tab Content */}
       <div>
-        {activeTab === 'overview' && <OverviewTab store={store} />}
-        {activeTab === 'knowledge' && settings && (
-          <div className="space-y-8">
-            <KnowledgeBaseForm settings={settings} onSave={handleSaveSettings} />
-            <ImageLibraryPanel storeId={store.id} />
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            <OverviewTab store={store} />
+            <TestModePanel store={store} onUpdate={setStore} />
           </div>
         )}
-        {activeTab === 'settings' && settings && (
-          <div className="space-y-6">
-            <TestModePanel store={store} onUpdate={setStore} />
+        {activeTab === 'knowledge' && settings && (
+          <div className="space-y-8">
             <StoreSettingsForm settings={settings} onSave={handleSaveSettings} />
+            <KnowledgeBaseForm settings={settings} onSave={handleSaveSettings} />
+            <ImageLibraryPanel storeId={store.id} />
           </div>
         )}
         {activeTab === 'recovery' && (

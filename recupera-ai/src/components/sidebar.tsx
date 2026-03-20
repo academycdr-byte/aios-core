@@ -1,18 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   ShoppingCart,
   MessageSquare,
-  Store,
   Settings,
   ChevronLeft,
   ChevronRight,
   Zap,
   X,
+  BarChart3,
+  BookOpen,
+  GitBranch,
+  MessageCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth-context'
@@ -38,9 +41,17 @@ const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: 'Admin',
+    title: 'Loja',
     items: [
-      { label: 'Minha Loja', href: '/minha-loja', icon: Store },
+      { label: 'Visão Geral', href: '/minha-loja?tab=overview', icon: BarChart3 },
+      { label: 'Recuperação', href: '/minha-loja?tab=recovery', icon: GitBranch },
+      { label: 'Conhecimento', href: '/minha-loja?tab=knowledge', icon: BookOpen },
+      { label: 'WhatsApp', href: '/minha-loja?tab=whatsapp', icon: MessageCircle },
+    ],
+  },
+  {
+    title: 'Conta',
+    items: [
       { label: 'Configurações', href: '/configuracoes', icon: Settings },
     ],
   },
@@ -56,8 +67,29 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
   const { user } = useAuth()
 
+  // Read current tab from URL (client-side only, avoids useSearchParams SSR issues)
+  const [currentTab, setCurrentTab] = useState<string | null>(null)
+  useEffect(() => {
+    function syncTab() {
+      const params = new URLSearchParams(window.location.search)
+      setCurrentTab(params.get('tab'))
+    }
+    syncTab()
+    // Re-sync on popstate (back/forward navigation)
+    window.addEventListener('popstate', syncTab)
+    return () => window.removeEventListener('popstate', syncTab)
+  }, [pathname])
+
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
+    if (href.includes('?')) {
+      const [path, query] = href.split('?')
+      const basePath = pathname.startsWith('/lojas') ? '/minha-loja' : pathname
+      if (basePath !== path && !pathname.startsWith(path)) return false
+      const params = new URLSearchParams(query)
+      const tab = params.get('tab')
+      return tab ? currentTab === tab : true
+    }
     return pathname.startsWith(href)
   }
 

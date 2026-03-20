@@ -18,7 +18,9 @@ export default function MinhaLojaPage() {
       .then(json => {
         const store = json.data
         if (store) {
-          router.replace(`/lojas/${store.id}`)
+          const params = new URLSearchParams(window.location.search)
+          const tab = params.get('tab')
+          router.replace(`/lojas/${store.id}${tab ? `?tab=${tab}` : ''}`)
         } else {
           setLoading(false)
         }
@@ -39,7 +41,9 @@ export default function MinhaLojaPage() {
           window.location.href = `/api/integrations/shopify?storeId=${json.data.id}`
           return
         }
-        router.replace(`/lojas/${json.data.id}`)
+        const p = new URLSearchParams(window.location.search)
+        const t = p.get('tab')
+        router.replace(`/lojas/${json.data.id}${t ? `?tab=${t}` : ''}`)
         return
       }
     } catch {
