@@ -40,7 +40,7 @@ const COMING_SOON_CARDS = [
 
 export default function ConfiguracoesPage() {
   const [user, setUser] = useState<UserData | null>(null)
-  const [stores, setStores] = useState<StoreStatus[]>([])
+  const [store, setStore] = useState<StoreStatus | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -58,15 +58,17 @@ export default function ConfiguracoesPage() {
 
         if (storesRes.ok) {
           const json = await storesRes.json()
-          const storeList = json.data ?? []
-          setStores(storeList.map((s: Record<string, unknown>) => ({
-            id: s.id,
-            name: s.name,
-            whatsappConnected: s.whatsappConnected ?? false,
-            hasSettings: true,
-            hasRecoveryConfig: true,
-            platform: s.platform,
-          })))
+          const s = json.data
+          if (s) {
+            setStore({
+              id: s.id as string,
+              name: s.name as string,
+              whatsappConnected: (s.whatsappConnected ?? false) as boolean,
+              hasSettings: true,
+              hasRecoveryConfig: true,
+              platform: s.platform as string,
+            })
+          }
         }
       } catch (error) {
         console.error('Failed to fetch settings data:', error)
@@ -131,15 +133,14 @@ export default function ConfiguracoesPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] bg-accent-light">
             <Store className="h-5 w-5 text-accent" />
           </div>
-          <h3 className="font-semibold text-text-primary">Status das Lojas</h3>
-          <Badge variant="neutral" size="sm">{stores.length} lojas</Badge>
+          <h3 className="font-semibold text-text-primary">Minha Loja</h3>
         </div>
 
-        {stores.length === 0 ? (
-          <p className="text-sm text-text-secondary">Nenhuma loja cadastrada ainda.</p>
+        {!store ? (
+          <p className="text-sm text-text-secondary">Nenhuma loja conectada ainda.</p>
         ) : (
           <div className="space-y-3">
-            {stores.map((store) => {
+            {(() => {
               const checks = [
                 { label: 'Plataforma', ok: true },
                 { label: 'WhatsApp', ok: store.whatsappConnected },
@@ -152,7 +153,6 @@ export default function ConfiguracoesPage() {
 
               return (
                 <div
-                  key={store.id}
                   className={cn(
                     'rounded-[var(--radius-md)] border p-3',
                     isReady ? 'border-success/30 bg-success/5' : 'border-border bg-bg-tertiary'
@@ -184,7 +184,7 @@ export default function ConfiguracoesPage() {
                   </div>
                 </div>
               )
-            })}
+            })()}
           </div>
         )}
       </div>

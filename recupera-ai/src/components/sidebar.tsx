@@ -40,7 +40,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Admin',
     items: [
-      { label: 'Lojas', href: '/lojas', icon: Store },
+      { label: 'Minha Loja', href: '/minha-loja', icon: Store },
       { label: 'Configurações', href: '/configuracoes', icon: Settings },
     ],
   },

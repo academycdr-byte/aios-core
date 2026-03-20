@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   Plus,
   ShoppingBag,
@@ -70,6 +71,7 @@ function StoreStatusBadge({ active }: { active: boolean }) {
 }
 
 export default function LojasPage() {
+  const router = useRouter()
   const [modalOpen, setModalOpen] = useState(false)
   const [stores, setStores] = useState<Store[]>([])
   const [loading, setLoading] = useState(true)
@@ -78,11 +80,18 @@ export default function LojasPage() {
     fetch('/api/stores')
       .then((res) => res.json())
       .then((json) => {
-        if (json.data) setStores(json.data)
+        const store = json.data
+        if (store) {
+          router.replace(`/lojas/${store.id}`)
+        } else {
+          router.replace('/minha-loja')
+        }
       })
-      .catch(() => { /* silently ignore */ })
+      .catch(() => {
+        router.replace('/minha-loja')
+      })
       .finally(() => setLoading(false))
-  }, [])
+  }, [router])
 
   async function handleConnect(data: ConnectStoreData) {
     try {

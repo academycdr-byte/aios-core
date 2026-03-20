@@ -34,14 +34,13 @@ export async function GET() {
       )
     }
 
-    // Get all store IDs for this user (scoping)
-    const userStores = await prisma.store.findMany({
+    // Get the user's single store
+    const store = await prisma.store.findFirst({
       where: { userId: user.id },
       select: { id: true },
     })
-    const userStoreIds = userStores.map((s) => s.id)
 
-    if (userStoreIds.length === 0) {
+    if (!store) {
       return NextResponse.json({ data: [] })
     }
 
@@ -54,7 +53,7 @@ export async function GET() {
       where: {
         abandonmentReason: { not: null },
         closedAt: { gte: thirtyDaysAgo },
-        storeId: { in: userStoreIds },
+        storeId: store.id,
       },
       orderBy: { _count: { id: 'desc' } },
     })

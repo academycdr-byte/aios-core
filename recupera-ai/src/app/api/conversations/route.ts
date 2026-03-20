@@ -7,7 +7,6 @@ import type { Prisma } from '@/generated/prisma/client'
  * GET /api/conversations
  * List conversations with filters and pagination
  * Query params:
- *   - storeId (optional): filter by store
  *   - status (optional): ACTIVE | RECOVERED | LOST | ESCALATED | EXPIRED
  *   - page (optional): page number (default: 1)
  *   - limit (optional): items per page (default: 20)
@@ -23,7 +22,6 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = request.nextUrl
-    const storeId = searchParams.get('storeId')
     const status = searchParams.get('status')
     const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') ?? '20', 10)))
@@ -39,18 +37,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Get user store IDs for scoping
-    const userStores = await prisma.store.findMany({
+    // Get the user's single store
+    const store = await prisma.store.findFirst({
       where: { userId: user.id },
       select: { id: true },
     })
-    const userStoreIds = userStores.map((s) => s.id)
+
+    if (!store) {
+      return NextResponse.json({ data: [], total: 0, page, limit, totalPages: 0 })
+    }
 
     // Build where clause
     const where: Prisma.ConversationWhereInput = {
-      storeId: storeId && userStoreIds.includes(storeId)
-        ? storeId
-        : { in: userStoreIds },
+      storeId: store.id,
     }
 
     if (status) {

@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import { formatCurrency, formatRelativeTime } from '@/lib/format'
 import { ConversationDetail } from '@/components/conversation-detail'
 import { Input, Spinner, Avatar, Badge, Button } from '@/components/ui'
-import type { Conversation, Store } from '@/types'
+import type { Conversation } from '@/types'
 
 // ============================================================
 // STATUS CONFIG
@@ -138,30 +138,17 @@ function ConversasContent() {
   const urlConvId = searchParams.get('id')
 
   const [conversations, setConversations] = useState<Conversation[]>([])
-  const [stores, setStores] = useState<Store[]>([])
   const [loading, setLoading] = useState(true)
 
   const [selectedId, setSelectedId] = useState<string | null>(urlConvId)
   const [statusFilter, setStatusFilter] = useState<string>('ALL')
-  const [storeFilter, setStoreFilter] = useState<string>('ALL')
   const [search, setSearch] = useState('')
   const [mobileShowDetail, setMobileShowDetail] = useState(urlConvId !== null)
-
-  // Fetch stores for filter dropdown
-  useEffect(() => {
-    fetch('/api/stores')
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.data) setStores(json.data)
-      })
-      .catch(() => { /* silently ignore */ })
-  }, [])
 
   // Fetch conversations from API
   useEffect(() => {
     const params = new URLSearchParams()
     if (statusFilter !== 'ALL') params.set('status', statusFilter)
-    if (storeFilter !== 'ALL') params.set('storeId', storeFilter)
     params.set('limit', '100')
 
     const controller = new AbortController()
@@ -186,7 +173,7 @@ function ConversasContent() {
       cancelled = true
       controller.abort()
     }
-  }, [statusFilter, storeFilter])
+  }, [statusFilter])
 
   // Client-side search filter
   const filteredConversations = search.trim()
@@ -261,19 +248,6 @@ function ConversasContent() {
                 ))}
               </div>
 
-              {/* Store filter */}
-              <select
-                value={storeFilter}
-                onChange={(e) => setStoreFilter(e.target.value)}
-                className="w-full rounded-[var(--radius-md)] border border-border bg-bg-tertiary px-3 py-1.5 text-xs text-text-primary"
-              >
-                <option value="ALL">Todas as lojas</option>
-                {stores.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {/* Conversation list */}

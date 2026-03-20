@@ -6,7 +6,6 @@ import { getAuthenticatedUser } from '@/lib/auth-utils'
  * GET /api/dashboard
  * Returns aggregated dashboard metrics from DailyMetrics table
  * Query params:
- *   - storeId (optional): filter by store
  *   - period: '7d' | '30d' | '90d' (default: '30d')
  */
 export async function GET(request: NextRequest) {
@@ -21,7 +20,6 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = request.nextUrl
     const period = searchParams.get('period') ?? '30d'
-    const storeId = searchParams.get('storeId')
 
     // Support custom date range or predefined period
     const startDate = searchParams.get('startDate')
@@ -49,14 +47,13 @@ export async function GET(request: NextRequest) {
       sinceDate.setDate(sinceDate.getDate() - days)
     }
 
-    // Get all store IDs for this user (scoping)
-    const userStores = await prisma.store.findMany({
+    // Get the user's single store
+    const store = await prisma.store.findFirst({
       where: { userId: user.id },
       select: { id: true },
     })
-    const userStoreIds = userStores.map((s) => s.id)
 
-    if (userStoreIds.length === 0) {
+    if (!store) {
       return NextResponse.json({
         data: {
           totalAbandoned: 0,
@@ -76,11 +73,6 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Build where clause for DailyMetrics
-    const storeFilter = storeId && userStoreIds.includes(storeId)
-      ? { storeId }
-      : { storeId: { in: userStoreIds } }
-
     // Get daily metrics for the period
     const dateFilter = untilDate
       ? { gte: sinceDate, lte: untilDate }
@@ -88,7 +80,7 @@ export async function GET(request: NextRequest) {
 
     const dailyMetrics = await prisma.dailyMetrics.findMany({
       where: {
-        ...storeFilter,
+        storeId: store.id,
         date: dateFilter,
       },
       orderBy: { date: 'asc' },

@@ -11,29 +11,24 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = request.nextUrl
     const period = searchParams.get('period') ?? '30d'
-    const storeId = searchParams.get('storeId')
 
     const days = period === '7d' ? 7 : period === '90d' ? 90 : 30
     const sinceDate = new Date()
     sinceDate.setDate(sinceDate.getDate() - days)
 
-    const userStores = await prisma.store.findMany({
+    // Get the user's single store
+    const store = await prisma.store.findFirst({
       where: { userId: user.id },
       select: { id: true },
     })
-    const userStoreIds = userStores.map(s => s.id)
 
-    if (userStoreIds.length === 0) {
+    if (!store) {
       return NextResponse.json({ data: [] })
     }
 
-    const storeFilter = storeId && userStoreIds.includes(storeId)
-      ? { storeId }
-      : { storeId: { in: userStoreIds } }
-
     const stepMetrics = await prisma.stepMetrics.findMany({
       where: {
-        ...storeFilter,
+        storeId: store.id,
         date: { gte: sinceDate },
       },
       orderBy: { stepNumber: 'asc' },

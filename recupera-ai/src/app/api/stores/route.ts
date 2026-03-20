@@ -6,7 +6,7 @@ import { normalizeShopDomain } from '@/lib/integrations/shopify'
 
 /**
  * GET /api/stores
- * List all stores for the authenticated user
+ * Get the authenticated user's store (single-store model)
  */
 export async function GET() {
   try {
@@ -18,17 +18,16 @@ export async function GET() {
       )
     }
 
-    const stores = await prisma.store.findMany({
+    const store = await prisma.store.findFirst({
       where: { userId: user.id },
-      orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json({ data: stores })
+    return NextResponse.json({ data: store })
   } catch (error) {
     return NextResponse.json(
       {
         error: 'internal_error',
-        message: `Failed to fetch stores: ${error instanceof Error ? error.message : 'Unknown'}`,
+        message: `Failed to fetch store: ${error instanceof Error ? error.message : 'Unknown'}`,
       },
       { status: 500 }
     )
@@ -49,6 +48,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'unauthorized', message: 'Authentication required' },
         { status: 401 }
+      )
+    }
+
+    // Single-store model: check if user already has a store
+    const existingStore = await prisma.store.findFirst({
+      where: { userId: user.id },
+      select: { id: true },
+    })
+    if (existingStore) {
+      return NextResponse.json(
+        { error: 'store_limit', message: 'Você já possui uma loja cadastrada' },
+        { status: 409 }
       )
     }
 

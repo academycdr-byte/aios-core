@@ -18,7 +18,7 @@ import { formatCurrency, formatRelativeTime } from '@/lib/format'
 import { StatusBadge, Button, Input } from '@/components/ui'
 import { PageSpinner } from '@/components/ui'
 import { StatCard } from '@/components/patterns'
-import type { AbandonedCart, Store } from '@/types'
+import type { AbandonedCart } from '@/types'
 
 // ============================================================
 // CONFIG
@@ -62,33 +62,20 @@ const ITEMS_PER_PAGE = 10
 export default function CarrinhosPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL')
   const [typeFilter, setTypeFilter] = useState<string>('ALL')
-  const [storeFilter, setStoreFilter] = useState<string>('ALL')
   const [periodFilter, setPeriodFilter] = useState<string>('all')
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
   // Data state
   const [carts, setCarts] = useState<AbandonedCart[]>([])
-  const [stores, setStores] = useState<Store[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
-
-  // Fetch stores for filter dropdown
-  useEffect(() => {
-    fetch('/api/stores')
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.data) setStores(json.data)
-      })
-      .catch(() => { /* silently ignore */ })
-  }, [])
 
   // Fetch carts from API
   useEffect(() => {
     const params = new URLSearchParams()
     if (statusFilter !== 'ALL') params.set('status', statusFilter)
     if (typeFilter !== 'ALL') params.set('type', typeFilter)
-    if (storeFilter !== 'ALL') params.set('storeId', storeFilter)
     if (periodFilter !== 'all') params.set('period', periodFilter)
     if (search.trim()) params.set('search', search.trim())
     params.set('page', String(currentPage))
@@ -118,7 +105,7 @@ export default function CarrinhosPage() {
       cancelled = true
       controller.abort()
     }
-  }, [statusFilter, typeFilter, storeFilter, periodFilter, search, currentPage])
+  }, [statusFilter, typeFilter, periodFilter, search, currentPage])
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
 
@@ -212,20 +199,6 @@ export default function CarrinhosPage() {
           {TYPE_FILTERS.map((f) => (
             <option key={f.value} value={f.value}>
               {f.label}
-            </option>
-          ))}
-        </select>
-
-        {/* Store select */}
-        <select
-          value={storeFilter}
-          onChange={(e) => handleFilterChange(setStoreFilter, e.target.value)}
-          className="rounded-[var(--radius-md)] border border-border bg-surface px-3 py-1.5 text-sm text-text-primary"
-        >
-          <option value="ALL">Todas as lojas</option>
-          {stores.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
             </option>
           ))}
         </select>

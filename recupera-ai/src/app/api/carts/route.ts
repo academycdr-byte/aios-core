@@ -7,7 +7,6 @@ import type { Prisma } from '@/generated/prisma/client'
  * GET /api/carts
  * List abandoned carts with filters and pagination
  * Query params:
- *   - storeId (optional): filter by store
  *   - status (optional): PENDING | CONTACTING | RECOVERED | PAID | LOST | EXPIRED
  *   - type (optional): ABANDONED_CART | PIX_PENDING | CARD_DECLINED
  *   - period (optional): today | 7d | 30d | all (default: all)
@@ -26,7 +25,6 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = request.nextUrl
-    const storeId = searchParams.get('storeId')
     const status = searchParams.get('status')
     const type = searchParams.get('type')
     const period = searchParams.get('period') ?? 'all'
@@ -56,18 +54,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Get user store IDs for scoping
-    const userStores = await prisma.store.findMany({
+    // Get the user's single store
+    const store = await prisma.store.findFirst({
       where: { userId: user.id },
       select: { id: true },
     })
-    const userStoreIds = userStores.map((s) => s.id)
+
+    if (!store) {
+      return NextResponse.json({ data: [], total: 0, page, limit, totalPages: 0 })
+    }
 
     // Build where clause
     const where: Prisma.AbandonedCartWhereInput = {
-      storeId: storeId && userStoreIds.includes(storeId)
-        ? storeId
-        : { in: userStoreIds },
+      storeId: store.id,
     }
 
     if (status) {
