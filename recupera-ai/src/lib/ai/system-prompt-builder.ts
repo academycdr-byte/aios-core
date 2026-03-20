@@ -100,7 +100,8 @@ export function buildSystemPrompt(
   settings: StoreSettings,
   config: RecoveryConfig | null,
   cart: AbandonedCart | null,
-  stage?: RecoveryStage | null
+  stage?: RecoveryStage | null,
+  storeImages?: Array<{ id: string; name: string; triggerContext: string }> | null
 ): string {
   const aiName = settings.aiName || 'Assistente'
   const storeName = settings.storeName || 'a loja'
@@ -171,6 +172,21 @@ ${buildCartItemsText(items)}${cart.checkoutUrl ? `\n- Link para finalizar: ${car
     ? `\n## Instruções adicionais da loja\n${settings.customInstructions}`
     : ''
 
+  // --- Image library section ---
+  let imageLibrarySection = ''
+  if (storeImages && storeImages.length > 0) {
+    const imageLines = storeImages.map(img =>
+      `  [IMG:${img.id}] "${img.name}" — Enviar quando: ${img.triggerContext}`
+    ).join('\n')
+    imageLibrarySection = `\n## Imagens disponíveis para enviar
+Você tem as seguintes imagens que pode enviar ao cliente quando o contexto combinar:
+${imageLines}
+
+REGRA DE IMAGENS: Para enviar uma imagem, inclua o código [IMG:id] no INÍCIO da sua resposta, seguido do texto.
+Exemplo: [IMG:abc123] Olha, essa foto mostra a qualidade do nosso tecido!
+Envie NO MÁXIMO 1 imagem por mensagem. Só envie se for genuinamente útil para o cliente.`
+  }
+
   // --- Full prompt ---
   return `Você é ${sellerIdentity}, vendedor(a) da loja ${storeName}.
 ${settings.storeDescription || ''}
@@ -191,7 +207,7 @@ ${settings.faqContent ? `\n## Perguntas frequentes\n${settings.faqContent}` : ''
 
 ## Ofertas especiais
 ${buildOffersSection(settings)}
-${productDetailsSection}${cartSection}${stageSection}
+${productDetailsSection}${cartSection}${stageSection}${imageLibrarySection}
 
 ## Regras OBRIGATÓRIAS:
 1. Você É ${sellerIdentity}. NUNCA diga que é IA, bot ou assistente virtual

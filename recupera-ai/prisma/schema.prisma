@@ -29,46 +29,47 @@ model User {
 // ============================================================
 
 model Store {
-  id              String    @id @default(cuid())
-  userId          String    @map("user_id")
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name            String
-  platform        Platform
-  domain          String?
-  accessToken     String?   @map("access_token")
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  platform    Platform
+  domain      String?
+  accessToken String?  @map("access_token")
 
   // Shopify specific
-  shopifyDomain      String?   @map("shopify_domain")
-  shopifyWebhookId   String?   @map("shopify_webhook_id")
-  shopifyClientId    String?   @map("shopify_client_id")
-  shopifyClientSecret String?  @map("shopify_client_secret")
-  shopifyScopes      String?   @map("shopify_scopes")
-  connectionStatus   String    @default("CONNECTED") @map("connection_status")
+  shopifyDomain       String? @map("shopify_domain")
+  shopifyWebhookId    String? @map("shopify_webhook_id")
+  shopifyClientId     String? @map("shopify_client_id")
+  shopifyClientSecret String? @map("shopify_client_secret")
+  shopifyScopes       String? @map("shopify_scopes")
+  connectionStatus    String  @default("CONNECTED") @map("connection_status")
 
   // Nuvemshop specific
-  nuvemshopStoreId String?  @map("nuvemshop_store_id")
+  nuvemshopStoreId String? @map("nuvemshop_store_id")
 
   // WhatsApp
-  whatsappPhone   String?   @map("whatsapp_phone")
+  whatsappPhone     String? @map("whatsapp_phone")
   whatsappConnected Boolean @default(false) @map("whatsapp_connected")
 
   // Config
-  settings        StoreSettings?
-  recoveryConfig  RecoveryConfig?
-  recoveryStages  RecoveryStage[]
+  settings       StoreSettings?
+  recoveryConfig RecoveryConfig?
+  recoveryStages RecoveryStage[]
+  storeImages    StoreImage[]
 
   // Data
-  abandonedCarts  AbandonedCart[]
-  conversations   Conversation[]
-  dailyMetrics    DailyMetrics[]
+  abandonedCarts AbandonedCart[]
+  conversations  Conversation[]
+  dailyMetrics   DailyMetrics[]
 
-  isActive        Boolean   @default(true) @map("is_active")
-  testMode        Boolean   @default(false) @map("test_mode")
-  testPhones      String[]  @default([]) @map("test_phones")
-  webhookSecret   String?   @map("webhook_secret")
-  lastSyncAt      DateTime? @map("last_sync_at")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  isActive      Boolean   @default(true) @map("is_active")
+  testMode      Boolean   @default(false) @map("test_mode")
+  testPhones    String[]  @default([]) @map("test_phones")
+  webhookSecret String?   @map("webhook_secret")
+  lastSyncAt    DateTime? @map("last_sync_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("stores")
 }
@@ -83,33 +84,33 @@ enum Platform {
 // ============================================================
 
 model StoreSettings {
-  id                String   @id @default(cuid())
-  storeId           String   @unique @map("store_id")
-  store             Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  storeId String @unique @map("store_id")
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   // Store info for AI context
-  storeName         String?  @map("store_name")
-  storeDescription  String?  @map("store_description") @db.Text
-  mainProducts      String?  @map("main_products") @db.Text
-  targetAudience    String?  @map("target_audience") @db.Text
+  storeName        String? @map("store_name")
+  storeDescription String? @map("store_description") @db.Text
+  mainProducts     String? @map("main_products") @db.Text
+  targetAudience   String? @map("target_audience") @db.Text
 
   // Policies (AI uses these to answer questions)
-  shippingPolicy    String?  @map("shipping_policy") @db.Text
-  returnPolicy      String?  @map("return_policy") @db.Text
-  paymentMethods    String?  @map("payment_methods") @db.Text
-  warrantyPolicy    String?  @map("warranty_policy") @db.Text
-  faqContent        String?  @map("faq_content") @db.Text
+  shippingPolicy String? @map("shipping_policy") @db.Text
+  returnPolicy   String? @map("return_policy") @db.Text
+  paymentMethods String? @map("payment_methods") @db.Text
+  warrantyPolicy String? @map("warranty_policy") @db.Text
+  faqContent     String? @map("faq_content") @db.Text
 
   // Offers & Discounts
-  currentOffers     String?  @map("current_offers") @db.Text
-  canOfferDiscount  Boolean  @default(false) @map("can_offer_discount")
+  currentOffers      String? @map("current_offers") @db.Text
+  canOfferDiscount   Boolean @default(false) @map("can_offer_discount")
   maxDiscountPercent Float?  @map("max_discount_percent")
-  couponCode        String?  @map("coupon_code")
-  couponDiscount    Float?   @map("coupon_discount")
+  couponCode         String? @map("coupon_code")
+  couponDiscount     Float?  @map("coupon_discount")
 
   // AI Behavior
-  aiTone            String   @default("profissional") @map("ai_tone")
-  aiName            String   @default("Assistente") @map("ai_name")
+  aiTone             String  @default("profissional") @map("ai_tone")
+  aiName             String  @default("Assistente") @map("ai_name")
   customInstructions String? @map("custom_instructions") @db.Text
 
   // Business hours
@@ -119,16 +120,16 @@ model StoreSettings {
   timezone           String  @default("America/Sao_Paulo")
 
   // Seller persona (human-like communication)
-  sellerName        String?  @map("seller_name")
-  sellerPersona     String?  @map("seller_persona") @db.Text
+  sellerName    String? @map("seller_name")
+  sellerPersona String? @map("seller_persona") @db.Text
 
   // Product details
   deliveryTimeframes String? @map("delivery_timeframes") @db.Text
-  sizeGuide         String?  @map("size_guide") @db.Text
-  productSpecs      String?  @map("product_specs") @db.Text
+  sizeGuide          String? @map("size_guide") @db.Text
+  productSpecs       String? @map("product_specs") @db.Text
 
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("store_settings")
 }
@@ -138,26 +139,26 @@ model StoreSettings {
 // ============================================================
 
 model RecoveryStage {
-  id              String   @id @default(cuid())
-  storeId         String   @map("store_id")
-  store           Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  storeId String @map("store_id")
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
-  name            String
-  order           Int
-  objective       String   @db.Text
-  aiInstructions  String   @map("ai_instructions") @db.Text
+  name           String
+  order          Int
+  objective      String @db.Text
+  aiInstructions String @map("ai_instructions") @db.Text
 
   // Discount rules for this stage
-  discountEnabled Boolean  @default(false) @map("discount_enabled")
-  discountPercent Float?   @map("discount_percent")
+  discountEnabled Boolean @default(false) @map("discount_enabled")
+  discountPercent Float?  @map("discount_percent")
 
   // First message config (only for stage order=1)
-  firstMessageTone    String?  @map("first_message_tone")
+  firstMessageTone     String? @map("first_message_tone")
   firstMessageElements String? @map("first_message_elements") @db.Text
 
-  isDefault       Boolean  @default(false) @map("is_default")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([storeId, order])
   @@index([storeId])
@@ -169,50 +170,50 @@ model RecoveryStage {
 // ============================================================
 
 model RecoveryConfig {
-  id                    String   @id @default(cuid())
-  storeId               String   @unique @map("store_id")
-  store                 Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  isActive              Boolean  @default(true) @map("is_active")
+  id       String  @id @default(cuid())
+  storeId  String  @unique @map("store_id")
+  store    Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  isActive Boolean @default(true) @map("is_active")
 
   // === ABANDONED CART RECOVERY ===
   // Timing (in minutes)
-  firstMessageDelay     Int      @default(30) @map("first_message_delay")
-  followUp1Delay        Int      @default(360) @map("follow_up_1_delay")
-  followUp2Delay        Int      @default(1440) @map("follow_up_2_delay")
-  followUp3Delay        Int?     @map("follow_up_3_delay")
-  maxAttempts           Int      @default(3) @map("max_attempts")
+  firstMessageDelay Int  @default(30) @map("first_message_delay")
+  followUp1Delay    Int  @default(360) @map("follow_up_1_delay")
+  followUp2Delay    Int  @default(1440) @map("follow_up_2_delay")
+  followUp3Delay    Int? @map("follow_up_3_delay")
+  maxAttempts       Int  @default(3) @map("max_attempts")
 
   // Message templates (if null, AI generates dynamically)
-  firstMessageTemplate  String?  @map("first_message_template") @db.Text
-  followUp1Template     String?  @map("follow_up_1_template") @db.Text
-  followUp2Template     String?  @map("follow_up_2_template") @db.Text
-  followUp3Template     String?  @map("follow_up_3_template") @db.Text
+  firstMessageTemplate String? @map("first_message_template") @db.Text
+  followUp1Template    String? @map("follow_up_1_template") @db.Text
+  followUp2Template    String? @map("follow_up_2_template") @db.Text
+  followUp3Template    String? @map("follow_up_3_template") @db.Text
 
   // Conditions
-  minCartValue          Float    @default(0) @map("min_cart_value")
-  excludeReturning      Boolean  @default(false) @map("exclude_returning")
+  minCartValue     Float   @default(0) @map("min_cart_value")
+  excludeReturning Boolean @default(false) @map("exclude_returning")
 
   // === PIX PENDING RECOVERY ===
-  pixRecoveryEnabled    Boolean  @default(true) @map("pix_recovery_enabled")
-  pixFirstDelay         Int      @default(15) @map("pix_first_delay")
-  pixFollowUpDelay      Int      @default(120) @map("pix_follow_up_delay")
-  pixMaxAttempts        Int      @default(2) @map("pix_max_attempts")
-  pixExpirationMinutes  Int      @default(1440) @map("pix_expiration_minutes")
+  pixRecoveryEnabled   Boolean @default(true) @map("pix_recovery_enabled")
+  pixFirstDelay        Int     @default(15) @map("pix_first_delay")
+  pixFollowUpDelay     Int     @default(120) @map("pix_follow_up_delay")
+  pixMaxAttempts       Int     @default(2) @map("pix_max_attempts")
+  pixExpirationMinutes Int     @default(1440) @map("pix_expiration_minutes")
 
   // === CARD DECLINED RECOVERY ===
-  cardRecoveryEnabled   Boolean  @default(true) @map("card_recovery_enabled")
-  cardFirstDelay        Int      @default(10) @map("card_first_delay")
-  cardMaxAttempts       Int      @default(2) @map("card_max_attempts")
+  cardRecoveryEnabled Boolean @default(true) @map("card_recovery_enabled")
+  cardFirstDelay      Int     @default(10) @map("card_first_delay")
+  cardMaxAttempts     Int     @default(2) @map("card_max_attempts")
 
   // === ADVANCED FOLLOW-UP (Story 1.3) ===
-  stopOnOptOut          Boolean  @default(true) @map("stop_on_opt_out")
-  expirationHours       Int      @default(72) @map("expiration_hours")
+  stopOnOptOut    Boolean @default(true) @map("stop_on_opt_out")
+  expirationHours Int     @default(72) @map("expiration_hours")
 
   // Flexible follow-up steps
-  followUpSteps         FollowUpStep[]
+  followUpSteps FollowUpStep[]
 
-  createdAt             DateTime @default(now()) @map("created_at")
-  updatedAt             DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("recovery_configs")
 }
@@ -222,18 +223,18 @@ model RecoveryConfig {
 // ============================================================
 
 model FollowUpStep {
-  id           String       @id @default(cuid())
-  configId     String       @map("config_id")
-  config       RecoveryConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+  id       String         @id @default(cuid())
+  configId String         @map("config_id")
+  config   RecoveryConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
 
-  cartType     CartType     @default(ABANDONED_CART) @map("cart_type")
-  stepNumber   Int          @map("step_number") // 0 = first message, 1-7 = follow-ups
-  delayMinutes Int          @map("delay_minutes")
-  strategy     String       @default("") @db.Text // Instructions for AI at this step
-  isActive     Boolean      @default(true) @map("is_active")
+  cartType     CartType @default(ABANDONED_CART) @map("cart_type")
+  stepNumber   Int      @map("step_number") // 0 = first message, 1-7 = follow-ups
+  delayMinutes Int      @map("delay_minutes")
+  strategy     String   @default("") @db.Text // Instructions for AI at this step
+  isActive     Boolean  @default(true) @map("is_active")
 
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([configId, cartType, stepNumber])
   @@index([configId])
@@ -245,48 +246,48 @@ model FollowUpStep {
 // ============================================================
 
 model AbandonedCart {
-  id              String        @id @default(cuid())
-  storeId         String        @map("store_id")
-  store           Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  storeId String @map("store_id")
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   // Customer info
-  customerName    String?       @map("customer_name")
-  customerEmail   String?       @map("customer_email")
-  customerPhone   String?       @map("customer_phone")
+  customerName  String? @map("customer_name")
+  customerEmail String? @map("customer_email")
+  customerPhone String? @map("customer_phone")
 
   // Cart info
-  cartTotal       Float         @map("cart_total")
-  currency        String        @default("BRL")
-  cartItems       Json          @map("cart_items")
-  itemCount       Int           @default(1) @map("item_count")
-  checkoutUrl     String?       @map("checkout_url")
+  cartTotal   Float   @map("cart_total")
+  currency    String  @default("BRL")
+  cartItems   Json    @map("cart_items")
+  itemCount   Int     @default(1) @map("item_count")
+  checkoutUrl String? @map("checkout_url")
 
   // Platform reference
-  platformCartId  String?       @map("platform_cart_id")
-  platformOrderId String?       @map("platform_order_id")
+  platformCartId  String? @map("platform_cart_id")
+  platformOrderId String? @map("platform_order_id")
 
   // Type & Status
-  type            CartType      @default(ABANDONED_CART)
-  status          CartStatus    @default(PENDING)
+  type   CartType   @default(ABANDONED_CART)
+  status CartStatus @default(PENDING)
 
   // Recovery tracking
-  recoveryAttempts Int          @default(0) @map("recovery_attempts")
-  lastAttemptAt   DateTime?     @map("last_attempt_at")
-  recoveredAt     DateTime?     @map("recovered_at")
-  recoveredValue  Float?        @map("recovered_value")
-  paidAt          DateTime?     @map("paid_at")
-  paidValue       Float?        @map("paid_value")
-  recoveredAtStage Int?         @map("recovered_at_stage")
-  discountUsed     Float?       @map("discount_used")
+  recoveryAttempts Int       @default(0) @map("recovery_attempts")
+  lastAttemptAt    DateTime? @map("last_attempt_at")
+  recoveredAt      DateTime? @map("recovered_at")
+  recoveredValue   Float?    @map("recovered_value")
+  paidAt           DateTime? @map("paid_at")
+  paidValue        Float?    @map("paid_value")
+  recoveredAtStage Int?      @map("recovered_at_stage")
+  discountUsed     Float?    @map("discount_used")
 
   // Conversation
-  conversation    Conversation?
+  conversation Conversation?
 
   // Timestamps
-  abandonedAt     DateTime      @map("abandoned_at")
-  expiresAt       DateTime?     @map("expires_at")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
+  abandonedAt DateTime  @map("abandoned_at")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   @@index([storeId, status])
   @@index([storeId, abandonedAt])
@@ -313,41 +314,41 @@ enum CartStatus {
 // ============================================================
 
 model Conversation {
-  id              String            @id @default(cuid())
-  storeId         String            @map("store_id")
-  store           Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  abandonedCartId String?           @unique @map("abandoned_cart_id")
-  abandonedCart   AbandonedCart?     @relation(fields: [abandonedCartId], references: [id])
+  id              String         @id @default(cuid())
+  storeId         String         @map("store_id")
+  store           Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  abandonedCartId String?        @unique @map("abandoned_cart_id")
+  abandonedCart   AbandonedCart? @relation(fields: [abandonedCartId], references: [id])
 
   // Customer
-  customerPhone   String            @map("customer_phone")
-  customerName    String?           @map("customer_name")
+  customerPhone String  @map("customer_phone")
+  customerName  String? @map("customer_name")
 
   // Status
-  status          ConversationStatus @default(ACTIVE)
+  status ConversationStatus @default(ACTIVE)
 
   // Messages
-  messages        Message[]
+  messages Message[]
 
   // AI metadata
-  aiModel         String?           @map("ai_model")
-  totalTokens     Int               @default(0) @map("total_tokens")
-  estimatedCost   Float             @default(0) @map("estimated_cost")
+  aiModel       String? @map("ai_model")
+  totalTokens   Int     @default(0) @map("total_tokens")
+  estimatedCost Float   @default(0) @map("estimated_cost")
 
   // Stage tracking
-  currentStageOrder Int?             @map("current_stage_order")
-  discountOffered   Float?           @map("discount_offered")
+  currentStageOrder Int?   @map("current_stage_order")
+  discountOffered   Float? @map("discount_offered")
 
   // Abandonment tracking
   abandonmentReason AbandonmentReason? @map("abandonment_reason")
   closingReason     String?            @map("closing_reason")
 
   // Timestamps
-  startedAt       DateTime          @default(now()) @map("started_at")
-  lastMessageAt   DateTime?         @map("last_message_at")
-  closedAt        DateTime?         @map("closed_at")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
+  startedAt     DateTime  @default(now()) @map("started_at")
+  lastMessageAt DateTime? @map("last_message_at")
+  closedAt      DateTime? @map("closed_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@index([storeId, status])
   @@map("conversations")
@@ -366,32 +367,32 @@ enum ConversationStatus {
 // ============================================================
 
 model Message {
-  id              String       @id @default(cuid())
-  conversationId  String       @map("conversation_id")
-  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  id             String       @id @default(cuid())
+  conversationId String       @map("conversation_id")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   // Message content
-  role            MessageRole
-  content         String       @db.Text
+  role    MessageRole
+  content String      @db.Text
 
   // WhatsApp tracking
-  whatsappMsgId   String?      @map("whatsapp_msg_id")
-  messageStatus   MessageStatus @default(SENT) @map("message_status")
+  whatsappMsgId String?       @map("whatsapp_msg_id")
+  messageStatus MessageStatus @default(SENT) @map("message_status")
 
   // Intent classification (set when role=CUSTOMER)
-  intent          String?
+  intent String?
 
   // Follow-up tracking
-  followUpStep    Int?         @map("follow_up_step")
+  followUpStep Int? @map("follow_up_step")
 
   // AI metadata
-  tokensUsed      Int?         @map("tokens_used")
-  modelUsed       String?      @map("model_used")
+  tokensUsed Int?    @map("tokens_used")
+  modelUsed  String? @map("model_used")
 
   // Timestamps
-  sentAt          DateTime     @default(now()) @map("sent_at")
-  deliveredAt     DateTime?    @map("delivered_at")
-  readAt          DateTime?    @map("read_at")
+  sentAt      DateTime  @default(now()) @map("sent_at")
+  deliveredAt DateTime? @map("delivered_at")
+  readAt      DateTime? @map("read_at")
 
   @@index([conversationId, sentAt])
   @@map("messages")
@@ -427,47 +428,47 @@ enum AbandonmentReason {
 // ============================================================
 
 model DailyMetrics {
-  id                 String   @id @default(cuid())
-  storeId            String   @map("store_id")
-  store              Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  date               DateTime @db.Date
+  id      String   @id @default(cuid())
+  storeId String   @map("store_id")
+  store   Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  date    DateTime @db.Date
 
   // Cart metrics
-  abandonedCount     Int      @default(0) @map("abandoned_count")
-  abandonedValue     Float    @default(0) @map("abandoned_value")
+  abandonedCount Int   @default(0) @map("abandoned_count")
+  abandonedValue Float @default(0) @map("abandoned_value")
 
   // Recovery metrics
-  contactedCount     Int      @default(0) @map("contacted_count")
-  recoveredCount     Int      @default(0) @map("recovered_count")
-  recoveredValue     Float    @default(0) @map("recovered_value")
+  contactedCount Int   @default(0) @map("contacted_count")
+  recoveredCount Int   @default(0) @map("recovered_count")
+  recoveredValue Float @default(0) @map("recovered_value")
 
   // Payment confirmation
-  paidCount          Int      @default(0) @map("paid_count")
-  paidValue          Float    @default(0) @map("paid_value")
+  paidCount Int   @default(0) @map("paid_count")
+  paidValue Float @default(0) @map("paid_value")
 
   // Calculated metrics
-  avgTicket          Float    @default(0) @map("avg_ticket")
-  recoveryRate       Float    @default(0) @map("recovery_rate")
+  avgTicket    Float @default(0) @map("avg_ticket")
+  recoveryRate Float @default(0) @map("recovery_rate")
 
   // Conversation metrics
-  totalConversations Int      @default(0) @map("total_conversations")
-  avgMessagesPerConv Float    @default(0) @map("avg_messages_per_conv")
-  aiCost             Float    @default(0) @map("ai_cost")
+  totalConversations Int   @default(0) @map("total_conversations")
+  avgMessagesPerConv Float @default(0) @map("avg_messages_per_conv")
+  aiCost             Float @default(0) @map("ai_cost")
 
   // Message delivery metrics (Story 1.6)
-  messagesSent       Int      @default(0) @map("messages_sent")
-  messagesDelivered  Int      @default(0) @map("messages_delivered")
-  messagesRead       Int      @default(0) @map("messages_read")
-  messagesReplied    Int      @default(0) @map("messages_replied")
+  messagesSent      Int @default(0) @map("messages_sent")
+  messagesDelivered Int @default(0) @map("messages_delivered")
+  messagesRead      Int @default(0) @map("messages_read")
+  messagesReplied   Int @default(0) @map("messages_replied")
 
   // Link tracking (Story 1.6)
-  linkClicks         Int      @default(0) @map("link_clicks")
+  linkClicks Int @default(0) @map("link_clicks")
 
   // Stage & discount metrics (Story 1.6)
-  discountRecoveries Int      @default(0) @map("discount_recoveries")
-  avgDiscountPercent Float    @default(0) @map("avg_discount_percent")
+  discountRecoveries Int   @default(0) @map("discount_recoveries")
+  avgDiscountPercent Float @default(0) @map("avg_discount_percent")
 
-  createdAt          DateTime @default(now()) @map("created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@unique([storeId, date])
   @@index([storeId, date])
@@ -479,20 +480,20 @@ model DailyMetrics {
 // ============================================================
 
 model TrackedLink {
-  id           String   @id @default(cuid())
-  storeId      String   @map("store_id")
-  code         String   @unique
-  targetUrl    String   @map("target_url") @db.Text
-  conversationId String? @map("conversation_id")
-  cartId       String?  @map("cart_id")
-  stepNumber   Int?     @map("step_number")
-  utmSource    String?  @map("utm_source")
-  utmMedium    String?  @map("utm_medium")
-  utmCampaign  String?  @map("utm_campaign")
-  utmContent   String?  @map("utm_content")
-  clicks       Int      @default(0)
-  lastClickAt  DateTime? @map("last_click_at")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id             String    @id @default(cuid())
+  storeId        String    @map("store_id")
+  code           String    @unique
+  targetUrl      String    @map("target_url") @db.Text
+  conversationId String?   @map("conversation_id")
+  cartId         String?   @map("cart_id")
+  stepNumber     Int?      @map("step_number")
+  utmSource      String?   @map("utm_source")
+  utmMedium      String?   @map("utm_medium")
+  utmCampaign    String?   @map("utm_campaign")
+  utmContent     String?   @map("utm_content")
+  clicks         Int       @default(0)
+  lastClickAt    DateTime? @map("last_click_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
   @@index([code])
   @@index([storeId])
@@ -504,24 +505,46 @@ model TrackedLink {
 // ============================================================
 
 model StepMetrics {
-  id                String   @id @default(cuid())
-  storeId           String   @map("store_id")
-  date              DateTime @db.Date
-  cartType          CartType @default(ABANDONED_CART) @map("cart_type")
-  stepNumber        Int      @map("step_number")
+  id         String   @id @default(cuid())
+  storeId    String   @map("store_id")
+  date       DateTime @db.Date
+  cartType   CartType @default(ABANDONED_CART) @map("cart_type")
+  stepNumber Int      @map("step_number")
 
-  messagesSent      Int      @default(0) @map("messages_sent")
-  messagesDelivered Int      @default(0) @map("messages_delivered")
-  messagesRead      Int      @default(0) @map("messages_read")
-  linkClicks        Int      @default(0) @map("link_clicks")
-  messagesReplied   Int      @default(0) @map("messages_replied")
-  conversions       Int      @default(0)
-  conversionValue   Float    @default(0) @map("conversion_value")
-  aiCost            Float    @default(0) @map("ai_cost")
+  messagesSent      Int   @default(0) @map("messages_sent")
+  messagesDelivered Int   @default(0) @map("messages_delivered")
+  messagesRead      Int   @default(0) @map("messages_read")
+  linkClicks        Int   @default(0) @map("link_clicks")
+  messagesReplied   Int   @default(0) @map("messages_replied")
+  conversions       Int   @default(0)
+  conversionValue   Float @default(0) @map("conversion_value")
+  aiCost            Float @default(0) @map("ai_cost")
 
-  createdAt         DateTime @default(now()) @map("created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@unique([storeId, date, cartType, stepNumber])
   @@index([storeId, date])
   @@map("step_metrics")
+}
+
+// ============================================================
+// STORE IMAGES (AI image library for smart sending)
+// ============================================================
+
+model StoreImage {
+  id      String @id @default(cuid())
+  storeId String @map("store_id")
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  name           String // "Etiqueta de autenticidade"
+  description    String  @db.Text // What this image shows
+  triggerContext String  @map("trigger_context") @db.Text // When AI should send it
+  category       String  @default("general") // quality, sizing, authenticity, product, etc.
+  imageUrl       String  @map("image_url") @db.Text // URL of the image
+  isActive       Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("store_images")
 }

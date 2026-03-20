@@ -240,6 +240,12 @@ export async function processSingleCart(
       return { action: 'skipped', error: 'Outside business hours' }
     }
 
+    // Load store images for AI context
+    const storeImages = await prisma.storeImage.findMany({
+      where: { storeId: store.id, isActive: true },
+      select: { id: true, name: true, triggerContext: true },
+    })
+
     const followUpSteps = (store.recoveryConfig?.followUpSteps ?? []) as unknown as FollowUpStep[]
     const cartType = cart.type as string
 
@@ -323,7 +329,8 @@ export async function processSingleCart(
         settings,
         config,
         firstStage,
-        stepStrategy
+        stepStrategy,
+        storeImages
       )
     } else {
       // Follow-up message — use corresponding stage
@@ -334,15 +341,31 @@ export async function processSingleCart(
         config,
         cart.recoveryAttempts + 1,
         stageForAttempt,
-        stepStrategy
+        stepStrategy,
+        storeImages
       )
     }
 
-    // Send via WhatsApp
+    // Send via WhatsApp (with image support)
     const instanceName = `recupera-${store.id}`
     try {
       if (evolutionApi.isConfigured()) {
-        await evolutionApi.sendText(instanceName, cart.customerPhone, generationResult.message)
+        // Check for image tags in the AI response
+        const imageTagMatch = generationResult.message.match(/\[IMG:([a-zA-Z0-9_-]+)\]/)
+        if (imageTagMatch) {
+          const imageId = imageTagMatch[1]
+          const cleanMessage = generationResult.message.replace(/\[IMG:[a-zA-Z0-9_-]+\]\s*/g, '').trim()
+          const storeImage = await prisma.storeImage.findFirst({
+            where: { id: imageId, storeId: store.id, isActive: true },
+          })
+          if (storeImage) {
+            await evolutionApi.sendMedia(instanceName, cart.customerPhone, storeImage.imageUrl, cleanMessage || undefined, 'image')
+          } else if (cleanMessage) {
+            await evolutionApi.sendText(instanceName, cart.customerPhone, cleanMessage)
+          }
+        } else {
+          await evolutionApi.sendText(instanceName, cart.customerPhone, generationResult.message)
+        }
       } else {
         console.warn(`[Scheduler] Evolution API not configured, message not sent for cart ${cartId}`)
       }

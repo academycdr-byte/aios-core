@@ -158,7 +158,8 @@ export class RecoveryEngine {
     settings: StoreSettings,
     config: RecoveryConfig | null,
     stage?: RecoveryStage | null,
-    stepStrategy?: string | null
+    stepStrategy?: string | null,
+    storeImages?: Array<{ id: string; name: string; triggerContext: string }> | null
   ): Promise<GenerationResult> {
     // If store has a template configured, use it directly
     if (config?.firstMessageTemplate) {
@@ -175,7 +176,7 @@ export class RecoveryEngine {
       return this.mockFirstMessage(cart)
     }
 
-    const systemPrompt = buildSystemPrompt(settings, config, cart, stage)
+    const systemPrompt = buildSystemPrompt(settings, config, cart, stage, storeImages)
     const stageContext = stage
       ? `\nSiga as instrucoes da Etapa ${stage.order} (${stage.name}).`
       : ''
@@ -200,7 +201,8 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
     config: RecoveryConfig | null,
     messageNumber: number,
     stage?: RecoveryStage | null,
-    stepStrategy?: string | null
+    stepStrategy?: string | null,
+    storeImages?: Array<{ id: string; name: string; triggerContext: string }> | null
   ): Promise<GenerationResult> {
     // Check for configured templates
     const templateMap: Record<number, string | null | undefined> = {
@@ -224,7 +226,7 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
       return this.mockFollowUp(cart)
     }
 
-    const systemPrompt = buildSystemPrompt(settings, config, cart, stage)
+    const systemPrompt = buildSystemPrompt(settings, config, cart, stage, storeImages)
     const urgencyLevel =
       messageNumber >= 3 ? 'alta (ultima tentativa)' : 'media'
 
@@ -254,7 +256,8 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
     conversationHistory: Message[],
     customerMessage: string,
     media?: MediaAttachment | null,
-    stage?: RecoveryStage | null
+    stage?: RecoveryStage | null,
+    storeImages?: Array<{ id: string; name: string; triggerContext: string }> | null
   ): Promise<GenerationResult> {
     const client = getAnthropic()
     if (!client) {
@@ -262,7 +265,7 @@ Responda SOMENTE com a mensagem, sem explicacoes.`
       return this.mockReply(cart, intent.intent)
     }
 
-    const systemPrompt = buildSystemPrompt(settings, null, cart, stage)
+    const systemPrompt = buildSystemPrompt(settings, null, cart, stage, storeImages)
 
     // Build conversation messages for context
     const messages: Anthropic.MessageParam[] = []

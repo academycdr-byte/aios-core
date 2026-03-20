@@ -114,6 +114,12 @@ export async function processIncomingMessage(
       }
     }
 
+    // Load store images for AI context
+    const storeImages = await prisma.storeImage.findMany({
+      where: { storeId: store.id, isActive: true },
+      select: { id: true, name: true, triggerContext: true },
+    })
+
     // ----------------------------------------------------------
     // 2. Classify customer intent
     // ----------------------------------------------------------
@@ -146,10 +152,13 @@ export async function processIncomingMessage(
     // 3a. COMPLETED: Customer says they bought / will buy
     if (intent === 'COMPLETED') {
       // Generate a thank-you message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage, storeImages)
 
-      // Send via WhatsApp
-      await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
+      // Send via WhatsApp (with image support)
+      const cleanMessage = await processAIResponseMedia(store.id, conversation.customerPhone, result.message)
+      if (cleanMessage) {
+        await sendWhatsAppMessage(store.id, conversation.customerPhone, cleanMessage)
+      }
 
       // Save AI message to DB
       await saveAIMessage(conversationId, result)
@@ -194,8 +203,11 @@ export async function processIncomingMessage(
     // 3b. OPT_OUT: Customer explicitly asked to stop
     if (intent === 'OPT_OUT') {
       // Send farewell message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
-      await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage, storeImages)
+      const cleanMsgOptOut = await processAIResponseMedia(store.id, conversation.customerPhone, result.message)
+      if (cleanMsgOptOut) {
+        await sendWhatsAppMessage(store.id, conversation.customerPhone, cleanMsgOptOut)
+      }
       await saveAIMessage(conversationId, result)
 
       // Mark cart as lost
@@ -264,10 +276,13 @@ export async function processIncomingMessage(
     // 3d. NOT_INTERESTED after 3+ messages: Mark as lost
     if (intent === 'NOT_INTERESTED' && messageCount >= 3) {
       // Generate a polite goodbye message
-      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
+      const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage, storeImages)
 
-      // Send via WhatsApp
-      await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
+      // Send via WhatsApp (with image support)
+      const cleanMsgLost = await processAIResponseMedia(store.id, conversation.customerPhone, result.message)
+      if (cleanMsgLost) {
+        await sendWhatsAppMessage(store.id, conversation.customerPhone, cleanMsgLost)
+      }
 
       // Save AI message to DB
       await saveAIMessage(conversationId, result)
@@ -335,10 +350,13 @@ export async function processIncomingMessage(
     }
 
     // 3f. Default: Generate AI reply and send
-    const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage)
+    const result = await recoveryEngine.generateReply(cart, settings, messages, customerMessage, media, currentStage, storeImages)
 
-    // Send via WhatsApp
-    await sendWhatsAppMessage(store.id, conversation.customerPhone, result.message)
+    // Send via WhatsApp (with image support)
+    const cleanMsgDefault = await processAIResponseMedia(store.id, conversation.customerPhone, result.message)
+    if (cleanMsgDefault) {
+      await sendWhatsAppMessage(store.id, conversation.customerPhone, cleanMsgDefault)
+    }
 
     // Save AI message to DB
     await saveAIMessage(conversationId, result)
@@ -427,6 +445,59 @@ async function sendWhatsAppMessage(
       error instanceof Error ? error.message : error
     )
   }
+}
+
+/**
+ * Parse AI response for image tags and send media if found.
+ * Returns the cleaned text message (without image tags).
+ */
+async function processAIResponseMedia(
+  storeId: string,
+  phone: string,
+  aiMessage: string
+): Promise<string> {
+  const imageTagMatch = aiMessage.match(/\[IMG:([a-zA-Z0-9_-]+)\]/)
+  if (!imageTagMatch) return aiMessage
+
+  const imageId = imageTagMatch[1]
+  const cleanMessage = aiMessage.replace(/\[IMG:[a-zA-Z0-9_-]+\]\s*/g, '').trim()
+
+  try {
+    const storeImage = await prisma.storeImage.findFirst({
+      where: { id: imageId, storeId, isActive: true },
+    })
+
+    if (storeImage && evolutionApi.isConfigured()) {
+      const store = await prisma.store.findUnique({
+        where: { id: storeId },
+        select: { testMode: true, testPhones: true },
+      })
+
+      // testMode guard
+      if (store?.testMode) {
+        const whitelisted = (store.testPhones ?? []) as string[]
+        if (!whitelisted.includes(phone)) {
+          console.warn(`[MessageProcessor] testMode: blocked media send to non-whitelisted phone ${phone}`)
+          return cleanMessage
+        }
+      }
+
+      const instanceName = `recupera-${storeId}`
+      await evolutionApi.sendMedia(
+        instanceName,
+        phone,
+        storeImage.imageUrl,
+        cleanMessage || undefined,
+        'image'
+      )
+      console.log(`[MessageProcessor] Sent image "${storeImage.name}" to ${phone}`)
+      return '' // Return empty — message was sent as caption with the image
+    }
+  } catch (error) {
+    console.error(`[MessageProcessor] Failed to send image ${imageId}:`, error)
+  }
+
+  return cleanMessage
 }
 
 /**

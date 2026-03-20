@@ -47,6 +47,7 @@ import { RecoveryConfigForm } from '@/components/recovery-config-form'
 import { StageConfigPanel } from '@/components/stage-config-panel'
 import { FollowUpConfigPanel } from '@/components/follow-up-config-panel'
 import { KnowledgeBaseForm } from '@/components/knowledge-base-form'
+import { ImageLibraryPanel } from '@/components/image-library-panel'
 import { WhatsappConnectModal } from '@/components/whatsapp-connect-modal'
 import { Button, Badge, Input, Spinner, PageSpinner } from '@/components/ui'
 import type { MockStoreSettings, MockRecoveryConfig } from '@/lib/mock-stores'
@@ -975,7 +976,10 @@ export default function StoreDetailPage() {
       <div>
         {activeTab === 'overview' && <OverviewTab store={store} />}
         {activeTab === 'knowledge' && settings && (
-          <KnowledgeBaseForm settings={settings} onSave={handleSaveSettings} />
+          <div className="space-y-8">
+            <KnowledgeBaseForm settings={settings} onSave={handleSaveSettings} />
+            <ImageLibraryPanel storeId={store.id} />
+          </div>
         )}
         {activeTab === 'settings' && settings && (
           <div className="space-y-6">
