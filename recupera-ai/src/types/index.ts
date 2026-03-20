@@ -114,6 +114,11 @@ export interface StoreSettings {
   businessHoursEnd: string | null
   sendOutsideHours: boolean
   timezone: string
+  sellerName: string | null
+  sellerPersona: string | null
+  deliveryTimeframes: string | null
+  sizeGuide: string | null
+  productSpecs: string | null
   createdAt: string
   updatedAt: string
 }

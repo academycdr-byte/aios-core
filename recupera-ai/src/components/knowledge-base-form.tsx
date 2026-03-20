@@ -15,6 +15,9 @@ import {
   CheckCircle2,
   AlertCircle,
   BookOpen,
+  Timer,
+  Ruler,
+  FileText,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button, Input, Textarea, Toggle } from '@/components/ui'
@@ -61,7 +64,7 @@ const SECTIONS: KnowledgeSection[] = [
       },
       {
         key: 'storeDescription',
-        label: 'Descricao da Loja',
+        label: 'Descrição da Loja',
         placeholder: 'Ex: Loja especializada em camisas de futebol oficiais e retro...',
         tip: 'Ajuda a IA entender o posicionamento e tom da marca',
         rows: 3,
@@ -69,13 +72,13 @@ const SECTIONS: KnowledgeSection[] = [
       {
         key: 'mainProducts',
         label: 'Produtos Principais',
-        placeholder: 'Ex: Camisas de futebol oficiais, retro, selecoes, personalizadas...',
-        tip: 'A IA usara para sugerir alternativas e destacar diferenciais',
+        placeholder: 'Ex: Camisas de futebol oficiais, retrô, seleções, personalizadas...',
+        tip: 'A IA usará para sugerir alternativas e destacar diferenciais',
         rows: 2,
       },
       {
         key: 'targetAudience',
-        label: 'Publico-Alvo',
+        label: 'Público-Alvo',
         placeholder: 'Ex: Homens 18-45 anos, apaixonados por futebol, classe B/C...',
         tip: 'Ajusta a linguagem e abordagem da IA',
         rows: 2,
@@ -86,13 +89,28 @@ const SECTIONS: KnowledgeSection[] = [
     id: 'shipping',
     icon: Truck,
     title: 'Política de Envio',
-    description: 'Prazos de entrega e condicoes de frete',
+    description: 'Prazos de entrega e condições de frete',
     fields: [
       {
         key: 'shippingPolicy',
         label: 'Detalhes do Envio',
-        placeholder: 'Ex: Frete gratis acima de R$299. Entrega em 3-7 dias uteis para todo o Brasil. Rastreamento via Correios/Jadlog...',
-        tip: 'Frete e a objecao #1 em e-commerce. Quanto mais detalhado, melhor a IA responde',
+        placeholder: 'Ex: Frete grátis acima de R$299. Entrega em 3-7 dias úteis para todo o Brasil. Rastreamento via Correios/Jadlog...',
+        tip: 'Frete é a objeção #1 em e-commerce. Quanto mais detalhado, melhor a IA responde',
+        rows: 4,
+      },
+    ],
+  },
+  {
+    id: 'delivery',
+    icon: Timer,
+    title: 'Prazos de Entrega',
+    description: 'Detalhes sobre prazos por região e modalidade',
+    fields: [
+      {
+        key: 'deliveryTimeframes' as keyof MockStoreSettings,
+        label: 'Prazos de Entrega',
+        placeholder: 'Ex: São Paulo capital: 1-3 dias úteis. Sudeste: 3-5 dias. Nordeste: 5-8 dias. Norte: 7-12 dias. Frete expresso: +R$ 29,90 (entrega em 24-48h)...',
+        tip: 'Prazos detalhados ajudam a IA responder a principal objeção de compras online',
         rows: 4,
       },
     ],
@@ -105,8 +123,8 @@ const SECTIONS: KnowledgeSection[] = [
     fields: [
       {
         key: 'returnPolicy',
-        label: 'Detalhes de Troca/Devolucao',
-        placeholder: 'Ex: Troca gratuita em ate 30 dias. Devolucao com reembolso integral. Produto deve estar sem uso...',
+        label: 'Detalhes de Troca/Devolução',
+        placeholder: 'Ex: Troca gratuita em até 30 dias. Devolução com reembolso integral. Produto deve estar sem uso...',
         tip: 'Clientes indecisos se tranquilizam ao saber que podem trocar/devolver',
         rows: 4,
       },
@@ -116,13 +134,13 @@ const SECTIONS: KnowledgeSection[] = [
     id: 'payment',
     icon: CreditCard,
     title: 'Formas de Pagamento',
-    description: 'Metodos aceitos e condicoes',
+    description: 'Métodos aceitos e condições',
     fields: [
       {
         key: 'paymentMethods',
-        label: 'Metodos de Pagamento',
-        placeholder: 'Ex: PIX (5% desconto), Cartao ate 12x sem juros, Boleto (3 dias), Google Pay, Apple Pay...',
-        tip: 'A IA pode sugerir metodo alternativo quando o original falha (ex: PIX se cartao recusou)',
+        label: 'Métodos de Pagamento',
+        placeholder: 'Ex: PIX (5% desconto), Cartão até 12x sem juros, Boleto (3 dias), Google Pay, Apple Pay...',
+        tip: 'A IA pode sugerir método alternativo quando o original falha (ex: PIX se cartão recusou)',
         rows: 3,
       },
     ],
@@ -143,16 +161,46 @@ const SECTIONS: KnowledgeSection[] = [
     ],
   },
   {
+    id: 'sizes',
+    icon: Ruler,
+    title: 'Tabela de Tamanhos',
+    description: 'Guia de medidas para ajudar o cliente a escolher',
+    fields: [
+      {
+        key: 'sizeGuide' as keyof MockStoreSettings,
+        label: 'Guia de Tamanhos',
+        placeholder: 'Ex: P: Busto 88-92cm, Cintura 68-72cm. M: Busto 92-96cm, Cintura 72-76cm. G: Busto 96-100cm. GG: Busto 100-104cm. Na dúvida entre dois tamanhos, recomendamos o maior...',
+        tip: 'Tamanho errado é o principal motivo de troca. Informação clara reduz devoluções',
+        rows: 5,
+      },
+    ],
+  },
+  {
+    id: 'specs',
+    icon: FileText,
+    title: 'Especificações dos Produtos',
+    description: 'Detalhes técnicos, materiais e composição',
+    fields: [
+      {
+        key: 'productSpecs' as keyof MockStoreSettings,
+        label: 'Especificações Técnicas',
+        placeholder: 'Ex: Material: 100% poliéster Dri-FIT. Tecnologia: absorção de suor, secagem rápida. Escudo: bordado. Patrocinador: sublimado. Lavagem: máquina a frio, não usar alvejante...',
+        tip: 'Especificações detalhadas aumentam confiança e reduzem dúvidas pré-compra',
+        rows: 5,
+      },
+    ],
+  },
+  {
     id: 'faq',
     icon: HelpCircle,
     title: 'Perguntas Frequentes (FAQ)',
-    description: 'Duvidas comuns que a IA deve saber responder',
+    description: 'Dúvidas comuns que a IA deve saber responder',
     fields: [
       {
         key: 'faqContent',
         label: 'FAQ',
-        placeholder: 'Ex:\nP: Qual o prazo de entrega?\nR: 3-7 dias uteis para todo o Brasil.\n\nP: Posso trocar o tamanho?\nR: Sim, troca gratuita em ate 30 dias.\n\nP: O produto e original?\nR: Sim, todos os produtos sao 100% originais com nota fiscal.',
-        tip: 'Use formato Pergunta/Resposta. A IA usara para responder duvidas automaticamente',
+        placeholder: 'Ex:\nP: Qual o prazo de entrega?\nR: 3-7 dias úteis para todo o Brasil.\n\nP: Posso trocar o tamanho?\nR: Sim, troca gratuita em até 30 dias.\n\nP: O produto é original?\nR: Sim, todos os produtos são 100% originais com nota fiscal.',
+        tip: 'Use formato Pergunta/Resposta. A IA usará para responder dúvidas automaticamente',
         rows: 6,
       },
     ],
@@ -161,13 +209,13 @@ const SECTIONS: KnowledgeSection[] = [
     id: 'offers',
     icon: Tag,
     title: 'Ofertas e Descontos',
-    description: 'Promocoes ativas que a IA pode oferecer',
+    description: 'Promoções ativas que a IA pode oferecer',
     fields: [
       {
         key: 'currentOffers',
         label: 'Ofertas Atuais',
-        placeholder: 'Ex: Frete gratis acima de R$299. Compre 2 camisas e ganhe 10% de desconto. PIX com 5% off...',
-        tip: 'A IA usara estas ofertas como argumento para fechar a venda',
+        placeholder: 'Ex: Frete grátis acima de R$299. Compre 2 camisas e ganhe 10% de desconto. PIX com 5% off...',
+        tip: 'A IA usará estas ofertas como argumento para fechar a venda',
         rows: 3,
       },
     ],
@@ -175,14 +223,14 @@ const SECTIONS: KnowledgeSection[] = [
   {
     id: 'instructions',
     icon: Sparkles,
-    title: 'Instrucoes Personalizadas',
+    title: 'Instruções Personalizadas',
     description: 'Regras especiais para a IA seguir',
     fields: [
       {
         key: 'customInstructions',
-        label: 'Instrucoes para a IA',
-        placeholder: 'Ex: Sempre mencionar frete gratis acima de R$299. Nunca oferecer desconto maior que 10%. Se perguntar sobre entrega internacional, informar que nao fazemos...',
-        tip: 'Instrucoes personalizadas tem prioridade maxima no comportamento da IA',
+        label: 'Instruções para a IA',
+        placeholder: 'Ex: Sempre mencionar frete grátis acima de R$299. Nunca oferecer desconto maior que 10%. Se perguntar sobre entrega internacional, informar que não fazemos...',
+        tip: 'Instruções personalizadas têm prioridade máxima no comportamento da IA',
         rows: 5,
       },
     ],
@@ -199,9 +247,12 @@ const SCORED_FIELDS: (keyof MockStoreSettings)[] = [
   'mainProducts',
   'targetAudience',
   'shippingPolicy',
+  'deliveryTimeframes',
   'returnPolicy',
   'paymentMethods',
   'warrantyPolicy',
+  'sizeGuide',
+  'productSpecs',
   'faqContent',
   'currentOffers',
   'customInstructions',
@@ -231,15 +282,15 @@ function isSectionComplete(form: MockStoreSettings, section: KnowledgeSection): 
 function generatePreviewMessage(form: MockStoreSettings): string {
   const name = form.storeName || 'Sua Loja'
   const customerName = 'Maria'
-  const product = form.mainProducts?.split(',')[0]?.trim() || 'um produto incrivel'
+  const product = form.mainProducts?.split(',')[0]?.trim() || 'um produto incrível'
   const shipping = form.shippingPolicy ? '📦 ' + form.shippingPolicy.split('.')[0] + '.' : ''
   const offer = form.currentOffers ? '🏷️ ' + form.currentOffers.split('.')[0] + '!' : ''
   const payment = form.paymentMethods ? 'Aceitamos ' + form.paymentMethods.split(',').slice(0, 2).join(' e ').trim() + '.' : ''
 
   const lines = [
-    `Oi ${customerName}! 😊 Aqui e da ${name}.`,
+    `Oi ${customerName}! 😊 Aqui é da ${name}.`,
     '',
-    `Vi que voce estava de olho em ${product} e o carrinho ficou esperando!`,
+    `Vi que você estava de olho em ${product} e o carrinho ficou esperando!`,
   ]
 
   if (offer) {
@@ -322,7 +373,7 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
           </div>
         </div>
         <p className="mt-3 text-center text-[11px] text-text-tertiary">
-          A IA combina as informacoes abaixo com o contexto do carrinho abandonado para criar mensagens personalizadas e naturais via WhatsApp.
+          A IA combina as informações abaixo com o contexto do carrinho abandonado para criar mensagens personalizadas e naturais via WhatsApp.
         </p>
       </div>
 
@@ -455,7 +506,7 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 animate-fade-in">
                         <div>
                           <label className="mb-1 block text-xs font-medium text-text-secondary">
-                            Desconto Maximo (%)
+                            Desconto Máximo (%)
                           </label>
                           <Input
                             type="number"
@@ -467,7 +518,7 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
                         </div>
                         <div>
                           <label className="mb-1 block text-xs font-medium text-text-secondary">
-                            Codigo do Cupom
+                            Código do Cupom
                           </label>
                           <Input
                             type="text"
@@ -524,7 +575,7 @@ export function KnowledgeBaseForm({ settings: initial, onSave }: KnowledgeBaseFo
             </div>
           </div>
           <p className="text-[10px] text-text-tertiary ml-9">
-            Esta e uma simulacao. A mensagem real sera personalizada pela IA com base no carrinho do cliente.
+            Esta é uma simulação. A mensagem real será personalizada pela IA com base no carrinho do cliente.
           </p>
         </div>
       </div>

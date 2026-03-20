@@ -38,6 +38,11 @@ export interface MockStoreSettings {
   businessHoursEnd: string | null
   sendOutsideHours: boolean
   timezone: string
+  sellerName: string | null
+  sellerPersona: string | null
+  deliveryTimeframes: string | null
+  sizeGuide: string | null
+  productSpecs: string | null
 }
 
 export interface MockRecoveryConfig {
@@ -128,6 +133,11 @@ export const mockStoreSettings: Record<string, MockStoreSettings> = {
     businessHoursEnd: '22:00',
     sendOutsideHours: false,
     timezone: 'America/Sao_Paulo',
+    sellerName: null,
+    sellerPersona: null,
+    deliveryTimeframes: null,
+    sizeGuide: null,
+    productSpecs: null,
   },
   '2': {
     id: 'settings-2',
@@ -153,6 +163,11 @@ export const mockStoreSettings: Record<string, MockStoreSettings> = {
     businessHoursEnd: '21:00',
     sendOutsideHours: true,
     timezone: 'America/Sao_Paulo',
+    sellerName: null,
+    sellerPersona: null,
+    deliveryTimeframes: null,
+    sizeGuide: null,
+    productSpecs: null,
   },
   '3': {
     id: 'settings-3',
@@ -178,6 +193,11 @@ export const mockStoreSettings: Record<string, MockStoreSettings> = {
     businessHoursEnd: '18:00',
     sendOutsideHours: false,
     timezone: 'America/Sao_Paulo',
+    sellerName: null,
+    sellerPersona: null,
+    deliveryTimeframes: null,
+    sizeGuide: null,
+    productSpecs: null,
   },
 }
 

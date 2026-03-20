@@ -116,6 +116,11 @@ export async function PUT(
         businessHoursEnd: updateData.businessHoursEnd ?? null,
         sendOutsideHours: updateData.sendOutsideHours ?? false,
         timezone: updateData.timezone ?? 'America/Sao_Paulo',
+        sellerName: updateData.sellerName ?? null,
+        sellerPersona: updateData.sellerPersona ?? null,
+        deliveryTimeframes: updateData.deliveryTimeframes ?? null,
+        sizeGuide: updateData.sizeGuide ?? null,
+        productSpecs: updateData.productSpecs ?? null,
       },
     })
 

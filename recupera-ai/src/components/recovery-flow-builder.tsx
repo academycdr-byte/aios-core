@@ -197,7 +197,7 @@ function AbandonedCartFlow({ config, onChange }: RecoveryFlowBuilderProps) {
       {/* Condition: Min Cart Value */}
       <FlowNode variant="condition" icon={Filter} title="Valor do Carrinho" subtitle={`>= R$ ${config.minCartValue}`}>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-text-tertiary">Valor minimo: R$</span>
+          <span className="text-xs text-text-tertiary">Valor mínimo: R$</span>
           <input
             type="number"
             min={0}
@@ -211,21 +211,21 @@ function AbandonedCartFlow({ config, onChange }: RecoveryFlowBuilderProps) {
       <FlowConnector label="Aprovado" />
 
       {/* Delay 1 */}
-      <FlowNode variant="delay" icon={Clock} title="Aguardar" subtitle="Tempo apos abandono">
-        <EditableDelay value={config.firstMessageDelay} onChange={(v) => update('firstMessageDelay', v)} label="Apos abandono" />
+      <FlowNode variant="delay" icon={Clock} title="Aguardar" subtitle="Tempo após abandono">
+        <EditableDelay value={config.firstMessageDelay} onChange={(v) => update('firstMessageDelay', v)} label="Após abandono" />
       </FlowNode>
       <FlowConnector />
 
       {/* Message 1 */}
-      <FlowNode variant="message" icon={MessageSquare} title="1a Mensagem" subtitle="Mensagem inicial de recuperacao">
+      <FlowNode variant="message" icon={MessageSquare} title="1a Mensagem" subtitle="Mensagem inicial de recuperação">
         <EditableTemplate value={config.firstMessageTemplate} onChange={(v) => update('firstMessageTemplate', v)} label="Template 1a msg" />
       </FlowNode>
       <FlowConnector />
 
       {/* AI Response Branch */}
-      <FlowNode variant="ai" icon={Bot} title="IA Analisa Respostas" subtitle={`Ate ${config.maxAttempts} interacoes`}>
+      <FlowNode variant="ai" icon={Bot} title="IA Analisa Respostas" subtitle={`Até ${config.maxAttempts} interações`}>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-text-tertiary">Max interacoes:</span>
+          <span className="text-xs text-text-tertiary">Máx interações:</span>
           <input
             type="number"
             min={1}
@@ -237,7 +237,7 @@ function AbandonedCartFlow({ config, onChange }: RecoveryFlowBuilderProps) {
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400">Comprou</span>
-          <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400">Objecao</span>
+          <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400">Objeção</span>
           <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-medium text-blue-400">Duvida</span>
           <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">Irritado</span>
         </div>
@@ -246,7 +246,7 @@ function AbandonedCartFlow({ config, onChange }: RecoveryFlowBuilderProps) {
 
       {/* Follow-up 1 */}
       <FlowNode variant="delay" icon={Clock} title="Aguardar Follow-up 1">
-        <EditableDelay value={config.followUp1Delay} onChange={(v) => update('followUp1Delay', v)} label="Apos 1a msg" />
+        <EditableDelay value={config.followUp1Delay} onChange={(v) => update('followUp1Delay', v)} label="Após 1ª msg" />
       </FlowNode>
       <FlowConnector />
       <FlowNode variant="message" icon={MessageSquare} title="Follow-up 1" subtitle="Segunda tentativa de contato">
@@ -256,10 +256,10 @@ function AbandonedCartFlow({ config, onChange }: RecoveryFlowBuilderProps) {
 
       {/* Follow-up 2 */}
       <FlowNode variant="delay" icon={Clock} title="Aguardar Follow-up 2">
-        <EditableDelay value={config.followUp2Delay} onChange={(v) => update('followUp2Delay', v)} label="Apos follow-up 1" />
+        <EditableDelay value={config.followUp2Delay} onChange={(v) => update('followUp2Delay', v)} label="Após follow-up 1" />
       </FlowNode>
       <FlowConnector />
-      <FlowNode variant="message" icon={MessageSquare} title="Follow-up 2" subtitle="Terceira tentativa (ultima chance)">
+      <FlowNode variant="message" icon={MessageSquare} title="Follow-up 2" subtitle="Terceira tentativa (última chance)">
         <EditableTemplate value={config.followUp2Template} onChange={(v) => update('followUp2Template', v)} label="Template follow-up 2" />
       </FlowNode>
 
@@ -268,7 +268,7 @@ function AbandonedCartFlow({ config, onChange }: RecoveryFlowBuilderProps) {
         <>
           <FlowConnector label="Sem resposta" />
           <FlowNode variant="delay" icon={Clock} title="Aguardar Follow-up 3">
-            <EditableDelay value={config.followUp3Delay} onChange={(v) => update('followUp3Delay', v)} label="Apos follow-up 2" />
+            <EditableDelay value={config.followUp3Delay} onChange={(v) => update('followUp3Delay', v)} label="Após follow-up 2" />
           </FlowNode>
           <FlowConnector />
           <FlowNode variant="message" icon={MessageSquare} title="Follow-up 3" subtitle="Tentativa final">
@@ -303,17 +303,17 @@ function PixFlow({ config, onChange }: RecoveryFlowBuilderProps) {
 
   return (
     <div className="flex flex-col items-center">
-      <FlowNode variant="trigger" icon={Zap} title="PIX Gerado (Pendente)" subtitle="Pagamento PIX aguardando confirmacao" />
+      <FlowNode variant="trigger" icon={Zap} title="PIX Gerado (Pendente)" subtitle="Pagamento PIX aguardando confirmação" />
       <FlowConnector />
       <FlowNode variant="delay" icon={Clock} title="Aguardar">
-        <EditableDelay value={config.pixFirstDelay} onChange={(v) => update('pixFirstDelay', v)} label="Apos geracao PIX" />
+        <EditableDelay value={config.pixFirstDelay} onChange={(v) => update('pixFirstDelay', v)} label="Após geração PIX" />
       </FlowNode>
       <FlowConnector />
       <FlowNode variant="message" icon={MessageSquare} title="Lembrete PIX" subtitle="Lembrar cliente de finalizar pagamento" />
       <FlowConnector />
-      <FlowNode variant="ai" icon={Bot} title="IA Analisa Resposta" subtitle={`Ate ${config.pixMaxAttempts} tentativas`}>
+      <FlowNode variant="ai" icon={Bot} title="IA Analisa Resposta" subtitle={`Até ${config.pixMaxAttempts} tentativas`}>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-text-tertiary">Max tentativas:</span>
+          <span className="text-xs text-text-tertiary">Máx tentativas:</span>
           <input
             type="number"
             min={1}
@@ -326,10 +326,10 @@ function PixFlow({ config, onChange }: RecoveryFlowBuilderProps) {
       </FlowNode>
       <FlowConnector label="Sem resposta" />
       <FlowNode variant="delay" icon={Clock} title="Aguardar Follow-up">
-        <EditableDelay value={config.pixFollowUpDelay} onChange={(v) => update('pixFollowUpDelay', v)} label="Apos lembrete" />
+        <EditableDelay value={config.pixFollowUpDelay} onChange={(v) => update('pixFollowUpDelay', v)} label="Após lembrete" />
       </FlowNode>
       <FlowConnector />
-      <FlowNode variant="message" icon={MessageSquare} title="Follow-up PIX" subtitle="Ultima tentativa" />
+      <FlowNode variant="message" icon={MessageSquare} title="Follow-up PIX" subtitle="Última tentativa" />
       <FlowConnector />
       <FlowNode variant="end" icon={XCircle} title="Fluxo Encerrado" />
     </div>
@@ -343,17 +343,17 @@ function CardFlow({ config, onChange }: RecoveryFlowBuilderProps) {
 
   return (
     <div className="flex flex-col items-center">
-      <FlowNode variant="trigger" icon={Zap} title="Cartao Recusado" subtitle="Tentativa de pagamento com cartao falhou" />
+      <FlowNode variant="trigger" icon={Zap} title="Cartão Recusado" subtitle="Tentativa de pagamento com cartão falhou" />
       <FlowConnector />
       <FlowNode variant="delay" icon={Clock} title="Aguardar">
-        <EditableDelay value={config.cardFirstDelay} onChange={(v) => update('cardFirstDelay', v)} label="Apos recusa" />
+        <EditableDelay value={config.cardFirstDelay} onChange={(v) => update('cardFirstDelay', v)} label="Após recusa" />
       </FlowNode>
       <FlowConnector />
-      <FlowNode variant="message" icon={MessageSquare} title="Notificacao" subtitle="Informar recusa e sugerir alternativa" />
+      <FlowNode variant="message" icon={MessageSquare} title="Notificação" subtitle="Informar recusa e sugerir alternativa" />
       <FlowConnector />
-      <FlowNode variant="ai" icon={Bot} title="IA Analisa Resposta" subtitle={`Ate ${config.cardMaxAttempts} tentativas`}>
+      <FlowNode variant="ai" icon={Bot} title="IA Analisa Resposta" subtitle={`Até ${config.cardMaxAttempts} tentativas`}>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-text-tertiary">Max tentativas:</span>
+          <span className="text-xs text-text-tertiary">Máx tentativas:</span>
           <input
             type="number"
             min={1}
@@ -386,7 +386,7 @@ interface FlowTabDef {
 const FLOW_TABS: FlowTabDef[] = [
   { id: 'abandoned', label: 'Carrinho Abandonado', icon: GitBranch, activeKey: 'isActive' },
   { id: 'pix', label: 'PIX Pendente', icon: UserCheck, activeKey: 'pixRecoveryEnabled' },
-  { id: 'card', label: 'Cartao Recusado', icon: PhoneOff, activeKey: 'cardRecoveryEnabled' },
+  { id: 'card', label: 'Cartão Recusado', icon: PhoneOff, activeKey: 'cardRecoveryEnabled' },
 ]
 
 export function RecoveryFlowBuilder({ config: initial, onSave }: {

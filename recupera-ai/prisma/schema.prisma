@@ -118,6 +118,15 @@ model StoreSettings {
   sendOutsideHours   Boolean @default(false) @map("send_outside_hours")
   timezone           String  @default("America/Sao_Paulo")
 
+  // Seller persona (human-like communication)
+  sellerName        String?  @map("seller_name")
+  sellerPersona     String?  @map("seller_persona") @db.Text
+
+  // Product details
+  deliveryTimeframes String? @map("delivery_timeframes") @db.Text
+  sizeGuide         String?  @map("size_guide") @db.Text
+  productSpecs      String?  @map("product_specs") @db.Text
+
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 
