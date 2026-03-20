@@ -31,11 +31,11 @@ interface StoreStatus {
 }
 
 const COMING_SOON_CARDS = [
-  { icon: Bell, title: 'Notificacoes', desc: 'Configure alertas de novas recuperacoes e vendas' },
-  { icon: Palette, title: 'Aparencia', desc: 'Tema escuro/claro e personalizacao visual' },
-  { icon: Shield, title: 'Seguranca', desc: 'Alterar senha, 2FA e sessoes ativas' },
-  { icon: CreditCard, title: 'Plano e Cobranca', desc: 'Gerencie seu plano, faturas e metodos de pagamento' },
-  { icon: Webhook, title: 'API & Webhooks', desc: 'Chaves de API e configuracao de webhooks' },
+  { icon: Bell, title: 'Notificações', desc: 'Configure alertas de novas recuperações e vendas' },
+  { icon: Palette, title: 'Aparência', desc: 'Tema escuro/claro e personalização visual' },
+  { icon: Shield, title: 'Segurança', desc: 'Alterar senha, 2FA e sessões ativas' },
+  { icon: CreditCard, title: 'Plano e Cobrança', desc: 'Gerencie seu plano, faturas e métodos de pagamento' },
+  { icon: Webhook, title: 'API & Webhooks', desc: 'Chaves de API e configuração de webhooks' },
 ]
 
 export default function ConfiguracoesPage() {
@@ -90,9 +90,9 @@ export default function ConfiguracoesPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-text-primary">Configuracoes</h2>
+        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">Configurações</h2>
         <p className="mt-1 text-text-secondary">
-          Configuracoes gerais da sua conta RecuperaAI
+          Configurações gerais da sua conta RecuperaAI
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export default function ConfiguracoesPage() {
         <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
           <div>
             <span className="text-text-tertiary text-xs uppercase tracking-wider">Nome</span>
-            <p className="mt-0.5 font-medium text-text-primary">{user?.name ?? 'Nao configurado'}</p>
+            <p className="mt-0.5 font-medium text-text-primary">{user?.name ?? 'Não configurado'}</p>
           </div>
           <div>
             <span className="text-text-tertiary text-xs uppercase tracking-wider">Email</span>
@@ -121,7 +121,7 @@ export default function ConfiguracoesPage() {
             </p>
           </div>
           <div>
-            <span className="text-text-tertiary text-xs uppercase tracking-wider">Versao</span>
+            <span className="text-text-tertiary text-xs uppercase tracking-wider">Versão</span>
             <p className="mt-0.5 font-medium text-text-primary">RecuperaAI v0.2.0</p>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function ConfiguracoesPage() {
                 { label: 'Plataforma', ok: true },
                 { label: 'WhatsApp', ok: store.whatsappConnected },
                 { label: 'Conhecimento', ok: store.hasSettings },
-                { label: 'Recuperacao', ok: store.hasRecoveryConfig },
+                { label: 'Recuperação', ok: store.hasRecoveryConfig },
               ]
               const completedChecks = checks.filter((c) => c.ok).length
               const totalChecks = checks.length

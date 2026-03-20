@@ -20,8 +20,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={cn(
               'w-full rounded-[var(--radius-md)] border bg-surface px-3 py-2.5 text-sm text-text-primary',
-              'placeholder:text-text-tertiary',
-              'focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent-light',
+              'placeholder:text-text-tertiary/60',
+              'transition-all duration-200',
+              'focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent-light focus:shadow-[0_0_0_3px_var(--accent-lighter)]',
               'disabled:opacity-50 disabled:cursor-not-allowed',
               error ? 'border-error' : 'border-border',
               icon && 'pl-9',

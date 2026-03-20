@@ -50,13 +50,13 @@ const SECTIONS: KnowledgeSection[] = [
     id: 'identity',
     icon: Store,
     title: 'Identidade da Loja',
-    description: 'Informacoes basicas sobre sua loja e produtos',
+    description: 'Informações básicas sobre sua loja e produtos',
     fields: [
       {
         key: 'storeName',
         label: 'Nome da Loja',
         placeholder: 'Ex: Manto da Classe',
-        tip: 'A IA se apresentara usando este nome ao falar com clientes',
+        tip: 'A IA se apresentará usando este nome ao falar com clientes',
         rows: 1,
       },
       {
@@ -85,7 +85,7 @@ const SECTIONS: KnowledgeSection[] = [
   {
     id: 'shipping',
     icon: Truck,
-    title: 'Politica de Envio',
+    title: 'Política de Envio',
     description: 'Prazos de entrega e condicoes de frete',
     fields: [
       {
@@ -100,7 +100,7 @@ const SECTIONS: KnowledgeSection[] = [
   {
     id: 'returns',
     icon: RefreshCcw,
-    title: 'Politica de Troca e Devolucao',
+    title: 'Política de Troca e Devolução',
     description: 'Regras para trocas e reembolsos',
     fields: [
       {
@@ -131,13 +131,13 @@ const SECTIONS: KnowledgeSection[] = [
     id: 'warranty',
     icon: Shield,
     title: 'Garantia',
-    description: 'Informacoes de garantia dos produtos',
+    description: 'Informações de garantia dos produtos',
     fields: [
       {
         key: 'warrantyPolicy',
-        label: 'Politica de Garantia',
-        placeholder: 'Ex: Garantia de 90 dias contra defeitos de fabricacao. Produtos oficiais com garantia do fabricante...',
-        tip: 'Garantia robusta aumenta a confianca e ajuda a IA fechar vendas',
+        label: 'Política de Garantia',
+        placeholder: 'Ex: Garantia de 90 dias contra defeitos de fabricação. Produtos oficiais com garantia do fabricante...',
+        tip: 'Garantia robusta aumenta a confiança e ajuda a IA fechar vendas',
         rows: 3,
       },
     ],

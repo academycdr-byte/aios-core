@@ -140,7 +140,7 @@ export function StoreSettingsForm({ settings: initial, onSave }: StoreSettingsFo
       <div className="flex justify-end">
         <Button loading={saving} onClick={handleSave}>
           {!saving && <Save className="h-4 w-4" />}
-          {saving ? 'Salvando...' : 'Salvar Configuracoes'}
+          {saving ? 'Salvando...' : 'Salvar Configurações'}
         </Button>
       </div>
     </div>

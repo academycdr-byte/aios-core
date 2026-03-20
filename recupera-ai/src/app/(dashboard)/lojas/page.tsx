@@ -121,7 +121,7 @@ export default function LojasPage() {
         <div>
           <h1 className="text-2xl font-semibold text-text-primary">Lojas</h1>
           <p className="mt-1 text-sm text-text-secondary">
-            Gerencie suas lojas conectadas e configuracoes de recuperacao
+            Gerencie suas lojas conectadas e configurações de recuperação
           </p>
         </div>
         <Button onClick={() => setModalOpen(true)}>
@@ -210,7 +210,7 @@ export default function LojasPage() {
               <EmptyState
                 icon={<ShoppingBag className="h-12 w-12" />}
                 title="Nenhuma loja conectada"
-                description="Conecte sua primeira loja para comecar a recuperar carrinhos abandonados."
+                description="Conecte sua primeira loja para começar a recuperar carrinhos abandonados."
                 action={{
                   label: 'Conectar Primeira Loja',
                   onClick: () => setModalOpen(true),

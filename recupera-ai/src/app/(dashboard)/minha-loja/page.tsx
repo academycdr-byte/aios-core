@@ -56,7 +56,7 @@ export default function MinhaLojaPage() {
         <Store className="h-8 w-8 text-accent" />
       </div>
       <h2 className="text-xl font-semibold text-text-primary mb-2">Nenhuma loja conectada</h2>
-      <p className="text-text-secondary mb-6">Conecte sua loja Shopify ou Nuvemshop para comecar a recuperar carrinhos.</p>
+      <p className="text-text-secondary mb-6">Conecte sua loja Shopify ou Nuvemshop para começar a recuperar carrinhos.</p>
       <button
         onClick={() => setShowConnect(true)}
         className="flex items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 py-2.5 text-sm font-medium text-text-inverse hover:bg-accent-hover transition-colors"

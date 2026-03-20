@@ -12,20 +12,20 @@ export interface BadgeProps {
 }
 
 const semanticStyles: Record<string, string> = {
-  success: 'bg-success-light text-success',
-  warning: 'bg-warning-light text-warning',
-  error: 'bg-error-light text-error',
-  info: 'bg-info-light text-info',
-  neutral: 'bg-surface-active text-text-secondary',
+  success: 'bg-success-light text-success border border-success/20',
+  warning: 'bg-warning-light text-warning border border-warning/20',
+  error: 'bg-error-light text-error border border-error/20',
+  info: 'bg-info-light text-info border border-info/20',
+  neutral: 'bg-surface-active text-text-secondary border border-border',
 }
 
 const statusStyles: Record<string, string> = {
-  PENDING: 'bg-surface-active text-text-secondary',
-  CONTACTING: 'bg-info-light text-info',
-  RECOVERED: 'bg-success-light text-success',
-  PAID: 'bg-accent-light text-accent',
-  LOST: 'bg-error-light text-error',
-  EXPIRED: 'bg-surface-active text-text-tertiary',
+  PENDING: 'bg-surface-active text-text-secondary border border-border',
+  CONTACTING: 'bg-info-light text-info border border-info/20',
+  RECOVERED: 'bg-success-light text-success border border-success/20',
+  PAID: 'bg-accent-light text-accent border border-accent/20',
+  LOST: 'bg-error-light text-error border border-error/20',
+  EXPIRED: 'bg-surface-active text-text-tertiary border border-border',
 }
 
 const STATUS_LABELS: Record<string, string> = {

@@ -443,7 +443,7 @@ export function RecoveryFlowBuilder({ config: initial, onSave }: {
         return (
           <div className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-surface px-4 py-3">
             <span className="text-sm text-text-primary">
-              {activeFlow === 'abandoned' ? 'Recuperacao de Carrinho' : activeFlow === 'pix' ? 'Recuperacao PIX' : 'Recuperacao Cartao'}
+              {activeFlow === 'abandoned' ? 'Recuperação de Carrinho' : activeFlow === 'pix' ? 'Recuperação PIX' : 'Recuperação Cartão'}
             </span>
             <Toggle
               checked={isFlowActive}

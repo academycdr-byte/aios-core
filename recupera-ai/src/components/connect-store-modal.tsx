@@ -206,7 +206,7 @@ export function ConnectStoreModal({ open, onClose, onConnect }: ConnectStoreModa
                   <ol className="list-inside list-decimal space-y-0.5">
                     <li>Acesse o Dev Dashboard da Shopify (dev.shopify.com)</li>
                     <li>Selecione ou crie um app para a loja</li>
-                    <li>Va em Configuracoes do app</li>
+                    <li>Vá em Configurações do app</li>
                     <li>Copie o ID do cliente e a Chave secreta</li>
                   </ol>
                 </div>

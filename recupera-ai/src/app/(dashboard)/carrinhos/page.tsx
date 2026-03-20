@@ -27,7 +27,7 @@ import type { AbandonedCart } from '@/types'
 const TYPE_CONFIG: Record<string, { label: string; short: string }> = {
   ABANDONED_CART: { label: 'Carrinho Abandonado', short: 'Carrinho' },
   PIX_PENDING: { label: 'PIX Pendente', short: 'PIX' },
-  CARD_DECLINED: { label: 'Cartao Recusado', short: 'Cartao' },
+  CARD_DECLINED: { label: 'Cartão Recusado', short: 'Cartão' },
 }
 
 const STATUS_FILTERS: { value: string; label: string }[] = [
@@ -43,7 +43,7 @@ const TYPE_FILTERS: { value: string; label: string }[] = [
   { value: 'ALL', label: 'Todos os tipos' },
   { value: 'ABANDONED_CART', label: 'Carrinho Abandonado' },
   { value: 'PIX_PENDING', label: 'PIX Pendente' },
-  { value: 'CARD_DECLINED', label: 'Cartao Recusado' },
+  { value: 'CARD_DECLINED', label: 'Cartão Recusado' },
 ]
 
 const PERIOD_FILTERS: { value: string; label: string }[] = [
@@ -137,7 +137,7 @@ export default function CarrinhosPage() {
     <div className="animate-fade-in space-y-6">
       {/* Page Header */}
       <div>
-        <h2 className="text-2xl font-semibold text-text-primary">
+        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">
           Carrinhos Abandonados
         </h2>
         <p className="mt-1 text-text-secondary">
@@ -148,7 +148,7 @@ export default function CarrinhosPage() {
       {/* Stats Banner */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
-          label="Carrinhos no periodo"
+          label="Carrinhos no período"
           value={String(stats.count)}
           icon={<ShoppingCart className="h-5 w-5" />}
           iconBg="var(--warning-light)"
@@ -179,7 +179,7 @@ export default function CarrinhosPage() {
               key={f.value}
               onClick={() => handleFilterChange(setStatusFilter, f.value)}
               className={cn(
-                'rounded-[var(--radius-sm)] px-3 py-1.5 text-xs font-medium transition-colors',
+                'rounded-[var(--radius-sm)] px-3.5 py-2 text-xs font-medium transition-colors',
                 statusFilter === f.value
                   ? 'bg-accent text-text-inverse'
                   : 'text-text-secondary hover:text-text-primary'
@@ -260,7 +260,7 @@ export default function CarrinhosPage() {
                   Tempo
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-tertiary">
-                  Acoes
+                  Ações
                 </th>
               </tr>
             </thead>

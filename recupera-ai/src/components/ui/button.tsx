@@ -10,7 +10,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<string, string> = {
   primary:
-    'bg-accent text-text-inverse hover:bg-accent-hover focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary',
+    'bg-accent text-text-inverse shadow-sm shadow-accent/25 hover:bg-accent-hover hover:shadow-md hover:shadow-accent/30 focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary',
   secondary:
     'border border-border text-text-secondary hover:bg-surface-hover hover:text-text-primary',
   danger:
@@ -34,7 +34,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           'inline-flex items-center justify-center font-semibold rounded-[var(--radius-md)] transition-all',
           'disabled:opacity-50 disabled:cursor-not-allowed',
-          'focus:outline-none',
+          'focus:outline-none active:scale-[0.98]',
           variantStyles[variant],
           sizeStyles[size],
           className

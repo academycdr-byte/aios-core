@@ -23,7 +23,7 @@ export default function DashboardLayout({
         <Header
           onMenuClick={() => setMobileOpen(true)}
         />
-        <main className="p-4 lg:p-6">
+        <main className="p-4 lg:p-8">
           {children}
         </main>
       </div>

@@ -27,7 +27,7 @@ export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
   }, [])
 
   return (
-    <header className="sticky top-0 z-20 flex h-[var(--header-height)] items-center justify-between border-b border-border bg-bg-secondary/80 px-4 backdrop-blur-xl lg:px-6">
+    <header className="sticky top-0 z-20 flex h-[var(--header-height)] items-center justify-between border-b border-border bg-bg-secondary/60 px-4 backdrop-blur-2xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] lg:px-6">
       {/* Left: Menu Toggle + Search */}
       <div className="flex items-center gap-3 flex-1">
         <button

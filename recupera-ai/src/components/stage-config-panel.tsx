@@ -144,9 +144,9 @@ export function StageConfigPanel({ storeId }: StageConfigPanelProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-text-primary">Etapas de Recuperacao</h3>
+          <h3 className="text-sm font-semibold text-text-primary">Etapas de Recuperação</h3>
           <p className="text-xs text-text-tertiary">
-            Configure a estrategia da IA em cada etapa da conversa
+            Configure a estratégia da IA em cada etapa da conversa
           </p>
         </div>
         <Button size="sm" variant="ghost" onClick={addStage}>

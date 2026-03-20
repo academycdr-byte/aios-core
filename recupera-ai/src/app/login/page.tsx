@@ -31,7 +31,7 @@ export default function LoginPage() {
       router.push('/')
       router.refresh()
     } catch {
-      setError('Credenciais invalidas. Tente novamente.')
+      setError('Credenciais inválidas. Tente novamente.')
     } finally {
       setLoading(false)
     }
@@ -55,7 +55,8 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="rounded-[var(--radius-xl)] border border-border bg-surface p-8 shadow-[var(--shadow-xl)]">
+        <div className="relative rounded-[var(--radius-xl)] border border-border bg-surface p-8 shadow-[var(--shadow-xl)]">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-text-primary">
               Bem-vindo de volta
@@ -147,7 +148,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="mt-8 text-center text-xs text-text-tertiary">
-          RecuperaAI - Recuperacao inteligente de carrinhos abandonados
+          RecuperaAI - Recuperação inteligente de carrinhos abandonados
         </p>
       </div>
     </div>

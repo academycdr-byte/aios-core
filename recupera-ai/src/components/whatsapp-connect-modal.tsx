@@ -306,9 +306,9 @@ export function WhatsappConnectModal({
                 <p className="text-xs font-medium text-text-primary mb-1.5">Como conectar:</p>
                 <ol className="list-inside list-decimal space-y-0.5 text-xs text-text-secondary">
                   <li>Abra o <strong>WhatsApp Business</strong></li>
-                  <li>Va em <strong>Configuracoes</strong> {'>'} <strong>Dispositivos Conectados</strong></li>
+                  <li>Vá em <strong>Configurações</strong> {'>'} <strong>Dispositivos Conectados</strong></li>
                   <li>Toque em <strong>Conectar Dispositivo</strong></li>
-                  <li>Toque em <strong>&quot;Conectar com numero de telefone&quot;</strong></li>
+                  <li>Toque em <strong>&quot;Conectar com número de telefone&quot;</strong></li>
                   <li>Digite o codigo <strong>{formattedPairingCode}</strong></li>
                 </ol>
               </div>

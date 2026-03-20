@@ -67,7 +67,7 @@ export function formatNumber(value: number): string {
 }
 
 /**
- * Format relative time: "ha 5 min", "ha 2h", "ha 1 dia"
+ * Format relative time: "há 5 min", "há 2h", "há 1 dia"
  */
 export function formatRelativeTime(date: Date): string {
   const now = new Date()
@@ -81,16 +81,16 @@ export function formatRelativeTime(date: Date): string {
     return 'agora'
   }
   if (diffMinutes < 60) {
-    return `ha ${diffMinutes} min`
+    return `há ${diffMinutes} min`
   }
   if (diffHours < 24) {
-    return `ha ${diffHours}h`
+    return `há ${diffHours}h`
   }
   if (diffDays === 1) {
-    return 'ha 1 dia'
+    return 'há 1 dia'
   }
   if (diffDays < 30) {
-    return `ha ${diffDays} dias`
+    return `há ${diffDays} dias`
   }
   return date.toLocaleDateString('pt-BR')
 }

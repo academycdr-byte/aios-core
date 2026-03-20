@@ -64,7 +64,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const sidebarContent = (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <div className="flex h-16 items-center gap-3 border-b border-border px-4">
+      <div className="relative flex h-16 items-center gap-3 px-4 after:absolute after:bottom-0 after:left-4 after:right-4 after:h-px after:bg-gradient-to-r after:from-transparent after:via-border after:to-transparent">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-accent">
           <Zap className="h-5 w-5 text-text-inverse" />
         </div>
@@ -85,7 +85,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         {NAV_SECTIONS.map((section) => (
           <div key={section.title} className="mb-4">
             {!collapsed && (
-              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-accent">
+              <p className="mb-2 flex items-center gap-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-accent">
+                <span className="h-1 w-1 rounded-full bg-accent opacity-60" />
                 {section.title}
               </p>
             )}
@@ -101,8 +102,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                     className={cn(
                       'flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-sm font-medium transition-colors',
                       active
-                        ? 'bg-accent-light text-accent'
-                        : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
+                        ? 'bg-accent-light text-accent border-l-[3px] border-accent -ml-px'
+                        : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary border-l-[3px] border-transparent -ml-px'
                     )}
                     title={collapsed ? item.label : undefined}
                   >
@@ -119,7 +120,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       </nav>
 
       {/* User Info */}
-      <div className="border-t border-border px-3 py-4">
+      <div className="relative px-3 py-4 before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-gradient-to-r before:from-transparent before:via-border before:to-transparent">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-accent text-sm font-semibold text-text-inverse">
             {user?.name?.charAt(0) ?? 'U'}
@@ -166,7 +167,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       {/* Mobile Drawer */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-[var(--sidebar-width)] bg-bg-secondary border-r border-border lg:hidden',
+          'fixed inset-y-0 left-0 z-50 w-[var(--sidebar-width)] bg-bg-secondary/80 backdrop-blur-xl border-r border-border lg:hidden',
           'transition-transform duration-300',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
@@ -184,7 +185,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       <aside
         className={cn(
           'hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 lg:z-30',
-          'bg-bg-secondary border-r border-border sidebar-transition',
+          'bg-bg-secondary/80 backdrop-blur-xl border-r border-border sidebar-transition',
           collapsed ? 'lg:w-[var(--sidebar-collapsed-width)]' : 'lg:w-[var(--sidebar-width)]'
         )}
       >

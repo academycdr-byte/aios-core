@@ -36,7 +36,7 @@ export function RecoveryTrendChart({ data }: RecoveryTrendChartProps) {
         className="mb-4 text-sm font-semibold"
         style={{ color: 'var(--text-primary)' }}
       >
-        Abandonos vs Recuperacoes (30 dias)
+        Abandonos vs Recuperações (30 dias)
       </h3>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">

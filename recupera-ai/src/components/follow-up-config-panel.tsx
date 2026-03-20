@@ -175,7 +175,7 @@ export function FollowUpConfigPanel({ storeId }: FollowUpConfigPanelProps) {
       <div>
         <h3 className="text-sm font-semibold text-text-primary">Follow-ups por Tipo</h3>
         <p className="text-xs text-text-tertiary">
-          Configure a cadencia e estrategia de cada follow-up
+          Configure a cadência e estratégia de cada follow-up
         </p>
       </div>
 
@@ -307,7 +307,7 @@ export function FollowUpConfigPanel({ storeId }: FollowUpConfigPanelProps) {
                   <details className="group">
                     <summary className="flex cursor-pointer items-center gap-1 text-[11px] text-text-tertiary hover:text-text-secondary">
                       <ChevronDown className="h-3 w-3 transition-transform group-open:rotate-180" />
-                      {step.strategy ? `Estrategia: "${step.strategy.slice(0, 50)}..."` : 'Definir estrategia (opcional)'}
+                      {step.strategy ? `Estratégia: "${step.strategy.slice(0, 50)}..."` : 'Definir estratégia (opcional)'}
                     </summary>
                     <textarea
                       value={step.strategy}

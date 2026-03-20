@@ -157,14 +157,14 @@ export default function DashboardPage() {
   }, [fetchData])
 
   const periodLabel = period === '7d'
-    ? 'ultimos 7 dias'
+    ? 'últimos 7 dias'
     : period === '30d'
-      ? 'ultimos 30 dias'
+      ? 'últimos 30 dias'
       : period === '90d'
-        ? 'ultimos 90 dias'
+        ? 'últimos 90 dias'
         : startDate && endDate
           ? `${startDate} a ${endDate}`
-          : 'periodo customizado'
+          : 'período personalizado'
 
   if (loading && !data) {
     return <PageSpinner message="Carregando dashboard..." />
@@ -190,11 +190,11 @@ export default function DashboardPage() {
       {/* Page Header + Date Picker */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-text-primary">
+          <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">
             Dashboard
           </h2>
           <p className="mt-1 text-text-secondary">
-            Visao geral da recuperacao — {periodLabel}
+            Visão geral da recuperação — {periodLabel}
           </p>
         </div>
 
@@ -208,7 +208,7 @@ export default function DashboardPage() {
               className={cn(
                 'rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors',
                 period === p
-                  ? 'border-accent bg-accent/10 text-accent'
+                  ? 'border-accent bg-accent/10 text-accent font-semibold'
                   : 'border-border bg-surface text-text-secondary hover:bg-surface-hover'
               )}
             >
@@ -221,7 +221,7 @@ export default function DashboardPage() {
             className={cn(
               'flex items-center gap-1 rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors',
               period === 'custom'
-                ? 'border-accent bg-accent/10 text-accent'
+                ? 'border-accent bg-accent/10 text-accent font-semibold'
                 : 'border-border bg-surface text-text-secondary hover:bg-surface-hover'
             )}
           >
@@ -237,7 +237,7 @@ export default function DashboardPage() {
                 onChange={(e) => setStartDate(e.target.value)}
                 className="rounded-[var(--radius-md)] border border-border bg-surface px-2 py-1.5 text-xs text-text-primary"
               />
-              <span className="text-xs text-text-tertiary">ate</span>
+              <span className="text-xs text-text-tertiary">até</span>
               <input
                 type="date"
                 value={endDate}
@@ -266,9 +266,9 @@ export default function DashboardPage() {
           color="green"
         />
         <KpiCard
-          title="Taxa de Recuperacao"
+          title="Taxa de Recuperação"
           value={formatPercent(data?.recoveryRate ?? 0)}
-          subtitle="media do periodo"
+          subtitle="média do período"
           icon={Target}
           color="blue"
         />
@@ -280,9 +280,9 @@ export default function DashboardPage() {
           color="green"
         />
         <KpiCard
-          title="Ticket Medio"
+          title="Ticket Médio"
           value={formatCurrency(data?.avgTicket ?? 0)}
-          subtitle="por recuperacao"
+          subtitle="por recuperação"
           icon={DollarSign}
           color="emerald"
         />

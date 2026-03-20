@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from 'lucide-react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export interface KpiCardProps {
   title: string
@@ -15,100 +16,127 @@ export interface KpiCardProps {
   color: 'yellow' | 'green' | 'blue' | 'emerald' | 'red' | 'purple'
 }
 
-const colorMap: Record<KpiCardProps['color'], { bg: string; text: string; iconBg: string }> = {
+const colorConfig: Record<KpiCardProps['color'], {
+  border: string
+  gradient: string
+  iconBg: string
+  iconColor: string
+  iconRing: string
+}> = {
   yellow: {
-    bg: 'rgba(245, 158, 11, 0.10)',
-    text: '#F59E0B',
-    iconBg: 'rgba(245, 158, 11, 0.15)',
+    border: '#F59E0B',
+    gradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, transparent 60%)',
+    iconBg: 'rgba(245, 158, 11, 0.12)',
+    iconColor: '#F59E0B',
+    iconRing: 'rgba(245, 158, 11, 0.06)',
   },
   green: {
-    bg: 'rgba(16, 185, 129, 0.10)',
-    text: '#10B981',
-    iconBg: 'rgba(16, 185, 129, 0.15)',
+    border: '#10B981',
+    gradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, transparent 60%)',
+    iconBg: 'rgba(16, 185, 129, 0.12)',
+    iconColor: '#10B981',
+    iconRing: 'rgba(16, 185, 129, 0.06)',
   },
   blue: {
-    bg: 'rgba(59, 130, 246, 0.10)',
-    text: '#3B82F6',
-    iconBg: 'rgba(59, 130, 246, 0.15)',
+    border: '#3B82F6',
+    gradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, transparent 60%)',
+    iconBg: 'rgba(59, 130, 246, 0.12)',
+    iconColor: '#3B82F6',
+    iconRing: 'rgba(59, 130, 246, 0.06)',
   },
   emerald: {
-    bg: 'rgba(5, 150, 105, 0.10)',
-    text: '#059669',
-    iconBg: 'rgba(5, 150, 105, 0.15)',
+    border: '#059669',
+    gradient: 'linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, transparent 60%)',
+    iconBg: 'rgba(5, 150, 105, 0.12)',
+    iconColor: '#059669',
+    iconRing: 'rgba(5, 150, 105, 0.06)',
   },
   red: {
-    bg: 'rgba(239, 68, 68, 0.10)',
-    text: '#EF4444',
-    iconBg: 'rgba(239, 68, 68, 0.15)',
+    border: '#EF4444',
+    gradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.06) 0%, transparent 60%)',
+    iconBg: 'rgba(239, 68, 68, 0.12)',
+    iconColor: '#EF4444',
+    iconRing: 'rgba(239, 68, 68, 0.06)',
   },
   purple: {
-    bg: 'rgba(139, 92, 246, 0.10)',
-    text: '#8B5CF6',
-    iconBg: 'rgba(139, 92, 246, 0.15)',
+    border: '#8B5CF6',
+    gradient: 'linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
+    iconBg: 'rgba(139, 92, 246, 0.12)',
+    iconColor: '#8B5CF6',
+    iconRing: 'rgba(139, 92, 246, 0.06)',
   },
 }
 
 export function KpiCard({ title, value, subtitle, icon: Icon, trend, color }: KpiCardProps) {
-  const colors = colorMap[color]
+  const config = colorConfig[color]
 
   return (
     <div
-      className="kpi-card-wrapper relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] p-5 transition-all hover:border-[var(--border-hover)]"
-      style={{ background: 'var(--surface)' }}
+      className={cn(
+        'kpi-card-wrapper group relative overflow-hidden rounded-[var(--radius-lg)]',
+        'border border-[var(--border)] transition-all duration-200',
+        'hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)] hover:-translate-y-[1px]'
+      )}
+      style={{
+        background: 'var(--surface)',
+        borderLeft: `3px solid ${config.border}`,
+      }}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <p
-            className="text-[11px] font-semibold uppercase tracking-wider"
-            style={{ color: 'var(--text-tertiary)' }}
-          >
-            {title}
-          </p>
+      {/* Subtle gradient overlay */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: config.gradient }}
+      />
 
-          <p
-            className="mt-2 text-2xl font-bold tracking-tight"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            {value}
-          </p>
+      <div className="relative p-5">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
+              {title}
+            </p>
 
-          <div className="mt-2 flex items-center gap-2">
-            {trend && (
-              <span
-                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
-                style={{
-                  background: trend.isPositive
-                    ? 'rgba(16, 185, 129, 0.12)'
-                    : 'rgba(239, 68, 68, 0.12)',
-                  color: trend.isPositive ? '#10B981' : '#EF4444',
-                }}
-              >
-                {trend.isPositive ? (
-                  <TrendingUp className="h-3 w-3" />
-                ) : (
-                  <TrendingDown className="h-3 w-3" />
-                )}
-                {trend.value}%
-              </span>
-            )}
+            <p className="mt-2 text-3xl font-bold tracking-tight text-value text-text-primary">
+              {value}
+            </p>
 
-            {subtitle && (
-              <span
-                className="text-xs"
-                style={{ color: 'var(--text-tertiary)' }}
-              >
-                {subtitle}
-              </span>
-            )}
+            <div className="mt-2 flex items-center gap-2">
+              {trend && (
+                <span
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+                  style={{
+                    background: trend.isPositive
+                      ? 'rgba(16, 185, 129, 0.12)'
+                      : 'rgba(239, 68, 68, 0.12)',
+                    color: trend.isPositive ? '#10B981' : '#EF4444',
+                  }}
+                >
+                  {trend.isPositive ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3" />
+                  )}
+                  {trend.value}%
+                </span>
+              )}
+
+              {subtitle && (
+                <span className="text-xs text-text-tertiary">
+                  {subtitle}
+                </span>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Icon — circular like reference */}
-        <div
-          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
-          style={{ background: colors.iconBg }}
-        >
-          <Icon className="h-5 w-5" style={{ color: colors.text }} />
+          {/* Icon with ring effect */}
+          <div
+            className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-hover:scale-105"
+            style={{
+              background: config.iconBg,
+              boxShadow: `0 0 0 4px ${config.iconRing}`,
+            }}
+          >
+            <Icon className="h-5 w-5" style={{ color: config.iconColor }} />
+          </div>
         </div>
       </div>
     </div>

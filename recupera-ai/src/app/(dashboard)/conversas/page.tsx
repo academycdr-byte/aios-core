@@ -121,7 +121,7 @@ function ConversasLoading() {
   return (
     <div className="animate-fade-in">
       <div className="mb-4">
-        <h2 className="text-2xl font-semibold text-text-primary">Conversas</h2>
+        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">Conversas</h2>
         <p className="mt-1 text-text-secondary">
           Carregando conversas...
         </p>
@@ -203,7 +203,7 @@ function ConversasContent() {
     <div className="animate-fade-in">
       {/* Page Header */}
       <div className="mb-4">
-        <h2 className="text-2xl font-semibold text-text-primary">Conversas</h2>
+        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">Conversas</h2>
         <p className="mt-1 text-text-secondary">
           Acompanhe as conversas da IA com seus clientes em tempo real.
         </p>
@@ -318,7 +318,7 @@ function ConversasContent() {
                   Selecione uma conversa
                 </h3>
                 <p className="mt-1 max-w-sm text-center text-sm text-text-tertiary">
-                  Escolha uma conversa na lista ao lado para ver os detalhes e o historico
+                  Escolha uma conversa na lista ao lado para ver os detalhes e o histórico
                   de mensagens.
                 </p>
               </div>

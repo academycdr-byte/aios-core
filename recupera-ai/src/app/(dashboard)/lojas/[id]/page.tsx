@@ -30,6 +30,17 @@ import {
   Plus,
   X,
 } from 'lucide-react'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts'
+import { useTheme } from '@/lib/theme-context'
 import { cn } from '@/lib/utils'
 import { StoreSettingsForm } from '@/components/store-settings-form'
 import { RecoveryConfigForm } from '@/components/recovery-config-form'
@@ -49,10 +60,10 @@ interface Tab {
 }
 
 const TABS: Tab[] = [
-  { id: 'overview', label: 'Visao Geral', icon: BarChart3 },
+  { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
   { id: 'knowledge', label: 'Conhecimento', icon: BookOpen },
-  { id: 'recovery', label: 'Fluxo de Recuperacao', icon: GitBranch },
-  { id: 'settings', label: 'Configuracoes', icon: Settings },
+  { id: 'recovery', label: 'Fluxo de Recuperação', icon: GitBranch },
+  { id: 'settings', label: 'Configurações', icon: Settings },
   { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
 ]
 
@@ -87,21 +98,27 @@ function OverviewStatCard({ icon: Icon, label, value, color }: {
   color: 'accent' | 'warning' | 'info' | 'success'
 }) {
   const colorMap = {
-    accent: 'bg-accent-light text-accent',
-    warning: 'bg-warning-light text-warning',
-    info: 'bg-info-light text-info',
-    success: 'bg-success-light text-success',
+    accent: { bg: 'bg-accent-light', text: 'text-accent', border: 'border-accent' },
+    warning: { bg: 'bg-warning-light', text: 'text-warning', border: 'border-warning' },
+    info: { bg: 'bg-info-light', text: 'text-info', border: 'border-info' },
+    success: { bg: 'bg-success-light', text: 'text-success', border: 'border-success' },
   } as const
 
+  const c = colorMap[color]
+
   return (
-    <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-4">
+    <div className={cn(
+      'rounded-[var(--radius-lg)] border border-border bg-surface p-4',
+      'transition-all duration-200 hover:border-border-hover hover:shadow-[var(--shadow-sm)] hover:-translate-y-[1px]',
+      `border-l-[3px] ${c.border}`
+    )}>
       <div className="flex items-center gap-3">
-        <div className={cn('flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)]', colorMap[color])}>
-          <Icon className="h-5 w-5" />
+        <div className={cn('flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)]', c.bg)}>
+          <Icon className={cn('h-5 w-5', c.text)} />
         </div>
         <div>
-          <p className="text-xs text-text-tertiary">{label}</p>
-          <p className="text-lg font-bold text-text-primary">{value}</p>
+          <p className="text-xs font-medium text-text-tertiary">{label}</p>
+          <p className="text-xl font-bold text-text-primary">{value}</p>
         </div>
       </div>
     </div>
@@ -109,41 +126,41 @@ function OverviewStatCard({ icon: Icon, label, value, color }: {
 }
 
 function SimpleBarChart({ data }: { data: ChartDataPoint[] }) {
-  const maxValue = Math.max(...data.map((d) => d.abandoned))
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
+  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
+  const tickColor = isDark ? '#8B8B8B' : '#6B7280'
 
   return (
-    <div className="space-y-3">
-      {data.map((d) => (
-        <div key={d.day} className="flex items-center gap-3">
-          <span className="w-8 shrink-0 text-xs font-medium text-text-tertiary">{d.day}</span>
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center gap-2">
-              <div
-                className="h-4 rounded-sm bg-warning/30"
-                style={{ width: `${(d.abandoned / maxValue) * 100}%` }}
-              />
-              <span className="text-xs text-text-tertiary">{d.abandoned}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="h-4 rounded-sm bg-accent/40"
-                style={{ width: `${(d.recovered / maxValue) * 100}%` }}
-              />
-              <span className="text-xs text-accent">{d.recovered}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-      <div className="flex items-center gap-4 pt-2">
-        <div className="flex items-center gap-1.5">
-          <div className="h-3 w-3 rounded-sm bg-warning/30" />
-          <span className="text-xs text-text-tertiary">Abandonados</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-3 w-3 rounded-sm bg-accent/40" />
-          <span className="text-xs text-text-tertiary">Recuperados</span>
-        </div>
-      </div>
+    <div className="h-[250px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }} barCategoryGap="25%">
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+          <XAxis dataKey="day" tick={{ fill: tickColor, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis tick={{ fill: tickColor, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <Tooltip
+            contentStyle={{
+              background: isDark ? '#1A1A1A' : '#FFFFFF',
+              border: `1px solid ${isDark ? '#2E2E2E' : '#E5E7EB'}`,
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              fontSize: 12,
+            }}
+            labelStyle={{ color: isDark ? '#F5F5F5' : '#1A1A1A', fontWeight: 600, marginBottom: 4 }}
+          />
+          <Legend
+            wrapperStyle={{ paddingTop: 12 }}
+            iconType="circle"
+            iconSize={8}
+            formatter={(value: string) => (
+              <span style={{ color: isDark ? '#8B8B8B' : '#9CA3AF', fontSize: 12 }}>{value}</span>
+            )}
+          />
+          <Bar dataKey="abandoned" name="Abandonados" fill="#F59E0B" radius={[4, 4, 0, 0]} opacity={0.8} />
+          <Bar dataKey="recovered" name="Recuperados" fill="#10B981" radius={[4, 4, 0, 0]} opacity={0.9} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   )
 }
@@ -173,7 +190,7 @@ function OverviewTab({ store }: { store: StoreData }) {
         setSyncResult(json.data)
       }
     } catch {
-      setSyncError('Erro de conexao')
+      setSyncError('Erro de conexão')
     } finally {
       setSyncing(false)
     }
@@ -187,7 +204,7 @@ function OverviewTab({ store }: { store: StoreData }) {
         const json = await res.json()
         const metrics = json.data?.dailyMetrics ?? []
         if (metrics.length > 0) {
-          const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
+          const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
           setChartData(
             metrics.map((m: { date: string; abandonedCount: number; recoveredCount: number }) => ({
               day: dayNames[new Date(m.date).getUTCDay()],
@@ -255,21 +272,21 @@ function OverviewTab({ store }: { store: StoreData }) {
             <h3 className="text-sm font-semibold text-text-primary">Link de Checkout</h3>
             {domainStatus === 'valid' && (
               <p className="text-xs text-success">
-                Dominio valido: {store.domain} — links de checkout funcionarao corretamente
+                Domínio válido: {store.domain} — links de checkout funcionarão corretamente
               </p>
             )}
             {domainStatus === 'invalid' && (
               <p className="text-xs text-error">
-                Dominio invalido: &quot;{store.domain}&quot; — verifique nas configuracoes da plataforma
+                Domínio inválido: &quot;{store.domain}&quot; — verifique nas configurações da plataforma
               </p>
             )}
             {domainStatus === 'unknown' && (
               <p className="text-xs text-warning">
-                Dominio nao configurado — os links de checkout virao da plataforma automaticamente
+                Domínio não configurado — os links de checkout virão da plataforma automaticamente
               </p>
             )}
             {domainStatus === 'checking' && (
-              <p className="text-xs text-text-tertiary">Verificando dominio...</p>
+              <p className="text-xs text-text-tertiary">Verificando domínio...</p>
             )}
           </div>
         </div>
@@ -290,7 +307,7 @@ function OverviewTab({ store }: { store: StoreData }) {
           </div>
           {syncResult && (
             <div className="mt-3 rounded-[var(--radius-md)] bg-success/10 p-3">
-              <p className="text-sm font-medium text-success">Sincronizacao concluida!</p>
+              <p className="text-sm font-medium text-success">Sincronização concluída!</p>
               <p className="mt-1 text-xs text-text-secondary">
                 {syncResult.totalFetched} encontrados · {syncResult.imported} importados · {syncResult.updated} atualizados · {syncResult.skipped} ignorados
               </p>
@@ -307,7 +324,7 @@ function OverviewTab({ store }: { store: StoreData }) {
       {/* Chart */}
       <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
         <h3 className="mb-4 text-sm font-semibold text-text-primary">
-          Recuperacao dos Ultimos 7 Dias
+          Recuperação dos Últimos 7 Dias
         </h3>
         {chartLoading ? (
           <div className="flex h-40 items-center justify-center">
@@ -316,14 +333,14 @@ function OverviewTab({ store }: { store: StoreData }) {
         ) : chartData.length > 0 ? (
           <SimpleBarChart data={chartData} />
         ) : (
-          <p className="py-8 text-center text-sm text-text-tertiary">Sem dados no periodo</p>
+          <p className="py-8 text-center text-sm text-text-tertiary">Sem dados no período</p>
         )}
       </div>
 
       {/* Store Info */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-          <h3 className="mb-3 text-sm font-semibold text-text-primary">Informacoes</h3>
+          <h3 className="mb-3 text-sm font-semibold text-text-primary">Informações</h3>
           <dl className="space-y-3">
             <div className="flex items-center justify-between">
               <dt className="text-sm text-text-secondary">Plataforma</dt>
@@ -336,12 +353,12 @@ function OverviewTab({ store }: { store: StoreData }) {
               </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-sm text-text-secondary">Dominio</dt>
+              <dt className="text-sm text-text-secondary">Domínio</dt>
               <dd className="text-sm font-medium text-text-primary">{store.domain ?? '-'}</dd>
             </div>
             {store.shopifyDomain && (
               <div className="flex items-center justify-between">
-                <dt className="text-sm text-text-secondary">Dominio Shopify</dt>
+                <dt className="text-sm text-text-secondary">Domínio Shopify</dt>
                 <dd className="text-sm font-medium text-text-primary">{store.shopifyDomain}</dd>
               </div>
             )}
@@ -370,7 +387,7 @@ function OverviewTab({ store }: { store: StoreData }) {
             </div>
             {store.whatsappPhone && (
               <div className="flex items-center justify-between">
-                <dt className="text-sm text-text-secondary">Numero</dt>
+                <dt className="text-sm text-text-secondary">Número</dt>
                 <dd className="text-sm font-medium text-text-primary">{store.whatsappPhone}</dd>
               </div>
             )}
@@ -451,7 +468,7 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
         setTestCost(json.data.estimatedCost)
       }
     } catch {
-      setTestError('Erro de conexao')
+      setTestError('Erro de conexão')
     } finally {
       setTestLoading(false)
     }
@@ -480,7 +497,7 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
         }
       }
     } catch {
-      setTestError('Erro de conexao')
+      setTestError('Erro de conexão')
     } finally {
       setTestLoading(false)
     }
@@ -539,13 +556,13 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
             </h3>
             <p className="text-sm text-text-secondary">
               {liveConnected
-                ? `Conectado ao numero ${store.whatsappPhone ?? '(numero nao registrado)'}`
-                : 'Conecte o WhatsApp para comecar a recuperar carrinhos'
+                ? `Conectado ao número ${store.whatsappPhone ?? '(número não registrado)'}`
+                : 'Conecte o WhatsApp para começar a recuperar carrinhos'
               }
             </p>
             {liveState && (
               <p className="mt-1 text-xs text-text-tertiary">
-                Estado da instancia: {liveState}
+                Estado da instância: {liveState}
               </p>
             )}
           </div>
@@ -566,7 +583,7 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
               Escaneie o QR Code com WhatsApp Business
             </p>
             <p className="text-center text-xs text-text-tertiary">
-              Abra o WhatsApp Business {'>'} Configuracoes {'>'} Dispositivos Conectados {'>'} Conectar Dispositivo
+              Abra o WhatsApp Business {'>'} Configurações {'>'} Dispositivos Conectados {'>'} Conectar Dispositivo
             </p>
             <Button onClick={() => setShowModal(true)}>
               Gerar QR Code
@@ -578,10 +595,10 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
       {/* WhatsApp Details (when connected) */}
       {liveConnected && (
         <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-          <h3 className="mb-3 text-sm font-semibold text-text-primary">Detalhes da Conexao</h3>
+          <h3 className="mb-3 text-sm font-semibold text-text-primary">Detalhes da Conexão</h3>
           <dl className="space-y-3">
             <div className="flex items-center justify-between">
-              <dt className="text-sm text-text-secondary">Numero</dt>
+              <dt className="text-sm text-text-secondary">Número</dt>
               <dd className="text-sm font-medium text-text-primary">{store.whatsappPhone ?? '-'}</dd>
             </div>
             <div className="flex items-center justify-between">
@@ -592,7 +609,7 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
               </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-sm text-text-secondary">Instancia</dt>
+              <dt className="text-sm text-text-secondary">Instância</dt>
               <dd className="text-sm font-medium text-text-primary">recupera-{store.id}</dd>
             </div>
           </dl>
@@ -608,13 +625,13 @@ function WhatsAppTab({ store, onStatusChange }: { store: StoreData; onStatusChan
       {/* Test Recovery */}
       {liveConnected && (
         <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
-          <h3 className="mb-2 text-sm font-semibold text-text-primary">Testar Recuperacao</h3>
+          <h3 className="mb-2 text-sm font-semibold text-text-primary">Testar Recuperação</h3>
           <p className="mb-4 text-xs text-text-tertiary">
-            Gere uma mensagem de recuperacao via IA e envie por WhatsApp para testar o fluxo completo.
+            Gere uma mensagem de recuperação via IA e envie por WhatsApp para testar o fluxo completo.
           </p>
 
           <div className="mb-3">
-            <label className="mb-1 block text-xs font-medium text-text-secondary">Numero do WhatsApp *</label>
+            <label className="mb-1 block text-xs font-medium text-text-secondary">Número do WhatsApp *</label>
             <Input
               type="text"
               placeholder="5511999999999"
@@ -758,8 +775,8 @@ function TestModePanel({ store, onUpdate }: { store: StoreData; onUpdate: (s: St
             <h3 className="text-sm font-semibold text-text-primary">Modo de Teste</h3>
             <p className="text-xs text-text-tertiary">
               {store.testMode
-                ? 'Ativo — mensagens so sao enviadas para numeros da whitelist'
-                : 'Desativado — mensagens podem ser enviadas para qualquer numero'
+                ? 'Ativo — mensagens só são enviadas para números da whitelist'
+                : 'Desativado — mensagens podem ser enviadas para qualquer número'
               }
             </p>
           </div>
@@ -810,7 +827,7 @@ function TestModePanel({ store, onUpdate }: { store: StoreData; onUpdate: (s: St
             </div>
           ) : (
             <p className="text-xs text-warning">
-              Nenhum numero adicionado. Adicione pelo menos um numero para testar.
+              Nenhum número adicionado. Adicione pelo menos um número para testar.
             </p>
           )}
         </div>
@@ -867,7 +884,7 @@ export default function StoreDetailPage() {
   if (!store) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-text-secondary">Loja nao encontrada</p>
+        <p className="text-text-secondary">Loja não encontrada</p>
       </div>
     )
   }
@@ -931,7 +948,7 @@ export default function StoreDetailPage() {
 
       {/* Tabs */}
       <div className="border-b border-border">
-        <nav className="-mb-px flex gap-1 overflow-x-auto" aria-label="Tabs">
+        <nav className="-mb-px flex gap-0.5 overflow-x-auto px-1" aria-label="Tabs">
           {TABS.map((tab) => {
             const Icon = tab.icon
             const active = activeTab === tab.id

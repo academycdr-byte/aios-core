@@ -64,7 +64,7 @@ const typeConfig: Record<CartType, { icon: typeof ShoppingCart; label: string; c
   },
   CARD_DECLINED: {
     icon: CreditCard,
-    label: 'Cartao',
+    label: 'Cartão',
     color: '#EF4444',
   },
 }

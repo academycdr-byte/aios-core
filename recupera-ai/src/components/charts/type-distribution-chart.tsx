@@ -64,7 +64,7 @@ export function TypeDistributionChart({ data }: TypeDistributionChartProps) {
         className="mb-4 text-sm font-semibold"
         style={{ color: 'var(--text-primary)' }}
       >
-        Distribuicao por Tipo
+        Distribuição por Tipo
       </h3>
 
       <div className="flex flex-col items-center gap-4 sm:flex-row">
