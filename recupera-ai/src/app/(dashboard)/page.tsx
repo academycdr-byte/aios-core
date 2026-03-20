@@ -226,7 +226,7 @@ export default function DashboardPage() {
             )}
           >
             <Calendar className="h-3 w-3" />
-            Custom
+            Personalizado
           </button>
 
           {period === 'custom' && (
