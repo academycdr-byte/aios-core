@@ -16,6 +16,7 @@ import {
   BookOpen,
   GitBranch,
   MessageCircle,
+  Receipt,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth-context'
@@ -52,6 +53,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Conta',
     items: [
+      { label: 'Cobrança', href: '/cobranca', icon: Receipt },
       { label: 'Configurações', href: '/configuracoes', icon: Settings },
     ],
   },

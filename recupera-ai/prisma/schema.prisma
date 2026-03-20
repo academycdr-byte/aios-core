@@ -63,6 +63,10 @@ model Store {
   conversations  Conversation[]
   dailyMetrics   DailyMetrics[]
 
+  // Billing
+  billingActive Boolean @default(true) @map("billing_active")
+  invoices      BillingInvoice[]
+
   isActive      Boolean   @default(true) @map("is_active")
   testMode      Boolean   @default(false) @map("test_mode")
   testPhones    String[]  @default([]) @map("test_phones")
@@ -547,4 +551,47 @@ model StoreImage {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("store_images")
+}
+
+// ============================================================
+// BILLING (revenue share — 10% of recovered value)
+// ============================================================
+
+model BillingInvoice {
+  id      String @id @default(cuid())
+  storeId String @map("store_id")
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  // Billing period
+  periodStart DateTime @map("period_start")
+  periodEnd   DateTime @map("period_end")
+
+  // Amounts
+  recoveredValue Float @map("recovered_value") // Total recovered in period
+  commissionRate Float @default(0.10) @map("commission_rate") // 10%
+  amount         Float // Commission to charge (recoveredValue × commissionRate)
+
+  // Status & due date
+  status  InvoiceStatus @default(PENDING)
+  dueDate DateTime      @map("due_date")
+  paidAt  DateTime?     @map("paid_at")
+
+  // Abacate Pay integration
+  abacateCheckoutId  String? @map("abacate_checkout_id")
+  abacateCheckoutUrl String? @map("abacate_checkout_url")
+  paymentMethod      String? @map("payment_method") // PIX, CARD, BOLETO
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([storeId, status])
+  @@index([storeId, periodStart])
+  @@map("billing_invoices")
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
 }

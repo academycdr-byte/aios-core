@@ -227,6 +227,11 @@ export async function processSingleCart(
       return { action: 'skipped', error: 'WhatsApp not connected' }
     }
 
+    // Check if billing is active (blocks messaging if overdue invoice)
+    if (!store.billingActive) {
+      return { action: 'skipped', error: 'Billing inactive — fatura em atraso' }
+    }
+
     // testMode guard: only send to whitelisted phone numbers
     if (store.testMode) {
       const whitelisted = (store.testPhones ?? []) as string[]
@@ -529,6 +534,7 @@ export async function processRecoveryJobs(): Promise<SchedulerStats> {
         status: { in: ['PENDING', 'CONTACTING'] },
         store: {
           isActive: true,
+          billingActive: true,
           whatsappConnected: true,
           recoveryConfig: {
             isActive: true,

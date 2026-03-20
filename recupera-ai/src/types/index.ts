@@ -83,6 +83,7 @@ export interface Store {
   nuvemshopStoreId: string | null
   whatsappPhone: string | null
   whatsappConnected: boolean
+  billingActive: boolean
   isActive: boolean
   webhookSecret: string | null
   lastSyncAt: string | null
@@ -344,4 +345,34 @@ export interface ApiError {
   error: string
   message: string
   statusCode: number
+}
+
+// ============================================================
+// BILLING
+// ============================================================
+
+export const InvoiceStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  OVERDUE: 'OVERDUE',
+  CANCELLED: 'CANCELLED',
+} as const
+export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
+
+export interface BillingInvoice {
+  id: string
+  storeId: string
+  periodStart: string
+  periodEnd: string
+  recoveredValue: number
+  commissionRate: number
+  amount: number
+  status: InvoiceStatus
+  dueDate: string
+  paidAt: string | null
+  abacateCheckoutId: string | null
+  abacateCheckoutUrl: string | null
+  paymentMethod: string | null
+  createdAt: string
+  updatedAt: string
 }
