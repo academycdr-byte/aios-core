@@ -10,41 +10,39 @@ interface StepMetricsCardProps {
 }
 
 function ConversionRateBadge({ rate }: { rate: number }) {
-  let bg: string
-  let color: string
-
-  if (rate > 10) {
-    bg = 'rgba(16, 185, 129, 0.12)'
-    color = '#10B981'
-  } else if (rate >= 5) {
-    bg = 'rgba(245, 158, 11, 0.12)'
-    color = '#F59E0B'
-  } else {
-    bg = 'rgba(239, 68, 68, 0.12)'
-    color = '#EF4444'
-  }
+  const isGood = rate > 10
+  const isMedium = rate >= 5
 
   return (
     <span
-      className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold"
-      style={{ background: bg, color }}
+      className="inline-flex items-center px-2 py-0.5 text-[14px] font-semibold"
+      style={{
+        borderRadius: '6px',
+        background: isGood
+          ? 'var(--success-surface)'
+          : isMedium
+            ? 'var(--warning-surface)'
+            : 'var(--danger-surface)',
+        color: isGood
+          ? 'var(--success)'
+          : isMedium
+            ? 'var(--warning)'
+            : 'var(--danger)',
+      }}
     >
-      {formatPercent(rate)}
+      {isGood ? '↑' : isMedium ? '→' : '↓'} {formatPercent(rate)}
     </span>
   )
 }
 
 function SkeletonRow() {
   return (
-    <tr
-      className="border-b"
-      style={{ borderColor: 'var(--border)' }}
-    >
+    <tr style={{ borderBottom: '1px solid var(--border)' }}>
       {Array.from({ length: 7 }).map((_, i) => (
-        <td key={i} className="px-5 py-3.5">
+        <td key={i} className="px-4 py-3">
           <div
-            className="h-4 w-16 animate-pulse rounded"
-            style={{ background: 'var(--border)' }}
+            className="skeleton h-4 w-16"
+            style={{ borderRadius: '6px' }}
           />
         </td>
       ))}
@@ -57,40 +55,61 @@ export function StepMetricsCard({ data, loading }: StepMetricsCardProps) {
 
   return (
     <div
-      className="rounded-[var(--radius-lg)] border border-[var(--border)]"
-      style={{ background: 'var(--surface)' }}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        overflow: 'hidden',
+      }}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-[var(--border)] px-5 py-4">
+      <div
+        className="flex items-center gap-3 px-7 py-5"
+        style={{ borderBottom: '1px solid var(--border)' }}
+      >
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-full"
-          style={{ background: 'rgba(59, 130, 246, 0.15)' }}
+          className="flex h-11 w-11 items-center justify-center"
+          style={{
+            background: 'var(--accent-surface)',
+            borderRadius: '12px',
+          }}
         >
-          <BarChart3 className="h-4 w-4" style={{ color: '#3B82F6' }} />
+          <BarChart3 className="h-5 w-5" style={{ color: 'var(--accent)' }} />
         </div>
         <h3
-          className="text-sm font-semibold"
-          style={{ color: 'var(--text-primary)' }}
+          className="text-[20px] font-bold"
+          style={{
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.01em',
+          }}
         >
           Métricas por Etapa
         </h3>
       </div>
 
-      {/* Table */}
+      {/* Content */}
       {isEmpty ? (
-        <div className="flex flex-col items-center justify-center px-5 py-12">
-          <BarChart3
-            className="mb-3 h-10 w-10"
-            style={{ color: 'var(--text-tertiary)', opacity: 0.4 }}
-          />
-          <p
-            className="text-sm font-medium"
-            style={{ color: 'var(--text-secondary)' }}
+        <div className="flex flex-col items-center justify-center px-7 py-16">
+          <div
+            className="mb-4 flex h-16 w-16 items-center justify-center"
+            style={{
+              background: 'var(--accent-surface)',
+              borderRadius: '50%',
+            }}
           >
-            Nenhuma métrica de etapa disponível
+            <BarChart3
+              className="h-7 w-7"
+              style={{ color: 'var(--accent)' }}
+            />
+          </div>
+          <p
+            className="text-[20px] font-bold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Nenhuma métrica disponível
           </p>
           <p
-            className="mt-1 text-xs"
+            className="mt-1 text-[14px]"
             style={{ color: 'var(--text-tertiary)' }}
           >
             Os dados aparecerão quando mensagens forem enviadas
@@ -101,19 +120,53 @@ export function StepMetricsCard({ data, loading }: StepMetricsCardProps) {
           <table className="w-full">
             <thead>
               <tr
-                className="border-b text-left text-xs font-medium uppercase tracking-wider"
                 style={{
-                  borderColor: 'var(--border)',
-                  color: 'var(--text-tertiary)',
+                  background: 'var(--bg-primary)',
+                  borderBottom: '1px solid var(--border)',
                 }}
               >
-                <th className="px-5 py-3">Etapa</th>
-                <th className="px-5 py-3">Enviadas</th>
-                <th className="px-5 py-3">Abertura</th>
-                <th className="px-5 py-3">Cliques</th>
-                <th className="px-5 py-3">Respostas</th>
-                <th className="px-5 py-3">Conversões</th>
-                <th className="px-5 py-3 text-right">Valor</th>
+                <th
+                  className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Etapa
+                </th>
+                <th
+                  className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Enviadas
+                </th>
+                <th
+                  className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Abertura
+                </th>
+                <th
+                  className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Cliques
+                </th>
+                <th
+                  className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Respostas
+                </th>
+                <th
+                  className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Conversões
+                </th>
+                <th
+                  className="px-4 py-3 text-right text-[13px] font-medium uppercase tracking-wider"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  Valor
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -127,108 +180,87 @@ export function StepMetricsCard({ data, loading }: StepMetricsCardProps) {
                 data.map((step) => (
                   <tr
                     key={step.stepNumber}
-                    className="border-b transition-colors last:border-b-0"
-                    style={{ borderColor: 'var(--border)' }}
+                    className="transition-colors last:border-b-0"
+                    style={{ borderBottom: '1px solid var(--border)' }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'var(--surface-hover)'
+                      e.currentTarget.style.background = 'var(--bg-hover)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.background = 'transparent'
                     }}
                   >
-                    {/* Etapa */}
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3">
                       <span
-                        className="text-sm font-medium"
+                        className="text-[14px] font-medium"
                         style={{ color: 'var(--text-primary)' }}
                       >
                         {step.stepLabel}
                       </span>
                     </td>
-
-                    {/* Enviadas */}
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3">
                       <span
-                        className="text-sm font-medium"
+                        className="text-[14px]"
                         style={{ color: 'var(--text-primary)' }}
                       >
                         {formatNumber(step.messagesSent)}
                       </span>
                     </td>
-
-                    {/* Abertura */}
-                    <td className="px-5 py-3.5">
-                      <div>
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: 'var(--text-primary)' }}
-                        >
-                          {formatNumber(step.messagesRead)}
-                        </span>
-                        <p
-                          className="mt-0.5 text-xs"
-                          style={{ color: 'var(--text-tertiary)' }}
-                        >
-                          {formatPercent(step.openRate)}
-                        </p>
-                      </div>
-                    </td>
-
-                    {/* Cliques */}
-                    <td className="px-5 py-3.5">
-                      <div>
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: 'var(--text-primary)' }}
-                        >
-                          {formatNumber(step.linkClicks)}
-                        </span>
-                        <p
-                          className="mt-0.5 text-xs"
-                          style={{ color: 'var(--text-tertiary)' }}
-                        >
-                          {formatPercent(step.clickRate)}
-                        </p>
-                      </div>
-                    </td>
-
-                    {/* Respostas */}
-                    <td className="px-5 py-3.5">
-                      <div>
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: 'var(--text-primary)' }}
-                        >
-                          {formatNumber(step.messagesReplied)}
-                        </span>
-                        <p
-                          className="mt-0.5 text-xs"
-                          style={{ color: 'var(--text-tertiary)' }}
-                        >
-                          {formatPercent(step.responseRate)}
-                        </p>
-                      </div>
-                    </td>
-
-                    {/* Conversões */}
-                    <td className="px-5 py-3.5">
-                      <div>
-                        <span
-                          className="text-sm font-medium"
-                          style={{ color: 'var(--text-primary)' }}
-                        >
-                          {formatNumber(step.conversions)}
-                        </span>
-                        <div className="mt-1">
-                          <ConversionRateBadge rate={step.conversionRate} />
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Valor */}
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-4 py-3">
                       <span
-                        className="text-sm font-semibold"
+                        className="text-[14px]"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        {formatNumber(step.messagesRead)}
+                      </span>
+                      <p
+                        className="text-[12px]"
+                        style={{ color: 'var(--text-tertiary)' }}
+                      >
+                        {formatPercent(step.openRate)}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="text-[14px]"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        {formatNumber(step.linkClicks)}
+                      </span>
+                      <p
+                        className="text-[12px]"
+                        style={{ color: 'var(--text-tertiary)' }}
+                      >
+                        {formatPercent(step.clickRate)}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="text-[14px]"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        {formatNumber(step.messagesReplied)}
+                      </span>
+                      <p
+                        className="text-[12px]"
+                        style={{ color: 'var(--text-tertiary)' }}
+                      >
+                        {formatPercent(step.responseRate)}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className="text-[14px]"
+                        style={{ color: 'var(--text-primary)' }}
+                      >
+                        {formatNumber(step.conversions)}
+                      </span>
+                      <div className="mt-1">
+                        <ConversionRateBadge rate={step.conversionRate} />
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <span
+                        className="text-[14px] font-semibold"
                         style={{ color: 'var(--text-primary)' }}
                       >
                         {formatCurrency(step.conversionValue)}

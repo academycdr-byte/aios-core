@@ -190,7 +190,7 @@ export default function DashboardPage() {
       {/* Page Header + Date Picker */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">
+          <h2 className="text-[30px] font-bold text-text-primary" style={{ letterSpacing: '-0.02em' }}>
             Dashboard
           </h2>
           <p className="mt-1 text-text-secondary">
@@ -249,8 +249,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Cards Grid — Row 1: Core Metrics */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* KPI Cards Grid — Row 1: Core Metrics (2x2 per DS) */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <KpiCard
           title="Valor Abandonado"
           value={formatCurrencyShort(data?.totalAbandonedValue ?? 0)}
@@ -296,7 +296,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards Grid — Row 2: Engagement Metrics */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <KpiCard
           title="Taxa de Resposta"
           value={formatPercent(data?.responseRate ?? 0)}

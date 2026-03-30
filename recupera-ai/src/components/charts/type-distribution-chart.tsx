@@ -10,6 +10,8 @@ import {
 import type { TypeDistribution } from '@/types/charts'
 import { formatNumber } from '@/lib/format'
 
+const DONUT_COLORS = ['#A8D600', '#F59E0B', '#F97316']
+
 interface TypeDistributionChartProps {
   data: TypeDistribution[]
 }
@@ -17,7 +19,7 @@ interface TypeDistributionChartProps {
 interface TooltipPayloadItem {
   name: string
   value: number
-  payload: TypeDistribution
+  payload: TypeDistribution & { fill: string }
 }
 
 interface CustomTooltipProps {
@@ -32,125 +34,151 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   return (
     <div
-      className="rounded-[var(--radius-md)] border border-[var(--border)] px-3 py-2"
       style={{
-        background: 'var(--bg-elevated)',
-        boxShadow: 'var(--shadow-lg)',
+        background: '#1F2937',
+        color: '#FFFFFF',
+        borderRadius: 8,
+        padding: '8px 12px',
       }}
     >
-      <div className="flex items-center gap-2 text-sm">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
         <span
-          className="inline-block h-2 w-2 rounded-full"
-          style={{ background: item.payload.color }}
+          style={{
+            display: 'inline-block',
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            background: item.payload.fill,
+            flexShrink: 0,
+          }}
         />
-        <span style={{ color: 'var(--text-secondary)' }}>{item.name}:</span>
-        <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-          {formatNumber(item.value)}
-        </span>
+        <span style={{ opacity: 0.7 }}>{item.name}:</span>
+        <span style={{ fontWeight: 600 }}>{formatNumber(item.value)}</span>
       </div>
     </div>
   )
 }
 
 export function TypeDistributionChart({ data }: TypeDistributionChartProps) {
-  const total = data.reduce((sum, d) => sum + d.value, 0)
+  const sliced = data.slice(0, 3)
+  const total = sliced.reduce((sum, d) => sum + d.value, 0)
 
   return (
     <div
-      className="rounded-[var(--radius-lg)] border border-[var(--border)] p-5"
-      style={{ background: 'var(--surface)' }}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: 20,
+        padding: 28,
+        boxShadow: 'none',
+      }}
     >
       <h3
-        className="mb-4 text-sm font-semibold"
-        style={{ color: 'var(--text-primary)' }}
+        style={{
+          fontSize: 20,
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          letterSpacing: '-0.01em',
+          margin: 0,
+          marginBottom: 20,
+        }}
       >
         Distribuição por Tipo
       </h3>
 
-      <div className="flex flex-col items-center gap-4 sm:flex-row">
-        {/* Pie Chart */}
-        <div className="h-[200px] w-[200px] flex-shrink-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={55}
-                outerRadius={85}
-                paddingAngle={3}
-                dataKey="value"
-                strokeWidth={0}
-              >
-                {data.map((entry) => (
-                  <Cell key={entry.name} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Donut with center text */}
+      <div style={{ position: 'relative', width: 220, height: 220, margin: '0 auto' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={sliced}
+              cx="50%"
+              cy="50%"
+              innerRadius="65%"
+              outerRadius="90%"
+              startAngle={90}
+              endAngle={-270}
+              paddingAngle={2}
+              cornerRadius={4}
+              dataKey="value"
+              stroke="var(--bg-card)"
+              strokeWidth={3}
+            >
+              {sliced.map((entry, index) => (
+                <Cell key={entry.name} fill={DONUT_COLORS[index % DONUT_COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
 
-        {/* Legend */}
-        <div className="flex flex-1 flex-col gap-3">
-          {data.map((item) => {
-            const percentage = total > 0 ? Math.round((item.value / total) * 100) : 0
-
-            return (
-              <div key={item.name} className="flex items-center gap-3">
-                <span
-                  className="h-3 w-3 flex-shrink-0 rounded-full"
-                  style={{ background: item.color }}
-                />
-                <div className="flex flex-1 items-center justify-between">
-                  <span
-                    className="text-sm"
-                    style={{ color: 'var(--text-secondary)' }}
-                  >
-                    {item.name}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: 'var(--text-primary)' }}
-                    >
-                      {formatNumber(item.count)}
-                    </span>
-                    <span
-                      className="rounded-full px-2 py-0.5 text-xs font-medium"
-                      style={{
-                        background: `${item.color}20`,
-                        color: item.color,
-                      }}
-                    >
-                      {percentage}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-
+        {/* Center text */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            textAlign: 'center',
+            pointerEvents: 'none',
+          }}
+        >
           <div
-            className="mt-1 border-t pt-2"
-            style={{ borderColor: 'var(--border)' }}
+            style={{
+              fontSize: 32,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              lineHeight: 1,
+            }}
           >
-            <div className="flex items-center justify-between">
-              <span
-                className="text-sm font-medium"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                Total
-              </span>
-              <span
-                className="text-sm font-bold"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {formatNumber(total)}
-              </span>
-            </div>
+            {formatNumber(total)}
+          </div>
+          <div
+            style={{
+              fontSize: 14,
+              fontWeight: 400,
+              color: 'var(--text-secondary)',
+              marginTop: 4,
+            }}
+          >
+            total
           </div>
         </div>
+      </div>
+
+      {/* Legend — horizontal */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginTop: 16,
+        }}
+      >
+        {sliced.map((item, index) => (
+          <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                background: DONUT_COLORS[index % DONUT_COLORS.length],
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontSize: 13,
+                fontWeight: 400,
+                color: 'var(--text-secondary)',
+              }}
+            >
+              {item.name}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   )

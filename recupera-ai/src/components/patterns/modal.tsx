@@ -56,30 +56,62 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0"
+        style={{ background: 'rgba(0,0,0,0.5)' }}
         onClick={onClose}
       />
 
       {/* Content */}
       <div
         className={cn(
-          'relative w-full animate-fade-in rounded-[var(--radius-xl)] border border-border bg-bg-secondary shadow-[var(--shadow-xl)]',
+          'relative w-full animate-fade-in',
           maxWidthStyles[maxWidth],
           className
         )}
+        style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
+          borderRadius: '20px',
+        }}
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <div
+            className="flex items-center justify-between px-7 py-5"
+            style={{ borderBottom: '1px solid var(--border)' }}
+          >
             <div>
-              <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
+              <h2
+                className="text-[20px] font-bold"
+                style={{
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {title}
+              </h2>
               {subtitle && (
-                <p className="text-sm text-text-tertiary">{subtitle}</p>
+                <p
+                  className="mt-1 text-[14px]"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  {subtitle}
+                </p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="rounded-[var(--radius-md)] p-1.5 text-text-tertiary hover:bg-surface-hover hover:text-text-primary"
+              className="flex h-9 w-9 items-center justify-center"
+              style={{
+                borderRadius: '10px',
+                color: 'var(--text-tertiary)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--bg-hover)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+              }}
             >
               <X className="h-5 w-5" />
             </button>
@@ -87,11 +119,14 @@ export function Modal({
         )}
 
         {/* Body */}
-        <div className="px-6 py-4">{children}</div>
+        <div className="px-7 py-5">{children}</div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-4">
+          <div
+            className="flex items-center justify-end gap-2 px-7 py-5"
+            style={{ borderTop: '1px solid var(--border)' }}
+          >
             {footer}
           </div>
         )}

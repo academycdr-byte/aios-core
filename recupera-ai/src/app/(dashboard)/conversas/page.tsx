@@ -121,7 +121,7 @@ function ConversasLoading() {
   return (
     <div className="animate-fade-in">
       <div className="mb-4">
-        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">Conversas</h2>
+        <h2 className="text-[30px] font-bold text-text-primary">Conversas</h2>
         <p className="mt-1 text-text-secondary">
           Carregando conversas...
         </p>
@@ -203,14 +203,14 @@ function ConversasContent() {
     <div className="animate-fade-in">
       {/* Page Header */}
       <div className="mb-4">
-        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">Conversas</h2>
+        <h2 className="text-[30px] font-bold text-text-primary">Conversas</h2>
         <p className="mt-1 text-text-secondary">
           Acompanhe as conversas da IA com seus clientes em tempo real.
         </p>
       </div>
 
       {/* Main Layout */}
-      <div className="overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface" style={{ height: 'calc(100vh - 220px)' }}>
+      <div className="overflow-hidden border border-border bg-surface" style={{ borderRadius: '20px', height: 'calc(100vh - 220px)' }}>
         <div className="flex h-full">
           {/* Left: Conversation List */}
           <div

@@ -12,20 +12,33 @@ export default function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-bg-primary">
-      <Sidebar
-        mobileOpen={mobileOpen}
-        onMobileClose={() => setMobileOpen(false)}
-      />
+    <div className="min-h-screen p-3" style={{ background: 'var(--bg-outer)' }}>
+      {/* Floating Container */}
+      <div
+        className="flex min-h-[calc(100vh-24px)] flex-col overflow-hidden"
+        style={{
+          background: 'var(--bg-card)',
+          borderRadius: '20px',
+        }}
+      >
+        {/* Header */}
+        <Header onMenuClick={() => setMobileOpen(true)} />
 
-      {/* Main Content */}
-      <div className="lg:pl-[var(--sidebar-width)]">
-        <Header
-          onMenuClick={() => setMobileOpen(true)}
-        />
-        <main className="p-4 lg:p-8">
-          {children}
-        </main>
+        {/* Sidebar + Content */}
+        <div className="flex flex-1">
+          <Sidebar
+            mobileOpen={mobileOpen}
+            onMobileClose={() => setMobileOpen(false)}
+          />
+
+          {/* Content Area */}
+          <main
+            className="flex-1 p-6 lg:p-8"
+            style={{ background: 'var(--bg-primary)' }}
+          >
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   )

@@ -9,24 +9,43 @@ export interface StatCardProps {
   className?: string
 }
 
-export function StatCard({ label, value, icon, iconColor, iconBg, className }: StatCardProps) {
+export function StatCard({ label, value, icon, className }: StatCardProps) {
   return (
     <div
-      className={cn(
-        'group flex items-center gap-4 rounded-[var(--radius-lg)] border border-border bg-surface p-4',
-        'transition-all duration-200 hover:border-border-hover hover:shadow-[var(--shadow-sm)] hover:-translate-y-[1px]',
-        className
-      )}
+      className={cn('flex items-center gap-4 p-5', className)}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+      }}
     >
       <div
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-lg)] transition-transform duration-200 group-hover:scale-105"
-        style={{ background: iconBg, color: iconColor }}
+        className="flex h-11 w-11 shrink-0 items-center justify-center"
+        style={{
+          background: 'var(--accent-surface)',
+          borderRadius: '12px',
+          color: 'var(--accent)',
+        }}
       >
         {icon}
       </div>
       <div>
-        <p className="text-xs font-medium text-text-tertiary">{label}</p>
-        <p className="mt-0.5 text-xl font-bold text-value text-text-primary">{value}</p>
+        <p
+          className="text-[14px] font-medium"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
+          {label}
+        </p>
+        <p
+          className="mt-0.5 text-[24px] font-bold"
+          style={{
+            color: 'var(--text-primary)',
+            fontVariantNumeric: 'tabular-nums',
+            letterSpacing: '-0.02em',
+          }}
+        >
+          {value}
+        </p>
       </div>
     </div>
   )

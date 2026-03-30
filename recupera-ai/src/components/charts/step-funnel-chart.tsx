@@ -12,7 +12,6 @@ import {
 } from 'recharts'
 import type { StepMetric } from '@/types/charts'
 import { ChartTooltip } from '@/components/patterns'
-import { useTheme } from '@/lib/theme-context'
 import { formatNumber } from '@/lib/format'
 
 interface StepFunnelChartProps {
@@ -20,13 +19,6 @@ interface StepFunnelChartProps {
 }
 
 export function StepFunnelChart({ data }: StepFunnelChartProps) {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
-
-  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
-  const tickColor = isDark ? '#8B8B8B' : '#6B7280'
-  const legendColor = isDark ? '#8B8B8B' : '#9CA3AF'
-
   const chartData = data.map((step) => ({
     name: step.stepNumber === 0 ? 'Primeira Msg' : `Follow-up ${step.stepNumber}`,
     Enviadas: step.messagesSent,
@@ -39,27 +31,74 @@ export function StepFunnelChart({ data }: StepFunnelChartProps) {
 
   return (
     <div
-      className="rounded-[var(--radius-lg)] border border-[var(--border)] p-5"
-      style={{ background: 'var(--surface)' }}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: 20,
+        padding: 28,
+      }}
     >
       <h3
-        className="mb-4 text-sm font-semibold"
-        style={{ color: 'var(--text-primary)' }}
+        style={{
+          fontSize: 20,
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          letterSpacing: '-0.01em',
+          margin: '0 0 20px 0',
+        }}
       >
         Funil por Etapa
       </h3>
 
       {isEmpty ? (
-        <div className="flex h-[300px] items-center justify-center">
-          <p
-            className="text-sm"
-            style={{ color: 'var(--text-tertiary)' }}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 300,
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: '50%',
+              background: 'var(--accent-surface)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 3h14v2.5L12 10v5l-4 2V10L3 5.5V3z"
+                stroke="var(--text-tertiary)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <span
+            style={{
+              fontSize: 14,
+              color: 'var(--text-tertiary)',
+            }}
           >
             Nenhum dado disponível
-          </p>
+          </span>
         </div>
       ) : (
-        <div className="h-[300px] w-full">
+        <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
@@ -67,20 +106,20 @@ export function StepFunnelChart({ data }: StepFunnelChartProps) {
               barCategoryGap="20%"
             >
               <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={gridColor}
+                strokeDasharray="4 4"
+                stroke="var(--border)"
                 vertical={false}
               />
 
               <XAxis
                 dataKey="name"
-                tick={{ fill: tickColor, fontSize: 11 }}
+                tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }}
                 tickLine={false}
                 axisLine={false}
               />
 
               <YAxis
-                tick={{ fill: tickColor, fontSize: 11 }}
+                tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(v: number) => formatNumber(v)}
@@ -95,40 +134,43 @@ export function StepFunnelChart({ data }: StepFunnelChartProps) {
               />
 
               <Legend
-                wrapperStyle={{ paddingTop: 12 }}
+                wrapperStyle={{ paddingTop: 16 }}
                 iconType="circle"
                 iconSize={8}
                 formatter={(value: string) => (
-                  <span style={{ color: legendColor, fontSize: 12 }}>{value}</span>
+                  <span
+                    style={{
+                      color: 'var(--text-secondary)',
+                      fontSize: '13px',
+                    }}
+                  >
+                    {value}
+                  </span>
                 )}
               />
 
               <Bar
                 dataKey="Enviadas"
-                fill="#6B7280"
-                radius={[4, 4, 0, 0]}
-                opacity={0.8}
+                fill="var(--chart-100)"
+                radius={[6, 6, 0, 0]}
               />
 
               <Bar
                 dataKey="Lidas"
-                fill="#3B82F6"
-                radius={[4, 4, 0, 0]}
-                opacity={0.85}
+                fill="var(--chart-200)"
+                radius={[6, 6, 0, 0]}
               />
 
               <Bar
                 dataKey="Cliques"
-                fill="#F59E0B"
-                radius={[4, 4, 0, 0]}
-                opacity={0.9}
+                fill="var(--chart-300)"
+                radius={[6, 6, 0, 0]}
               />
 
               <Bar
                 dataKey="Conversões"
-                fill="#10B981"
-                radius={[4, 4, 0, 0]}
-                opacity={0.95}
+                fill="var(--chart-400)"
+                radius={[6, 6, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>

@@ -149,8 +149,8 @@ export default function BillingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Cobrança</h1>
-          <p className="text-sm text-text-secondary">
+          <h1 className="text-[30px] font-bold text-text-primary" style={{ letterSpacing: '-0.02em' }}>Cobrança</h1>
+          <p className="text-[14px] text-text-tertiary">
             Comissão de 10% sobre o valor dos carrinhos recuperados
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function BillingPage() {
       </div>
 
       {/* How it works */}
-      <div className="rounded-[var(--radius-lg)] border border-border bg-bg-secondary p-5">
+      <div className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
         <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-text-primary">
           <Receipt className="h-4 w-4 text-accent" />
           Como Funciona
@@ -330,42 +330,37 @@ function KpiCard({
   label,
   value,
   subtitle,
-  accent = 'blue',
 }: {
   icon: React.ComponentType<{ className?: string }>
   label: string
   value: string
   subtitle?: string
-  accent?: 'emerald' | 'blue' | 'violet'
+  accent?: string
 }) {
-  const accentClasses = {
-    emerald: 'border-emerald-500/30 text-emerald-400 bg-emerald-500/10',
-    blue: 'border-blue-500/30 text-blue-400 bg-blue-500/10',
-    violet: 'border-violet-500/30 text-violet-400 bg-violet-500/10',
-  }
-
-  const iconBg = {
-    emerald: 'bg-emerald-500/15 text-emerald-400',
-    blue: 'bg-blue-500/15 text-blue-400',
-    violet: 'bg-violet-500/15 text-violet-400',
-  }
-
   return (
     <div
-      className={cn(
-        'rounded-[var(--radius-lg)] border bg-bg-secondary p-4',
-        accentClasses[accent].split(' ')[0]
-      )}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        padding: '24px',
+      }}
     >
       <div className="mb-3 flex items-center gap-3">
-        <div className={cn('flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)]', iconBg[accent])}>
-          <Icon className="h-4.5 w-4.5" />
+        <div
+          className="flex h-11 w-11 items-center justify-center"
+          style={{
+            background: 'var(--accent-surface)',
+            borderRadius: '12px',
+          }}
+        >
+          <div style={{ color: 'var(--accent)' }}><Icon className="h-5 w-5" /></div>
         </div>
-        <span className="text-xs font-medium text-text-tertiary">{label}</span>
+        <span className="text-[14px] font-medium" style={{ color: 'var(--text-tertiary)' }}>{label}</span>
       </div>
-      <p className="text-xl font-bold text-text-primary">{value}</p>
+      <p className="text-[28px] font-bold" style={{ color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em' }}>{value}</p>
       {subtitle && (
-        <p className="mt-1 text-xs text-text-tertiary">{subtitle}</p>
+        <p className="mt-1 text-[13px]" style={{ color: 'var(--text-tertiary)' }}>{subtitle}</p>
       )}
     </div>
   )

@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui'
 
 export interface EmptyStateProps {
   icon: React.ReactNode
@@ -15,15 +14,41 @@ export interface EmptyStateProps {
 export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
     <div className={cn('flex flex-col items-center justify-center py-16 text-center', className)}>
-      <div className="mb-4 text-text-tertiary">{icon}</div>
-      <h3 className="text-base font-semibold text-text-primary">{title}</h3>
+      <div
+        className="mb-4 flex h-16 w-16 items-center justify-center"
+        style={{
+          background: 'var(--accent-surface)',
+          borderRadius: '50%',
+        }}
+      >
+        <div style={{ color: 'var(--accent)' }}>{icon}</div>
+      </div>
+      <h3
+        className="text-[20px] font-bold"
+        style={{ color: 'var(--text-primary)' }}
+      >
+        {title}
+      </h3>
       {description && (
-        <p className="mt-1 max-w-sm text-sm text-text-secondary">{description}</p>
+        <p
+          className="mt-1 max-w-sm text-[14px]"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
+          {description}
+        </p>
       )}
       {action && (
-        <Button onClick={action.onClick} size="md" className="mt-4">
+        <button
+          onClick={action.onClick}
+          className="mt-4 px-4 py-2 text-[14px] font-medium"
+          style={{
+            background: 'var(--accent)',
+            color: 'var(--text-inverse)',
+            borderRadius: '10px',
+          }}
+        >
           {action.label}
-        </Button>
+        </button>
       )}
     </div>
   )

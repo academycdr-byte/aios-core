@@ -137,10 +137,10 @@ export default function CarrinhosPage() {
     <div className="animate-fade-in space-y-6">
       {/* Page Header */}
       <div>
-        <h2 className="text-2xl lg:text-3xl font-semibold text-text-primary">
+        <h2 className="text-[30px] font-bold text-text-primary" style={{ letterSpacing: '-0.02em' }}>
           Carrinhos Abandonados
         </h2>
-        <p className="mt-1 text-text-secondary">
+        <p className="mt-1 text-[14px] text-text-tertiary">
           Acompanhe e recupere vendas perdidas automaticamente.
         </p>
       </div>
@@ -230,7 +230,7 @@ export default function CarrinhosPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface">
+      <div className="overflow-hidden border border-border bg-surface" style={{ borderRadius: '20px' }}>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

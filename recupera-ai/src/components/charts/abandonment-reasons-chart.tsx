@@ -11,7 +11,6 @@ import {
 } from 'recharts'
 import type { AbandonmentReasonData } from '@/types/charts'
 import { formatNumber } from '@/lib/format'
-import { useTheme } from '@/lib/theme-context'
 
 interface AbandonmentReasonsChartProps {
   data: AbandonmentReasonData[]
@@ -28,6 +27,18 @@ interface CustomTooltipProps {
   payload?: TooltipPayloadItem[]
 }
 
+const MONOCHROMATIC_SCALE = [
+  'var(--chart-400)',
+  'var(--chart-300)',
+  'var(--chart-200)',
+  'var(--chart-100)',
+]
+
+function getBarFill(index: number): string {
+  if (index < MONOCHROMATIC_SCALE.length) return MONOCHROMATIC_SCALE[index]
+  return MONOCHROMATIC_SCALE[MONOCHROMATIC_SCALE.length - 1]
+}
+
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
   if (!active || !payload?.length) return null
 
@@ -35,57 +46,51 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   return (
     <div
-      className="rounded-[var(--radius-md)] border border-[var(--border)] px-3 py-2"
       style={{
-        background: 'var(--bg-elevated)',
-        boxShadow: 'var(--shadow-lg)',
+        background: '#1F2937',
+        color: '#FFFFFF',
+        borderRadius: 8,
+        padding: '8px 12px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        fontSize: 13,
       }}
     >
-      <div className="flex items-center gap-2 text-sm">
-        <span
-          className="inline-block h-2 w-2 rounded-full"
-          style={{ background: item.payload.color }}
-        />
-        <span style={{ color: 'var(--text-secondary)' }}>{item.payload.label}:</span>
-        <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-          {formatNumber(item.value)}
-        </span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span>{item.payload.label}:</span>
+        <span style={{ fontWeight: 600 }}>{formatNumber(item.value)}</span>
       </div>
     </div>
   )
 }
 
 export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
-
-  const xTickColor = isDark ? '#5A5A5A' : '#9CA3AF'
-  const yTickColor = isDark ? '#8B8B8B' : '#6B7280'
-  const cursorFill = isDark ? '#1A1A1A' : '#F3F4F6'
-
   const total = data.reduce((sum, d) => sum + d.count, 0)
 
   return (
     <div
-      className="rounded-[var(--radius-lg)] border border-[var(--border)] p-5"
-      style={{ background: 'var(--surface)' }}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: 20,
+        padding: 28,
+      }}
     >
-      <div className="mb-4 flex items-center justify-between">
-        <h3
-          className="text-sm font-semibold"
-          style={{ color: 'var(--text-primary)' }}
-        >
-          Motivos de Abandono
-        </h3>
-        <span
-          className="text-xs"
-          style={{ color: 'var(--text-tertiary)' }}
-        >
-          {formatNumber(total)} conversas
-        </span>
-      </div>
+      {/* Title */}
+      <h3
+        style={{
+          fontSize: 20,
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          letterSpacing: '-0.01em',
+          margin: 0,
+          marginBottom: 20,
+        }}
+      >
+        Motivos de Abandono
+      </h3>
 
-      <div className="h-[280px]">
+      {/* Chart */}
+      <div style={{ height: 280 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
@@ -94,7 +99,7 @@ export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) 
           >
             <XAxis
               type="number"
-              tick={{ fill: xTickColor, fontSize: 11 }}
+              tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }}
               axisLine={false}
               tickLine={false}
             />
@@ -102,17 +107,21 @@ export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) 
               type="category"
               dataKey="label"
               width={140}
-              tick={{ fill: yTickColor, fontSize: 12 }}
+              tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
               content={<CustomTooltip />}
-              cursor={{ fill: cursorFill, opacity: 0.5 }}
+              cursor={{ fill: 'var(--bg-card)', opacity: 0.5 }}
             />
-            <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={24}>
-              {data.map((entry) => (
-                <Cell key={entry.reason} fill={entry.color} />
+            <Bar
+              dataKey="count"
+              radius={[0, 6, 6, 0]}
+              maxBarSize={24}
+            >
+              {data.map((entry, index) => (
+                <Cell key={entry.reason} fill={getBarFill(index)} />
               ))}
             </Bar>
           </BarChart>
@@ -121,28 +130,33 @@ export function AbandonmentReasonsChart({ data }: AbandonmentReasonsChartProps) 
 
       {/* Summary row */}
       <div
-        className="mt-3 flex items-center justify-between border-t pt-3"
-        style={{ borderColor: 'var(--border)' }}
+        style={{
+          marginTop: 16,
+          paddingTop: 16,
+          borderTop: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
       >
         <span
-          className="text-xs"
-          style={{ color: 'var(--text-tertiary)' }}
+          style={{
+            fontSize: 13,
+            color: 'var(--text-tertiary)',
+          }}
         >
           Top motivo
         </span>
         {data.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-block h-2 w-2 rounded-full"
-              style={{ background: data[0].color }}
-            />
-            <span
-              className="text-xs font-semibold"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              {data[0].label} ({Math.round((data[0].count / total) * 100)}%)
-            </span>
-          </div>
+          <span
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+            }}
+          >
+            {data[0].label} ({Math.round((data[0].count / total) * 100)}%)
+          </span>
         )}
       </div>
     </div>

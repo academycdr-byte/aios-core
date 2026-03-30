@@ -8,17 +8,6 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean
 }
 
-const variantStyles: Record<string, string> = {
-  primary:
-    'bg-accent text-text-inverse shadow-sm shadow-accent/25 hover:bg-accent-hover hover:shadow-md hover:shadow-accent/30 focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-primary',
-  secondary:
-    'border border-border text-text-secondary hover:bg-surface-hover hover:text-text-primary',
-  danger:
-    'border border-error/30 text-error hover:bg-error-light',
-  ghost:
-    'text-text-secondary hover:bg-surface-hover hover:text-text-primary',
-}
-
 const sizeStyles: Record<string, string> = {
   sm: 'px-3 py-1.5 text-xs gap-1.5',
   md: 'px-4 py-2 text-sm gap-2',
@@ -26,19 +15,46 @@ const sizeStyles: Record<string, string> = {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', loading, disabled, children, ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', loading, disabled, children, style, ...props }, ref) => {
+    const variantStyle: React.CSSProperties =
+      variant === 'primary'
+        ? {
+            background: 'var(--accent)',
+            color: 'var(--text-inverse)',
+          }
+        : variant === 'secondary'
+          ? {
+              background: 'transparent',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
+            }
+          : variant === 'danger'
+            ? {
+                background: 'transparent',
+                color: 'var(--danger)',
+                border: '1px solid var(--danger)',
+              }
+            : {
+                background: 'transparent',
+                color: 'var(--text-secondary)',
+              }
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'inline-flex items-center justify-center font-semibold rounded-[var(--radius-md)] transition-all',
+          'inline-flex items-center justify-center font-semibold transition-all',
           'disabled:opacity-50 disabled:cursor-not-allowed',
-          'focus:outline-none active:scale-[0.98]',
-          variantStyles[variant],
+          'focus:outline-none',
           sizeStyles[size],
           className
         )}
+        style={{
+          borderRadius: '10px',
+          ...variantStyle,
+          ...style,
+        }}
         {...props}
       >
         {loading ? (

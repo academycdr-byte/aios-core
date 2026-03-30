@@ -28,28 +28,36 @@ export function ChartTooltip({
 
   return (
     <div
-      className="rounded-[var(--radius-md)] border border-[var(--border)] px-3 py-2"
       style={{
-        background: 'var(--bg-elevated)',
-        boxShadow: 'var(--shadow-lg)',
+        background: '#1F2937',
+        borderRadius: '8px',
+        padding: '8px 12px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
       }}
     >
       {displayLabel && (
         <p
-          className="mb-1.5 text-xs font-medium"
-          style={{ color: 'var(--text-tertiary)' }}
+          style={{
+            color: 'rgba(255,255,255,0.6)',
+            fontSize: '12px',
+            marginBottom: '4px',
+          }}
         >
           {displayLabel}
         </p>
       )}
       {payload.map((entry) => (
-        <div key={entry.dataKey} className="flex items-center gap-2 text-sm">
+        <div
+          key={entry.dataKey}
+          className="flex items-center gap-2"
+          style={{ fontSize: '14px' }}
+        >
           <span
             className="h-2 w-2 rounded-full"
             style={{ background: entry.color }}
           />
-          <span style={{ color: 'var(--text-secondary)' }}>{entry.name}:</span>
-          <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+          <span style={{ color: 'rgba(255,255,255,0.7)' }}>{entry.name}:</span>
+          <span style={{ color: '#FFFFFF', fontWeight: 700 }}>
             {formatter ? formatter(entry.value, entry.name) : entry.value}
           </span>
         </div>

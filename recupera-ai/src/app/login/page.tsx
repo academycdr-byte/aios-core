@@ -38,30 +38,62 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="gradient-bg flex min-h-screen items-center justify-center px-4">
-      {/* Subtle glow effect */}
-      <div className="pointer-events-none fixed left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-3xl" />
-
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      style={{ background: 'var(--bg-outer)' }}
+    >
       <div className="relative w-full max-w-md animate-fade-in">
         {/* Logo */}
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-xl)] bg-accent shadow-[var(--shadow-lg)]">
-            <Zap className="h-8 w-8 text-text-inverse" />
+          <div
+            className="mb-4 flex h-16 w-16 items-center justify-center"
+            style={{
+              background: 'var(--accent)',
+              borderRadius: '16px',
+            }}
+          >
+            <Zap className="h-8 w-8" style={{ color: 'var(--text-inverse)' }} />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary">RecuperaAI</h1>
-          <p className="mt-2 text-text-secondary">
+          <h1
+            className="text-[30px] font-bold"
+            style={{
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            RecuperaAI
+          </h1>
+          <p
+            className="mt-2 text-[14px]"
+            style={{ color: 'var(--text-secondary)' }}
+          >
             Seu vendedor IA que nunca dorme
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="relative rounded-[var(--radius-xl)] border border-border bg-surface p-8 shadow-[var(--shadow-xl)]">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
+        <div
+          style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: '20px',
+            padding: '32px',
+          }}
+        >
           <div className="mb-6">
-            <h2 className="text-xl font-semibold text-text-primary">
+            <h2
+              className="text-[24px] font-bold"
+              style={{
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
+              }}
+            >
               Bem-vindo de volta
             </h2>
-            <p className="mt-1 text-sm text-text-secondary">
+            <p
+              className="mt-1 text-[14px]"
+              style={{ color: 'var(--text-secondary)' }}
+            >
               Entre na sua conta para continuar
             </p>
           </div>
@@ -71,7 +103,8 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-text-secondary"
+                className="mb-1.5 block text-[14px] font-medium"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 E-mail
               </label>
@@ -81,7 +114,6 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
-                className="bg-bg-primary"
                 autoComplete="email"
               />
             </div>
@@ -90,7 +122,8 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-text-secondary"
+                className="mb-1.5 block text-[14px] font-medium"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 Senha
               </label>
@@ -101,13 +134,14 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Sua senha"
-                  className="bg-bg-primary pr-11"
+                  className="pr-11"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  style={{ color: 'var(--text-tertiary)' }}
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -121,7 +155,14 @@ export default function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="rounded-[var(--radius-md)] bg-error-light px-4 py-3 text-sm text-error">
+              <div
+                className="px-4 py-3 text-[14px]"
+                style={{
+                  borderRadius: '10px',
+                  background: 'var(--danger-surface)',
+                  color: 'var(--danger)',
+                }}
+              >
                 {error}
               </div>
             )}
@@ -140,14 +181,20 @@ export default function LoginPage() {
 
           {/* Forgot Password */}
           <div className="mt-6 text-center">
-            <Button variant="ghost" size="sm" className="text-text-secondary">
+            <button
+              className="text-[14px] font-medium"
+              style={{ color: 'var(--accent)' }}
+            >
               Esqueci minha senha
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-xs text-text-tertiary">
+        <p
+          className="mt-8 text-center text-[12px]"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
           RecuperaAI - Recuperação inteligente de carrinhos abandonados
         </p>
       </div>

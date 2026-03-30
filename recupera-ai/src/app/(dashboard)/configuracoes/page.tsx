@@ -405,8 +405,8 @@ export default function ConfiguracoesPage() {
   return (
     <div className="animate-fade-in space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-text-primary lg:text-3xl">Configurações</h2>
-        <p className="mt-1 text-text-secondary">
+        <h2 className="text-[30px] font-bold text-text-primary" style={{ letterSpacing: '-0.02em' }}>Configurações</h2>
+        <p className="mt-1 text-[14px] text-text-tertiary">
           Configurações gerais da sua conta RecuperaAI
         </p>
       </div>

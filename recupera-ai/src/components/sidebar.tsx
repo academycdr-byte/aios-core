@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -8,8 +8,6 @@ import {
   ShoppingCart,
   MessageSquare,
   Settings,
-  ChevronLeft,
-  ChevronRight,
   Zap,
   X,
   BarChart3,
@@ -17,6 +15,7 @@ import {
   GitBranch,
   MessageCircle,
   Receipt,
+  LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth-context'
@@ -65,11 +64,9 @@ interface SidebarProps {
 }
 
 export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(false)
   const pathname = usePathname()
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
 
-  // Read current tab from URL (client-side only, avoids useSearchParams SSR issues)
   const [currentTab, setCurrentTab] = useState<string | null>(null)
   useEffect(() => {
     function syncTab() {
@@ -77,7 +74,6 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       setCurrentTab(params.get('tab'))
     }
     syncTab()
-    // Re-sync on popstate (back/forward navigation)
     window.addEventListener('popstate', syncTab)
     return () => window.removeEventListener('popstate', syncTab)
   }, [pathname])
@@ -98,33 +94,40 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const sidebarContent = (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <div className="relative flex h-16 items-center gap-3 px-4 after:absolute after:bottom-0 after:left-4 after:right-4 after:h-px after:bg-gradient-to-r after:from-transparent after:via-border after:to-transparent">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-accent">
-          <Zap className="h-5 w-5 text-text-inverse" />
-        </div>
-        {!collapsed && (
-          <div className="animate-fade-in">
-            <span className="text-base font-semibold text-text-primary">
-              RecuperaAI
-            </span>
-            <span className="block text-[11px] text-text-tertiary">
-              Recuperação Inteligente
-            </span>
+      <div className="px-6 pt-6 pb-4">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center"
+            style={{
+              background: 'var(--accent)',
+              borderRadius: '12px',
+            }}
+          >
+            <Zap className="h-5 w-5" style={{ color: 'var(--text-inverse)' }} />
           </div>
-        )}
+          <span
+            className="text-[15px] font-bold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            RecuperaAI
+          </span>
+        </div>
       </div>
 
-      {/* Navigation with Sections */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        {NAV_SECTIONS.map((section) => (
-          <div key={section.title} className="mb-4">
-            {!collapsed && (
-              <p className="mb-2 flex items-center gap-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-accent">
-                <span className="h-1 w-1 rounded-full bg-accent opacity-60" />
-                {section.title}
-              </p>
-            )}
-            <div className="space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto px-4 py-2">
+        {NAV_SECTIONS.map((section, idx) => (
+          <div key={section.title} className={cn(idx > 0 && 'mt-6')}>
+            <p
+              className="mb-2 px-4 text-[13px] font-medium"
+              style={{
+                color: 'var(--text-tertiary)',
+                letterSpacing: '0.02em',
+              }}
+            >
+              {section.title}
+            </p>
+            <div className="space-y-0.5">
               {section.items.map((item) => {
                 const active = isActive(item.href)
                 const Icon = item.icon
@@ -134,17 +137,34 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                     href={item.href}
                     onClick={onMobileClose}
                     className={cn(
-                      'flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-sm font-medium transition-colors',
-                      active
-                        ? 'bg-accent-light text-accent border-l-[3px] border-accent -ml-px'
-                        : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary border-l-[3px] border-transparent -ml-px'
+                      'flex items-center gap-3 px-4 py-3 text-[16px] transition-colors',
+                      active ? 'font-semibold' : 'font-medium'
                     )}
-                    title={collapsed ? item.label : undefined}
+                    style={{
+                      borderRadius: '16px',
+                      color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                      background: active ? 'var(--accent-surface)' : 'transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.background = 'var(--bg-hover)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.background = 'transparent'
+                      }
+                    }}
                   >
-                    <Icon className={cn('h-5 w-5 shrink-0', active && 'text-accent')} />
-                    {!collapsed && (
-                      <span className="animate-fade-in">{item.label}</span>
-                    )}
+                    <div
+                      className="shrink-0"
+                      style={{
+                        color: active ? 'var(--accent)' : 'var(--text-tertiary)',
+                      }}
+                    >
+                      <Icon className="h-[22px] w-[22px]" />
+                    </div>
+                    <span>{item.label}</span>
                   </Link>
                 )
               })}
@@ -153,36 +173,27 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         ))}
       </nav>
 
-      {/* User Info */}
-      <div className="relative px-3 py-4 before:absolute before:top-0 before:left-4 before:right-4 before:h-px before:bg-gradient-to-r before:from-transparent before:via-border before:to-transparent">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-accent text-sm font-semibold text-text-inverse">
-            {user?.name?.charAt(0) ?? 'U'}
-          </div>
-          {!collapsed && (
-            <div className="min-w-0 animate-fade-in">
-              <p className="truncate text-sm font-medium text-text-primary">
-                {user?.name ?? 'Usuário'}
-              </p>
-              <p className="truncate text-xs text-text-tertiary">
-                {user?.email ?? ''}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Collapse Toggle (desktop only) */}
-      <div className="hidden border-t border-border px-3 py-3 lg:block">
+      {/* Footer */}
+      <div
+        className="px-4 py-4"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex w-full items-center justify-center rounded-[var(--radius-md)] py-2 text-text-tertiary hover:bg-surface-hover hover:text-text-primary"
+          onClick={logout}
+          className="flex w-full items-center gap-3 px-4 py-3 text-[16px] font-medium transition-colors"
+          style={{
+            borderRadius: '16px',
+            color: 'var(--danger)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'var(--danger-surface)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent'
+          }}
         >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
+          <LogOut className="h-[22px] w-[22px]" />
+          Sair
         </button>
       </div>
     </div>
@@ -193,7 +204,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 lg:hidden"
+          style={{ background: 'rgba(0,0,0,0.6)' }}
           onClick={onMobileClose}
         />
       )}
@@ -201,27 +213,31 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       {/* Mobile Drawer */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-[var(--sidebar-width)] bg-bg-secondary/80 backdrop-blur-xl border-r border-border lg:hidden',
+          'fixed inset-y-0 left-0 z-50 w-[240px] lg:hidden',
           'transition-transform duration-300',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
+        style={{
+          background: 'var(--bg-card)',
+          borderRight: '1px solid var(--border)',
+        }}
       >
         <button
           onClick={onMobileClose}
-          className="absolute right-3 top-4 rounded-[var(--radius-md)] p-1.5 text-text-tertiary hover:bg-surface-hover hover:text-text-primary lg:hidden"
+          className="absolute right-3 top-4 p-1.5 lg:hidden"
+          style={{
+            borderRadius: '10px',
+            color: 'var(--text-tertiary)',
+          }}
         >
           <X className="h-5 w-5" />
         </button>
         {sidebarContent}
       </aside>
 
-      {/* Desktop Sidebar */}
+      {/* Desktop Sidebar — part of the floating container, NO border, NO bg */}
       <aside
-        className={cn(
-          'hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 lg:z-30',
-          'bg-bg-secondary/80 backdrop-blur-xl border-r border-border sidebar-transition',
-          collapsed ? 'lg:w-[var(--sidebar-collapsed-width)]' : 'lg:w-[var(--sidebar-width)]'
-        )}
+        className="hidden w-[var(--sidebar-width)] shrink-0 lg:block"
       >
         {sidebarContent}
       </aside>

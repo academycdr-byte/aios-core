@@ -10,7 +10,7 @@ interface HeaderProps {
   title?: string
 }
 
-export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
+export function Header({ onMenuClick }: HeaderProps) {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -27,33 +27,58 @@ export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
   }, [])
 
   return (
-    <header className="sticky top-0 z-20 flex h-[var(--header-height)] items-center justify-between border-b border-border bg-bg-secondary/60 px-4 backdrop-blur-2xl shadow-[0_1px_3px_rgba(0,0,0,0.1)] lg:px-6">
-      {/* Left: Menu Toggle + Search */}
-      <div className="flex items-center gap-3 flex-1">
+    <header
+      className="flex h-[var(--header-height)] items-center justify-between px-6 lg:px-8"
+      style={{
+        borderBottom: '1px solid var(--border)',
+        borderRadius: '20px 20px 0 0',
+      }}
+    >
+      {/* Left: Menu Toggle (mobile) */}
+      <div className="flex items-center lg:w-[200px]">
         <button
           onClick={onMenuClick}
-          className="rounded-[var(--radius-md)] p-2 text-text-secondary hover:bg-surface-hover hover:text-text-primary lg:hidden"
+          className="p-2 lg:hidden"
+          style={{
+            borderRadius: '10px',
+            color: 'var(--text-secondary)',
+          }}
         >
           <Menu className="h-5 w-5" />
         </button>
+      </div>
 
-        {/* Search Bar */}
-        <div className="relative hidden sm:flex items-center max-w-sm flex-1">
-          <Search className="absolute left-3 h-4 w-4 text-text-tertiary" />
+      {/* Center: Search */}
+      <div className="hidden max-w-[480px] flex-1 sm:flex sm:justify-center">
+        <div className="relative w-full max-w-[480px]">
+          <Search
+            className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
+            style={{ color: 'var(--text-tertiary)' }}
+          />
           <input
             type="text"
             placeholder="Buscar..."
-            className="w-full rounded-[var(--radius-md)] border border-border bg-surface pl-9 pr-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent focus:ring-2 focus:ring-accent-light focus:outline-none"
+            className="w-full py-2.5 pl-10 pr-4 text-sm"
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              color: 'var(--text-primary)',
+            }}
           />
         </div>
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 lg:w-[200px] lg:justify-end">
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="rounded-[var(--radius-md)] p-2 text-text-secondary hover:bg-surface-hover hover:text-text-primary"
+          className="p-2"
+          style={{
+            borderRadius: '10px',
+            color: 'var(--text-tertiary)',
+          }}
           title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
         >
           {theme === 'dark' ? (
@@ -64,39 +89,96 @@ export function Header({ onMenuClick, title = 'Dashboard' }: HeaderProps) {
         </button>
 
         {/* Notifications */}
-        <button className="relative rounded-[var(--radius-md)] p-2 text-text-secondary hover:bg-surface-hover hover:text-text-primary">
+        <button
+          className="relative p-2"
+          style={{
+            borderRadius: '10px',
+            color: 'var(--text-tertiary)',
+          }}
+        >
           <Bell className="h-5 w-5" />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent" />
+          <span
+            className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full"
+            style={{ background: 'var(--accent)' }}
+          />
         </button>
+
+        {/* Separator */}
+        <div
+          className="hidden h-6 w-px lg:block"
+          style={{ background: 'var(--border)' }}
+        />
 
         {/* User Avatar + Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-2 rounded-[var(--radius-md)] p-1.5 hover:bg-surface-hover"
+            className="flex items-center gap-2 p-1.5"
+            style={{ borderRadius: '10px' }}
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] bg-accent text-sm font-semibold text-text-inverse">
+            <div
+              className="flex h-9 w-9 items-center justify-center text-sm font-bold"
+              style={{
+                background: 'var(--accent)',
+                color: 'var(--text-inverse)',
+                borderRadius: '50%',
+              }}
+            >
               {user?.name?.charAt(0) ?? 'U'}
             </div>
-            <span className="hidden text-sm font-medium text-text-primary md:block">
-              {user?.name ?? 'Usuário'}
-            </span>
+            <div className="hidden text-left md:block">
+              <p
+                className="text-sm font-medium"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {user?.name ?? 'Usuário'}
+              </p>
+            </div>
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-56 animate-fade-in rounded-[var(--radius-lg)] border border-border bg-bg-elevated p-1.5 shadow-[var(--shadow-lg)]">
-              <div className="border-b border-border px-3 py-2.5">
-                <p className="text-sm font-medium text-text-primary">
+            <div
+              className="absolute right-0 top-full z-50 mt-2 w-56 animate-fade-in p-1.5"
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: '12px',
+                boxShadow: 'var(--shadow-md)',
+              }}
+            >
+              <div
+                className="px-3 py-2.5"
+                style={{ borderBottom: '1px solid var(--border)' }}
+              >
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: 'var(--text-primary)' }}
+                >
                   {user?.name}
                 </p>
-                <p className="text-xs text-text-tertiary">{user?.email}</p>
+                <p
+                  className="text-xs"
+                  style={{ color: 'var(--text-tertiary)' }}
+                >
+                  {user?.email}
+                </p>
               </div>
               <button
                 onClick={() => {
                   setDropdownOpen(false)
                   logout()
                 }}
-                className="mt-1 flex w-full items-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm text-error hover:bg-error-light"
+                className="mt-1 flex w-full items-center gap-2 px-3 py-2 text-sm"
+                style={{
+                  borderRadius: '8px',
+                  color: 'var(--danger)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--danger-surface)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
               >
                 <LogOut className="h-4 w-4" />
                 Sair

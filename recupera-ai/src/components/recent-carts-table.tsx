@@ -10,72 +10,55 @@ interface RecentCartsTableProps {
   limit?: number
 }
 
-// ============================================================
-// Status badge configuration
-// ============================================================
-
 const statusConfig: Record<CartStatus, { label: string; bg: string; text: string }> = {
   PENDING: {
     label: 'Pendente',
-    bg: 'rgba(245, 158, 11, 0.12)',
-    text: '#F59E0B',
+    bg: 'var(--warning-surface)',
+    text: 'var(--warning)',
   },
   CONTACTING: {
     label: 'Contatando',
-    bg: 'rgba(59, 130, 246, 0.12)',
-    text: '#3B82F6',
+    bg: 'var(--info-surface)',
+    text: 'var(--info)',
   },
   RECOVERED: {
     label: 'Recuperado',
-    bg: 'rgba(16, 185, 129, 0.12)',
-    text: '#10B981',
+    bg: 'var(--success-surface)',
+    text: 'var(--success)',
   },
   PAID: {
     label: 'Pago',
-    bg: 'rgba(5, 150, 105, 0.15)',
-    text: '#059669',
+    bg: 'var(--success-surface)',
+    text: 'var(--success)',
   },
   LOST: {
     label: 'Perdido',
-    bg: 'rgba(239, 68, 68, 0.12)',
-    text: '#EF4444',
+    bg: 'var(--danger-surface)',
+    text: 'var(--danger)',
   },
   EXPIRED: {
     label: 'Expirado',
-    bg: 'rgba(107, 114, 128, 0.12)',
-    text: '#6B7280',
+    bg: 'var(--bg-hover)',
+    text: 'var(--text-secondary)',
   },
 }
 
-// ============================================================
-// Type icon configuration
-// ============================================================
-
-const typeConfig: Record<CartType, { icon: typeof ShoppingCart; label: string; color: string }> = {
-  ABANDONED_CART: {
-    icon: ShoppingCart,
-    label: 'Carrinho',
-    color: '#F59E0B',
-  },
-  PIX_PENDING: {
-    icon: QrCode,
-    label: 'PIX',
-    color: '#3B82F6',
-  },
-  CARD_DECLINED: {
-    icon: CreditCard,
-    label: 'Cartão',
-    color: '#EF4444',
-  },
+const typeConfig: Record<CartType, { icon: typeof ShoppingCart; label: string }> = {
+  ABANDONED_CART: { icon: ShoppingCart, label: 'Carrinho' },
+  PIX_PENDING: { icon: QrCode, label: 'PIX' },
+  CARD_DECLINED: { icon: CreditCard, label: 'Cartão' },
 }
 
 function StatusBadge({ status }: { status: CartStatus }) {
   const config = statusConfig[status]
-
   return (
     <span
-      className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold"
-      style={{ background: config.bg, color: config.text }}
+      className="inline-flex items-center px-2.5 py-1 text-[12px] font-semibold"
+      style={{
+        borderRadius: '6px',
+        background: config.bg,
+        color: config.text,
+      }}
     >
       {config.label}
     </span>
@@ -85,11 +68,14 @@ function StatusBadge({ status }: { status: CartStatus }) {
 function TypeBadge({ type }: { type: CartType }) {
   const config = typeConfig[type]
   const Icon = config.icon
-
   return (
     <span
-      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
-      style={{ background: `${config.color}15`, color: config.color }}
+      className="inline-flex items-center gap-1 px-2 py-0.5 text-[12px] font-medium"
+      style={{
+        borderRadius: '6px',
+        background: 'var(--accent-surface)',
+        color: 'var(--accent)',
+      }}
     >
       <Icon className="h-3 w-3" />
       {config.label}
@@ -102,19 +88,29 @@ export function RecentCartsTable({ carts, limit = 10 }: RecentCartsTableProps) {
 
   return (
     <div
-      className="rounded-[var(--radius-lg)] border border-[var(--border)]"
-      style={{ background: 'var(--surface)' }}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        overflow: 'hidden',
+      }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
+      <div
+        className="flex items-center justify-between px-7 py-5"
+        style={{ borderBottom: '1px solid var(--border)' }}
+      >
         <h3
-          className="text-sm font-semibold"
-          style={{ color: 'var(--text-primary)' }}
+          className="text-[20px] font-bold"
+          style={{
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.01em',
+          }}
         >
           Carrinhos Recentes
         </h3>
         <span
-          className="text-xs"
+          className="text-[14px]"
           style={{ color: 'var(--text-tertiary)' }}
         >
           {carts.length} total
@@ -126,85 +122,99 @@ export function RecentCartsTable({ carts, limit = 10 }: RecentCartsTableProps) {
         <table className="w-full">
           <thead>
             <tr
-              className="border-b text-left text-xs font-medium uppercase tracking-wider"
               style={{
-                borderColor: 'var(--border)',
-                color: 'var(--text-tertiary)',
+                background: 'var(--bg-primary)',
+                borderBottom: '1px solid var(--border)',
               }}
             >
-              <th className="px-5 py-3">Cliente</th>
-              <th className="px-5 py-3">Valor</th>
-              <th className="hidden px-5 py-3 md:table-cell">Produtos</th>
-              <th className="px-5 py-3">Tipo</th>
-              <th className="px-5 py-3">Status</th>
-              <th className="hidden px-5 py-3 text-right sm:table-cell">Tempo</th>
+              <th
+                className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                Cliente
+              </th>
+              <th
+                className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                Valor
+              </th>
+              <th
+                className="hidden px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider md:table-cell"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                Produtos
+              </th>
+              <th
+                className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                Tipo
+              </th>
+              <th
+                className="px-4 py-3 text-left text-[13px] font-medium uppercase tracking-wider"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                Status
+              </th>
+              <th
+                className="hidden px-4 py-3 text-right text-[13px] font-medium uppercase tracking-wider sm:table-cell"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                Tempo
+              </th>
             </tr>
           </thead>
           <tbody>
             {displayCarts.map((cart) => (
               <tr
                 key={cart.id}
-                className="border-b transition-colors last:border-b-0"
-                style={{
-                  borderColor: 'var(--border)',
-                }}
+                className="transition-colors last:border-b-0"
+                style={{ borderBottom: '1px solid var(--border)' }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--surface-hover)'
+                  e.currentTarget.style.background = 'var(--bg-hover)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent'
                 }}
               >
-                {/* Cliente */}
-                <td className="px-5 py-3.5">
-                  <div>
-                    <p
-                      className="text-sm font-medium"
-                      style={{ color: 'var(--text-primary)' }}
-                    >
-                      {cart.customerName}
-                    </p>
-                    <p
-                      className="mt-0.5 text-xs"
-                      style={{ color: 'var(--text-tertiary)' }}
-                    >
-                      {cart.customerPhone}
-                    </p>
-                  </div>
+                <td className="px-4 py-3">
+                  <p
+                    className="text-[14px] font-medium"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {cart.customerName}
+                  </p>
+                  <p
+                    className="mt-0.5 text-[12px]"
+                    style={{ color: 'var(--text-tertiary)' }}
+                  >
+                    {cart.customerPhone}
+                  </p>
                 </td>
-
-                {/* Valor */}
-                <td className="px-5 py-3.5">
+                <td className="px-4 py-3">
                   <span
-                    className="text-sm font-semibold"
+                    className="text-[14px] font-semibold"
                     style={{ color: 'var(--text-primary)' }}
                   >
                     {formatCurrency(cart.cartTotal)}
                   </span>
                 </td>
-
-                {/* Produtos */}
                 <td
-                  className="hidden max-w-[200px] truncate px-5 py-3.5 text-sm md:table-cell"
+                  className="hidden max-w-[200px] truncate px-4 py-3 text-[14px] md:table-cell"
                   style={{ color: 'var(--text-secondary)' }}
                   title={cart.cartItems.map((item) => item.name).join(', ')}
                 >
                   {cart.cartItems.map((item) => item.name).join(', ')}
                 </td>
-
-                {/* Tipo */}
-                <td className="px-5 py-3.5">
+                <td className="px-4 py-3">
                   <TypeBadge type={cart.type} />
                 </td>
-
-                {/* Status */}
-                <td className="px-5 py-3.5">
+                <td className="px-4 py-3">
                   <StatusBadge status={cart.status} />
                 </td>
-
-                {/* Tempo */}
                 <td
-                  className="hidden px-5 py-3.5 text-right text-xs sm:table-cell"
+                  className="hidden px-4 py-3 text-right text-[12px] sm:table-cell"
                   style={{ color: 'var(--text-tertiary)' }}
                 >
                   {formatRelativeTime(cart.abandonedAt)}

@@ -13,7 +13,6 @@ import {
 import type { DailyMetric } from '@/types/charts'
 import { formatCurrencyShort } from '@/lib/format'
 import { ChartTooltip } from '@/components/patterns'
-import { useTheme } from '@/lib/theme-context'
 
 interface ValueComparisonChartProps {
   data: DailyMetric[]
@@ -21,85 +20,102 @@ interface ValueComparisonChartProps {
 
 function formatYAxis(value: number): string {
   if (value >= 1000) {
-    return `${(value / 1000).toFixed(0)}K`
+    return `${(value / 1000).toFixed(0)}k`
   }
   return String(value)
 }
 
 export function ValueComparisonChart({ data }: ValueComparisonChartProps) {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
-
-  const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
-  const tickColor = isDark ? '#8B8B8B' : '#6B7280'
-  const legendColor = isDark ? '#8B8B8B' : '#9CA3AF'
-
   // Show last 14 days to keep bars readable
   const chartData = data.slice(-14)
 
   return (
     <div
-      className="rounded-[var(--radius-lg)] border border-[var(--border)] p-5"
-      style={{ background: 'var(--surface)' }}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        padding: '28px',
+      }}
     >
       <h3
-        className="mb-4 text-sm font-semibold"
-        style={{ color: 'var(--text-primary)' }}
+        style={{
+          fontSize: '20px',
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          letterSpacing: '-0.01em',
+          margin: '0 0 20px 0',
+        }}
       >
-        Valor Abandonado vs Recuperado (14 dias)
+        Valor Abandonado vs Recuperado
       </h3>
-      <div className="h-[300px] w-full">
+
+      <div style={{ width: '100%', height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
             margin={{ top: 5, right: 5, left: -10, bottom: 0 }}
-            barCategoryGap="20%"
+            barCategoryGap="35%"
+            barGap={0}
           >
             <CartesianGrid
-              strokeDasharray="3 3"
-              stroke={gridColor}
+              strokeDasharray="4 4"
+              stroke="var(--border)"
               vertical={false}
             />
 
             <XAxis
               dataKey="dateLabel"
-              tick={{ fill: tickColor, fontSize: 11 }}
+              tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }}
               tickLine={false}
               axisLine={false}
             />
 
             <YAxis
-              tick={{ fill: tickColor, fontSize: 11 }}
+              tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }}
               tickLine={false}
               axisLine={false}
               tickFormatter={formatYAxis}
             />
 
-            <Tooltip content={<ChartTooltip formatter={(v) => formatCurrencyShort(v)} />} />
+            <Tooltip
+              content={
+                <ChartTooltip
+                  formatter={(v) => formatCurrencyShort(v)}
+                />
+              }
+            />
 
             <Legend
-              wrapperStyle={{ paddingTop: 12 }}
+              wrapperStyle={{ paddingTop: 16 }}
               iconType="circle"
               iconSize={8}
               formatter={(value: string) => (
-                <span style={{ color: legendColor, fontSize: 12 }}>{value}</span>
+                <span
+                  style={{
+                    color: 'var(--text-secondary)',
+                    fontSize: '13px',
+                  }}
+                >
+                  {value}
+                </span>
               )}
             />
 
+            {/* Background bar — full abandoned value (max height reference) */}
             <Bar
               dataKey="abandonedValue"
               name="Abandonado"
-              fill="#F59E0B"
-              radius={[4, 4, 0, 0]}
-              opacity={0.8}
+              fill="var(--chart-100)"
+              radius={[6, 6, 0, 0]}
             />
 
+            {/* Foreground bar — recovered value (proportional) */}
             <Bar
               dataKey="recoveredValue"
               name="Recuperado"
-              fill="#10B981"
-              radius={[4, 4, 0, 0]}
-              opacity={0.9}
+              fill="var(--chart-400)"
+              radius={[6, 6, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>
